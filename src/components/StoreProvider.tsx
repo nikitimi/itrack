@@ -28,7 +28,7 @@ import {
   studentInfoSetSpecialization,
   studentInfoSetType,
 } from '@/redux/reducers/studentInfoReducer';
-import { EMPTY_STRING } from '@/utils/constants';
+import { EMPTY_STRING, NUMBER_OF_SEMESTER } from '@/utils/constants';
 import { InternshipResult } from '@/utils/types/internshipResult';
 import {
   internshipCompanyQuestionUpdate,
@@ -140,6 +140,22 @@ const StoreInitializer = ({ children }: Children) => {
         inputControlSetPromptType({
           key: 'internshipModule',
           promptType: 'no document',
+        })
+      );
+    }
+
+    if (grades.length === NUMBER_OF_SEMESTER) {
+      dispatch(
+        inputControlSetPromptType({
+          key: 'gradeModule',
+          promptType: 'fetched from server',
+        })
+      );
+    } else {
+      dispatch(
+        inputControlSetPromptType({
+          key: 'gradeModule',
+          promptType: 'missing document',
         })
       );
     }
