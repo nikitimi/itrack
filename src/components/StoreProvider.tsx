@@ -151,6 +151,13 @@ const StoreInitializer = ({ children }: Children) => {
           promptType: 'fetched from server',
         })
       );
+    } else if (grades.length === 0) {
+      dispatch(
+        inputControlSetPromptType({
+          key: 'gradeModule',
+          promptType: 'no document',
+        })
+      );
     } else {
       dispatch(
         inputControlSetPromptType({

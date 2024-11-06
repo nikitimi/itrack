@@ -6,6 +6,7 @@ import internshipReducer from '@/redux/reducers/internshipReducer';
 import studentInfoReducer from '@/redux/reducers/studentInfoReducer';
 import studentTemporaryReducer from './reducers/studentTemporaryReducer';
 import inputControlReducer from './reducers/inputControlReducer';
+import presentationReducer from './reducers/presentationReducer';
 
 export type AppStore = typeof store;
 export type RootState = ReturnType<AppStore['getState']>;
@@ -18,6 +19,7 @@ const store = configureStore({
     certificate: certificateReducer,
     grade: gradeReducer,
     internship: internshipReducer,
+    presentation: presentationReducer,
     studentInfo: studentInfoReducer,
     studentTemporary: studentTemporaryReducer,
   },

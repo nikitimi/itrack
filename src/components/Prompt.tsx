@@ -7,13 +7,14 @@ import { Button } from './ui/button';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
 import {
   Dialog,
+  DialogContent,
+  DialogTitle,
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTrigger,
-} from './ui/dialog';
-import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
+} from '@/components/ui/dialog';
 import { useState } from 'react';
 
 type PromptProps<T> = {
@@ -53,8 +54,8 @@ const Prompt = <T,>(props: PromptProps<T>) => {
     >
       <DialogTrigger asChild>{props.trigger}</DialogTrigger>
       <DialogContent className="fixed inset-x-0 inset-y-0 z-20 flex flex-col items-center justify-center rounded-lg bg-white/90 p-4 text-center shadow-sm duration-200 ease-in-out">
+        <DialogTitle>{props.title}</DialogTitle>
         <DialogHeader>
-          <DialogTitle>{props.title}</DialogTitle>
           <DialogDescription>{props.description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="grid grid-cols-2 gap-2">

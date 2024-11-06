@@ -42,29 +42,27 @@ const Dashboard = () => {
           chartData={chartData}
           chartConfig={chartConfig}
           description={description}
-          title="bar chart - careers"
+          title="careers"
           footerDescription={<ParagraphNode description={'Career Chart'} />}
         />
         <AreaChart
           chartData={[...chartData]}
           chartConfig={chartConfig}
           description={description}
-          title="area chart - careers"
+          title="careers"
           footerDescription={<ParagraphNode description={'Career Chart'} />}
         />
         <PieChartLabeled
           description={description}
-          title="pie chart - certificates"
+          title="certificates"
           footerDescription={
             <ParagraphNode description={'Certificates Chart'} />
           }
         />
         <LineChart
           description={description}
-          title="pie chart - certificates"
-          footerDescription={
-            <ParagraphNode description={'Certificates Chart'} />
-          }
+          title="internship"
+          footerDescription={<ParagraphNode description={'Internship Chart'} />}
         />
         {/* <BarChartSemester /> */}
       </div>

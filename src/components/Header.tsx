@@ -9,6 +9,7 @@ import {
 import AppLogo from '@/components/AppLogo';
 import { Button } from './ui/button';
 import useAppRouter from '@/hooks/useAppRouter';
+import { ProgressTracker } from './ProgressTracker';
 
 const Header = () => {
   return (
@@ -20,6 +21,7 @@ const Header = () => {
         <ResizableHandle disabled />
         <ResizablePanel defaultSize={50} />
       </ResizablePanelGroup>
+      <ProgressTracker />
     </header>
   );
 };

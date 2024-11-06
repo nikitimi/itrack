@@ -12,11 +12,13 @@ const Internship = () => {
     <div>
       <Header />
       <Suspense fallback={<Loading />}>
-        <InternshipIsITCompany />
-        <InternshipGrade />
-        <InternshipTaskSelector />
-        <InternshipTaskLoader />
-        <InternshipTaskConfirmation />
+        <div className="pt-12">
+          <InternshipIsITCompany />
+          <InternshipGrade />
+          <InternshipTaskSelector />
+          <InternshipTaskLoader />
+          <InternshipTaskConfirmation />
+        </div>
       </Suspense>
     </div>
   );
