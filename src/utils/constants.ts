@@ -7,7 +7,6 @@ export const HEADER_KEY = {
   lastName: 'x-lastName',
   specialization: 'x-specialization',
   studentNumber: 'x-studentNumber',
-  studentType: 'x-studentType',
   uid: 'x-uid',
   url: 'x-url',
 };

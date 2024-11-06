@@ -25,7 +25,6 @@ import {
   studentInfoSetLastname,
   studentInfoSetNumber,
   studentInfoSetSpecialization,
-  studentInfoSetType,
 } from '@/redux/reducers/studentInfoReducer';
 import { NUMBER_OF_SEMESTER } from '@/utils/constants';
 import { InternshipResult } from '@/utils/types/internshipResult';
@@ -90,7 +89,6 @@ const StoreInitializer = ({ children }: Children) => {
       role,
       specialization,
       studentNumber,
-      studentType,
       lastName,
       firstName,
     } = json.data;
@@ -100,7 +98,6 @@ const StoreInitializer = ({ children }: Children) => {
     dispatch(studentInfoSetSpecialization(specialization));
     dispatch(studentInfoSetFirstname(firstName));
     dispatch(studentInfoSetLastname(lastName));
-    dispatch(studentInfoSetType(studentType));
 
     if (certificate.length > 0) {
       certificate.forEach((certificate) =>

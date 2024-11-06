@@ -6,7 +6,6 @@ import {
   studentInfoFirstname,
   studentInfoLastname,
   studentInfoSpecialization,
-  studentInfoType,
 } from '@/redux/reducers/studentInfoReducer';
 import { useEffect, useState } from 'react';
 import {
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
+import getStudentType from '@/utils/getStudentType';
 
 type InitialState = 'loading' | 'ready';
 const initialState = 'loading';
@@ -33,7 +33,6 @@ const Hero = () => {
   const studentInfoSelector = useAppSelector((s) => s.studentInfo);
   const _studentNumber = studentInfoNumber(studentInfoSelector);
   const _specialization = studentInfoSpecialization(studentInfoSelector);
-  const _studentType = studentInfoType(studentInfoSelector);
   const firstName = studentInfoFirstname(studentInfoSelector);
   const lastName = studentInfoLastname(studentInfoSelector);
   const fullName = `${firstName} ${lastName}`;
@@ -54,7 +53,10 @@ const Hero = () => {
             label="Specialization:"
             value={_specialization?.replace(/_/g, ' ')}
           />
-          <LabelHelper label="Student Type:" value={_studentType} />
+          <LabelHelper
+            label="Student Type:"
+            value={getStudentType(_studentNumber)}
+          />
           <LabelHelper label="Student Number:" value={_studentNumber} />
         </CardContent>
       </Card>

@@ -7,7 +7,6 @@ import gradeResult from '@/features/grade/student/utils/gradeResult';
 // eslint-disable-next-line boundaries/element-types
 import internshipResult from '@/features/internship/utils/internshipResult';
 import { Specialization } from '@/lib/enums/specialization';
-import { StudentType } from '@/lib/enums/studentType';
 import { UserRole } from '@/lib/enums/userRole';
 import { HEADER_KEY, EMPTY_STRING } from '@/utils/constants';
 import { ChartData } from '@/utils/types/chartData';
@@ -23,7 +22,6 @@ export default async function layoutFetcher() {
   const firstName = headerList.get(HEADER_KEY.firstName) ?? EMPTY_STRING;
   const lastName = headerList.get(HEADER_KEY.lastName) ?? EMPTY_STRING;
   const role = (headerList.get(HEADER_KEY.role) as UserRole) || 'anonymous';
-  const studentType = headerList.get(HEADER_KEY.studentType) as StudentType;
   const specialization = headerList.get(
     HEADER_KEY.specialization
   ) as Specialization;
@@ -92,7 +90,6 @@ export default async function layoutFetcher() {
     firstName,
     lastName,
     specialization,
-    studentType,
     studentNumber,
     chartData,
     ...result,

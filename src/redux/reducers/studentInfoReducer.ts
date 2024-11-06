@@ -1,4 +1,3 @@
-import type { StudentType } from '@/lib/enums/studentType';
 import type { Specialization } from '@/lib/enums/specialization';
 import type { RootState } from '@/redux/store';
 
@@ -10,7 +9,6 @@ import { ChartData } from '@/utils/types/chartData';
 type StudentInfo = {
   specialization: Specialization;
   studentNumber: string;
-  studentType: StudentType;
   chartData: ChartData[];
   firstName: string;
   lastName: string;
@@ -28,7 +26,6 @@ type InitialState = StudentInfo;
 const initialState: InitialState = {
   specialization: 'BUSINESS_ANALYTICS',
   studentNumber: EMPTY_STRING,
-  studentType: 'regular',
   chartData: [],
   firstName: EMPTY_STRING,
   lastName: EMPTY_STRING,
@@ -63,12 +60,6 @@ const studentInfoSlice = createSlice({
     ) {
       state.specialization = action.payload;
     },
-    studentInfoSetType(
-      state,
-      action: { payload: InitialState['studentType'] }
-    ) {
-      state.studentType = action.payload;
-    },
     studentInfoSetChartData(
       state,
       action: { payload: InitialState['chartData'][number] }
@@ -81,7 +72,6 @@ const studentInfoSlice = createSlice({
     studentInfoResetState(state) {
       state.specialization = initialState.specialization;
       state.studentNumber = initialState.studentNumber;
-      state.studentType = initialState.studentType;
       state.chartData.splice(0);
       state.firstName = initialState.firstName;
       state.lastName = initialState.lastName;
@@ -99,7 +89,6 @@ export const studentInfoNumber = (a: RootState['studentInfo']) =>
   a.studentNumber;
 export const studentInfoSpecialization = (a: RootState['studentInfo']) =>
   a.specialization;
-export const studentInfoType = (a: RootState['studentInfo']) => a.studentType;
 
 // ACTIONS.
 export const {
@@ -109,6 +98,5 @@ export const {
   studentInfoSetNumber,
   studentInfoSetChartData,
   studentInfoSetSpecialization,
-  studentInfoSetType,
 } = studentInfoSlice.actions;
 export default studentInfoSlice.reducer;
