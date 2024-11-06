@@ -10,7 +10,7 @@ import PDFParser, { type Output } from 'pdf2json';
 export async function POST(
   request: NextRequest
 ): Promise<NextResponse<ExtractPDFDataCORResponse>> {
-  let response: BaseAPIResponse<ExtractPDFDataCOR> = {
+  const response: BaseAPIResponse<ExtractPDFDataCOR> = {
     data: {
       name: EMPTY_STRING,
       studentNumber: EMPTY_STRING,
@@ -47,6 +47,9 @@ export async function POST(
     pdfParser.on('pdfParser_dataReady', (pdfData: Output) => {
       const uriEncodedRegExp = { comma: /%2C/g, colon: /%3A/g };
       const normalEncoding = { comma: ',', colon: ':' };
+      let allTextFromPDF = EMPTY_STRING;
+      const isValidCORSign =
+        'C E R T I F I C A T E  O F  R E G I S T R A T I O N';
       let studentNameCounter = 0;
 
       pdfData.Pages.forEach((page) => {
@@ -55,6 +58,7 @@ export async function POST(
             uriEncodedRegExp.colon,
             normalEncoding.colon
           )}`;
+          allTextFromPDF += ` ${decodedText}`;
 
           if (regExp.studentNumber.test(decodedText)) {
             response.data = { ...response.data, studentNumber: decodedText };
@@ -70,6 +74,20 @@ export async function POST(
           }
         });
       });
+
+      if (!allTextFromPDF.includes(isValidCORSign)) {
+        return resolve(
+          NextResponse.json(
+            {
+              ...response,
+              errorMessage: [
+                "You've uploaded a invalid COR, please upload the proper document.",
+              ],
+            },
+            { status: 400 }
+          )
+        );
+      }
 
       for (const keys of Object.values(response.data)) {
         if (keys === EMPTY_STRING) {

@@ -4,11 +4,8 @@ import type { RootState } from '@/redux/store';
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { EMPTY_STRING } from '@/utils/constants';
-
 type InitialState = {
   status: AuthenticationStatus;
-  userId: string;
   userType: UserRole | 'anonymous';
 };
 /** `studentNumber`: ***'null'*** if userType is ***'anonymous'***.
@@ -20,7 +17,6 @@ type InitialState = {
  * */
 const initialState: InitialState = {
   status: 'initializing',
-  userId: EMPTY_STRING,
   userType: 'anonymous',
 };
 
@@ -35,12 +31,6 @@ const authenticationSlice = createSlice({
     ) {
       state.status = action.payload;
     },
-    authenticationSetUserID(
-      state,
-      action: { payload: InitialState['userId'] }
-    ) {
-      state.userId = action.payload;
-    },
     authenticationSetUserType(
       state,
       action: { payload: InitialState['userType'] }
@@ -49,7 +39,6 @@ const authenticationSlice = createSlice({
     },
     authenticationResetState(state) {
       state.status = initialState.status;
-      state.userId = initialState.userId;
       state.userType = initialState.userType;
     },
   },
@@ -58,8 +47,6 @@ const authenticationSlice = createSlice({
 // SELECTORS.
 export const authenticationStatus = (a: RootState['authentication']) =>
   a.status;
-export const authenticationUserID = (a: RootState['authentication']) =>
-  a.userId;
 export const authenticationUserType = (a: RootState['authentication']) =>
   a.userType;
 
@@ -67,7 +54,6 @@ export const authenticationUserType = (a: RootState['authentication']) =>
 export const {
   authenticationResetState,
   authenticationSetStatus,
-  authenticationSetUserID,
   authenticationSetUserType,
 } = authenticationSlice.actions;
 export default authenticationSlice.reducer;

@@ -15,14 +15,19 @@ import {
 } from '@/components/ui/select';
 //eslint-disable-next-line boundaries/element-types
 import gradeSystem from '@/features/grade/student/utils/gradeSystem';
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useInternshipInputControl from '@/hooks/useInternshipInputControl';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import { internshipGradeUpdate } from '@/redux/reducers/internshipReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const InternshipGrade = () => {
   const dispatch = useAppDispatch();
   const { isInputDisabled } = useInternshipInputControl();
   const gradeScale = gradeSystem.flatMap((g) => g.scale);
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   function handleGradeChange(value: (typeof gradeScale)[number]) {
     dispatch(internshipGradeUpdate(value));
@@ -37,7 +42,7 @@ const InternshipGrade = () => {
         <Select
           onValueChange={handleGradeChange}
           required
-          disabled={isInputDisabled}
+          disabled={isInputDisabled || disabledNoUserList.includes(authStatus)}
         >
           <SelectTrigger>
             <SelectValue placeholder="grade" />

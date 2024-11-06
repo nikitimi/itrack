@@ -14,7 +14,6 @@ import { Provider } from 'react-redux';
 import { useAppDispatch } from '@/hooks/redux';
 import {
   authenticationSetStatus,
-  authenticationSetUserID,
   authenticationSetUserType,
 } from '@/redux/reducers/authenticationReducer';
 import { certificateAdd } from '@/redux/reducers/certificateReducer';
@@ -28,7 +27,7 @@ import {
   studentInfoSetSpecialization,
   studentInfoSetType,
 } from '@/redux/reducers/studentInfoReducer';
-import { EMPTY_STRING, NUMBER_OF_SEMESTER } from '@/utils/constants';
+import { NUMBER_OF_SEMESTER } from '@/utils/constants';
 import { InternshipResult } from '@/utils/types/internshipResult';
 import {
   internshipCompanyQuestionUpdate,
@@ -79,6 +78,8 @@ const StoreInitializer = ({ children }: Children) => {
     }
     if (typeof userId !== 'string') {
       dispatch(authenticationSetStatus('no user'));
+    } else {
+      dispatch(authenticationSetStatus('authenticated'));
     }
 
     const {
@@ -94,8 +95,6 @@ const StoreInitializer = ({ children }: Children) => {
       firstName,
     } = json.data;
 
-    dispatch(authenticationSetUserID(userId ?? EMPTY_STRING));
-    dispatch(authenticationSetStatus('authenticated'));
     dispatch(authenticationSetUserType(role));
     dispatch(studentInfoSetNumber(studentNumber));
     dispatch(studentInfoSetSpecialization(specialization));

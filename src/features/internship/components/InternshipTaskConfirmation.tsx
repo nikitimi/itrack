@@ -18,6 +18,8 @@ import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
 import Prompt from '@/components/Prompt';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 
 const InternshipTaskConfirmation = () => {
   const [isTaskAlertPrompted, setTaskAlertPromp] = useState(false);
@@ -29,6 +31,9 @@ const InternshipTaskConfirmation = () => {
   const { isInputDisabled, internshipInputControl } =
     useInternshipInputControl();
   const studentNumber = studentInfoNumber(useAppSelector((s) => s.studentInfo));
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   async function handleInternshipSubmit() {
     dispatch(
@@ -109,7 +114,13 @@ const InternshipTaskConfirmation = () => {
       title={'Internship Details Confirmation'}
       trigger={
         <Card className="grid rounded-none border-none bg-transparent p-2 shadow-none">
-          <Button disabled={isInputDisabled}>Submit internship details</Button>
+          <Button
+            disabled={
+              isInputDisabled || disabledNoUserList.includes(authStatus)
+            }
+          >
+            Submit internship details
+          </Button>
         </Card>
       }
       handleConfirmation={handleInternshipSubmit}

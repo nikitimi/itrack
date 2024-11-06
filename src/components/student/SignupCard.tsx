@@ -13,16 +13,17 @@ import specializationEnum, {
   type Specialization,
 } from '@/lib/enums/specialization';
 
-import { useAppDispatch } from '@/hooks/redux';
-import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
-  studentTemporarySetFirstname,
-  studentTemporarySetLastname,
-  studentTemporarySetNumber,
+  authenticationSetStatus,
+  authenticationStatus,
+} from '@/redux/reducers/authenticationReducer';
+import {
+  studentTemporaryNumber,
   studentTemporarySetSpecialization,
 } from '@/redux/reducers/studentTemporaryReducer';
 import type StudentCreation from '@/utils/types/studentCreation';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import {
   Card,
   CardContent,
@@ -36,6 +37,8 @@ import handleInputChange, {
   errorClasses,
   validClasses,
 } from '@/utils/handleInputChange';
+import CORExtractor from './CORExtractor';
+import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 
 type InitialState = {
   studentNumbers: StudentCreation['studentNumber'][];
@@ -65,19 +68,28 @@ const initialState: InitialState = {
 const SignupCard = () => {
   const router = useAppRouter();
   const { isLoaded, signUp } = useSignUp();
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const dispatch = useAppDispatch();
   const [state, setState] = useState(initialState);
+  const _studentTemporaryNumber = studentTemporaryNumber(
+    useAppSelector((s) => s.studentTemporary)
+  );
 
   async function handleStudentCreation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formdata = new FormData(event.currentTarget);
-    const firstName = formdata.get('firstName') as string;
-    const lastName = formdata.get('lastName') as string;
     const emailAddress = formdata.get('email') as string;
     const password = formdata.get('password') as string;
     const studentNumber = formdata.get('studentNumber') as string;
     const confirmPassword = formdata.get('confirmPassword') as string;
     const specialization = formdata.get('specialization') as Specialization;
+
+    if (studentNumber != _studentTemporaryNumber)
+      return alert(
+        `Student number in COR is ${_studentTemporaryNumber}, not ${studentNumber}!`
+      );
 
     if (!isLoaded) return;
 
@@ -99,9 +111,6 @@ const SignupCard = () => {
       if (response === undefined) throw new Error('Signing in failed.');
 
       await response.prepareEmailAddressVerification();
-      dispatch(studentTemporarySetFirstname(firstName));
-      dispatch(studentTemporarySetLastname(lastName));
-      dispatch(studentTemporarySetNumber(studentNumber));
       dispatch(studentTemporarySetSpecialization(specialization));
       dispatch(authenticationSetStatus('verifying account'));
       router.push('/student/verify-email');
@@ -156,21 +165,9 @@ const SignupCard = () => {
       <CardContent>
         <form onSubmit={handleStudentCreation}>
           <div className="grid gap-4 p-2">
+            <CORExtractor />
             <Input
-              required
-              onChange={(e) => handleInputChange(e, /[A-Za-z ]*/)}
-              name="firstName"
-              type="text"
-              placeholder="First name"
-            />
-            <Input
-              required
-              onChange={(e) => handleInputChange(e, /[A-Za-z ]*/)}
-              name="lastName"
-              type="text"
-              placeholder="Last name"
-            />
-            <Input
+              disabled={disabledWithUserList.includes(authStatus)}
               required
               onChange={(e) =>
                 handleInputChange(e, new RegExp(regExp.studentNumber))
@@ -182,12 +179,17 @@ const SignupCard = () => {
             />
             <Input
               required
+              disabled={disabledWithUserList.includes(authStatus)}
               onChange={(e) => handleInputChange(e, regExp.email)}
               name="email"
               type="email"
               placeholder="Email"
             />
-            <Select name="specialization" required>
+            <Select
+              name="specialization"
+              required
+              disabled={disabledWithUserList.includes(authStatus)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Specialization" />
               </SelectTrigger>
@@ -202,6 +204,7 @@ const SignupCard = () => {
               </SelectContent>
             </Select>
             <Input
+              disabled={disabledWithUserList.includes(authStatus)}
               required
               name="password"
               type="password"
@@ -209,6 +212,7 @@ const SignupCard = () => {
               placeholder="Password"
             />
             <Input
+              disabled={disabledWithUserList.includes(authStatus)}
               required
               name="confirmPassword"
               type="password"
@@ -226,6 +230,7 @@ const SignupCard = () => {
           Already have an account?
         </CardDescription>
         <Button
+          disabled={disabledWithUserList.includes(authStatus)}
           variant="outline"
           className="w-full"
           onClick={() => router.replace('/student/signin')}

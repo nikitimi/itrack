@@ -18,11 +18,15 @@ import {
 } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 /** The uploader of certificates to the database. */
 const CertificateSelector = () => {
   const allUnderscoreRegExp = /_/g;
-
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const selector = useAppSelector((s) => s.certificate);
   const _certificateList = certificateList(selector);
   const isCertificateOptionEmpty =
@@ -31,7 +35,10 @@ const CertificateSelector = () => {
   const dispatch = useAppDispatch();
   const [selectState, setSelectState] = useState<string>('');
   const { isInputDisabled } = useCertificateInputControl();
-  const condition = isCertificateOptionEmpty || isInputDisabled;
+  const condition =
+    isCertificateOptionEmpty ||
+    isInputDisabled ||
+    disabledNoUserList.includes(authStatus);
 
   function handleClick() {
     try {

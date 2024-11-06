@@ -1,5 +1,5 @@
 import { HeaderNoUser } from '@/components/Header';
-import SignupCard from '@/components/SignupCard';
+import SignupCard from '@/components/student/SignupCard';
 import Image from 'next/image';
 
 const page = () => {

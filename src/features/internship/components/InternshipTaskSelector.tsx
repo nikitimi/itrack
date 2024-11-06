@@ -17,10 +17,12 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import type { InternshipTask } from '@/lib/enums/internshipTask';
 import internshipTaskEnum from '@/lib/enums/internshipTask';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import {
   internshipTaskAdd,
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { SelectValue } from '@radix-ui/react-select';
 import { FormEvent } from 'react';
 
@@ -29,9 +31,13 @@ const InternshipTaskSelector = () => {
   const selector = useAppSelector((s) => s.internship);
   const _internshipTasks = internshipTasks(selector);
   const { isInputDisabled } = useInternshipInputControl();
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const condition =
     isInputDisabled ||
-    _internshipTasks.length === internshipTaskEnum.options.length;
+    _internshipTasks.length === internshipTaskEnum.options.length ||
+    disabledNoUserList.includes(authStatus);
 
   function handleTaskAdd(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

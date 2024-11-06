@@ -15,11 +15,17 @@ import {
 import getDynamicClasses from '@/utils/getDynamicClasses';
 import { useEffect, useState } from 'react';
 import { AdminRoute } from '@/lib/enums/routes/adminRoutes';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import { useAppSelector } from '@/hooks/redux';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const ModuleNav = () => {
   const studentRoutes = studentRoutesEnum.options;
   const pathname = usePathname() as StudentRoute;
   const [state, setState] = useState<(StudentRoute | AdminRoute)[]>([]);
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const lastIndexOfRouteDivider =
     pathname?.lastIndexOf(ROUTE_DIVIDER) ?? WRONG_NUMBER;
   const pathName =
@@ -52,7 +58,9 @@ const ModuleNav = () => {
           <SidebarMenuSubItem key={route}>
             <Link href={route}>
               <SidebarMenuButton
-                disabled={isActiveRoute}
+                disabled={
+                  isActiveRoute || disabledNoUserList.includes(authStatus)
+                }
                 className={`${getDynamicClasses(isActiveRoute)} ${[
                   ...defaultClasses,
                 ]}`}

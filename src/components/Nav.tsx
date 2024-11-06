@@ -15,7 +15,10 @@ import { Collapsible, CollapsibleContent } from './ui/collapsible';
 import ModuleNav from '@/features/modules/student/components/ModuleNav';
 import getDynamicClasses from '@/utils/getDynamicClasses';
 import { useAppSelector } from '@/hooks/redux';
-import { authenticationUserType } from '@/redux/reducers/authenticationReducer';
+import {
+  authenticationStatus,
+  authenticationUserType,
+} from '@/redux/reducers/authenticationReducer';
 import { useEffect, useState } from 'react';
 
 const adminRoutes = adminRoutesEnum.options;
@@ -24,9 +27,10 @@ const studentRoutes = studentRoutesEnum.options;
 
 const Nav = () => {
   const pathname = usePathname();
-  const userRole = authenticationUserType(
-    useAppSelector((s) => s.authentication)
-  );
+  const authSelector = useAppSelector((s) => s.authentication);
+  const userRole = authenticationUserType(authSelector);
+  const authStatus = authenticationStatus(authSelector);
+  const isAuthInitializing = authStatus === 'initializing';
   const [state, setState] = useState<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { title: string; url: StudentRoute | AdminRoute; icon: any }[]
@@ -95,7 +99,11 @@ const Nav = () => {
         return isModules ? (
           <Collapsible open className="group/collapsible" key={item.title}>
             <SidebarMenuItem>
-              <SidebarMenuButton className={dynamicClasses} asChild>
+              <SidebarMenuButton
+                className={dynamicClasses}
+                asChild
+                disabled={isAuthInitializing}
+              >
                 <a href={item.url} className="flex">
                   <item.icon />
                   <span className="capitalize">{item.title}</span>
@@ -108,7 +116,11 @@ const Nav = () => {
           </Collapsible>
         ) : (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton className={dynamicClasses} asChild>
+            <SidebarMenuButton
+              className={dynamicClasses}
+              asChild
+              disabled={isAuthInitializing}
+            >
               <a href={item.url}>
                 <item.icon />
                 <span className="capitalize">{item.title}</span>

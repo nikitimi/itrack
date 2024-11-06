@@ -18,10 +18,12 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import { type InternshipTask } from '@/lib/enums/internshipTask';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import {
   internshipTaskRemove,
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { EMPTY_STRING } from '@/utils/constants';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 
@@ -32,6 +34,9 @@ const InternshipTaskLoader = () => {
     useInternshipInputControl();
   const dispatch = useAppDispatch();
   const nonAlphabetCharacters = /[()/]/g;
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   function handleRemoveTask(task: InternshipTask) {
     const tableRow = document.querySelector(
@@ -74,7 +79,10 @@ const InternshipTaskLoader = () => {
                   <TableCell>
                     <div className="flex flex-row justify-center gap-2 p-2">
                       <Button
-                        disabled={isInputDisabled}
+                        disabled={
+                          isInputDisabled ||
+                          disabledNoUserList.includes(authStatus)
+                        }
                         onClick={() => handleRemoveTask(task)}
                         variant="destructive"
                       >

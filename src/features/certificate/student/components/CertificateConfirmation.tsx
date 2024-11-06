@@ -14,6 +14,8 @@ import { PromptType } from '@/lib/enums/promptType';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import Prompt from '@/components/Prompt';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const CertificateConfirmation = () => {
   const certificateSelector = useAppSelector((s) => s.certificate);
@@ -22,6 +24,9 @@ const CertificateConfirmation = () => {
   const { isInputDisabled, certificateInputControl } =
     useCertificateInputControl();
   const dispatch = useAppDispatch();
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   function handleInputControl(prompType: PromptType) {
     dispatch(
@@ -79,7 +84,12 @@ const CertificateConfirmation = () => {
           title={'Certificate Confirmation'}
           handleConfirmation={handleConfirmCertificate}
           trigger={
-            <Button onClick={handleSubmit} disabled={isInputDisabled}>
+            <Button
+              onClick={handleSubmit}
+              disabled={
+                isInputDisabled || disabledNoUserList.includes(authStatus)
+              }
+            >
               Submit
             </Button>
           }

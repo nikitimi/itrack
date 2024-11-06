@@ -15,16 +15,20 @@ import {
 import Nav from '@/components/Nav';
 import NavProjectsSkeleton from '@/components/NavProjectsSkeleton';
 import SignoutButton from '@/components/SignoutButton';
-import { useAppSelector } from '@/hooks/redux';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import { useAppSelector } from '@/hooks/redux';
+import { useAuth } from '@clerk/nextjs';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const AppSidebar = () => {
   const backgroundClasses = 'bg-slate-50';
-  const selector = useAppSelector((s) => s.authentication);
-  const authState = authenticationStatus(selector);
-  const acceptedRenderState = ['authenticated', 'initializing'];
+  const { userId } = useAuth();
+  const authState = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
-  if (!acceptedRenderState.includes(authState)) return <></>;
+  if (disabledNoUserList.includes(authState) && typeof userId !== 'string')
+    return <></>;
 
   return (
     <Sidebar>

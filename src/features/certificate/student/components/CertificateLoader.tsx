@@ -15,10 +15,12 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import { Certificate } from '@/lib/enums/certificate';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import {
   certificateList,
   certificateRemove,
 } from '@/redux/reducers/certificateReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { EMPTY_STRING } from '@/utils/constants';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import mime from '@/utils/mime';
@@ -39,7 +41,9 @@ const CertificateLoader = () => {
   const _certificateList = certificateList(selector);
   const { isInputDisabled, certificateInputControl } =
     useCertificateInputControl();
-
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const dispatch = useAppDispatch();
   const invalidExtraCharactersRegex = /(%\d{1}\D{1})/g;
 
@@ -149,12 +153,18 @@ const CertificateLoader = () => {
                   >
                     <Input
                       type="file"
-                      disabled={isInputDisabled}
+                      disabled={
+                        isInputDisabled ||
+                        disabledNoUserList.includes(authStatus)
+                      }
                       onChange={(e) => handleAddFile(e, certificate)}
                     />
                     <Button
                       variant="destructive"
-                      disabled={isInputDisabled}
+                      disabled={
+                        isInputDisabled ||
+                        disabledNoUserList.includes(authStatus)
+                      }
                       onClick={() => handleRemoveCertificate(certificate)}
                     >
                       Remove

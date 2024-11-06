@@ -1,5 +1,5 @@
 import Loading from '@/components/Loading';
-import SigninCard from '@/components/SigninCard';
+import SigninCard from '@/components/student/SigninCard';
 import { Suspense } from 'react';
 
 const Signin = () => {

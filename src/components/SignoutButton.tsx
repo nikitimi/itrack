@@ -2,11 +2,12 @@
 
 import { useClerk } from '@clerk/nextjs';
 
-import { useAppDispatch } from '@/hooks/redux';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useAppRouter from '@/hooks/useAppRouter';
 import {
   authenticationResetState,
   authenticationSetStatus,
+  authenticationStatus,
 } from '@/redux/reducers/authenticationReducer';
 import { certificateResetState } from '@/redux/reducers/certificateReducer';
 import { gradeResetState } from '@/redux/reducers/gradeReducer';
@@ -15,11 +16,15 @@ import { studentInfoResetState } from '@/redux/reducers/studentInfoReducer';
 import { Button } from './ui/button';
 import { inputControlResetter } from '@/redux/reducers/inputControlReducer';
 import { presentationResetState } from '@/redux/reducers/presentationReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const SignoutButton = () => {
   const clerk = useClerk();
   const router = useAppRouter();
   const dispatch = useAppDispatch();
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   function handleSignout() {
     dispatch(authenticationSetStatus('initializing'));
@@ -37,7 +42,11 @@ const SignoutButton = () => {
   }
   return (
     <div className="grid">
-      <Button variant="destructive" onClick={handleSignout}>
+      <Button
+        variant="destructive"
+        onClick={handleSignout}
+        disabled={disabledNoUserList.includes(authStatus)}
+      >
         Signout
       </Button>
     </div>

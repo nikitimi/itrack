@@ -19,6 +19,8 @@ import { Button } from '@/components/ui/button';
 import { CollapsibleTrigger } from '@radix-ui/react-collapsible';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 
 type SortingConfig = {
   key: keyof GradeInfo;
@@ -30,7 +32,9 @@ const COGDataLoader = () => {
   // Handle hydration failure.
   const [state, setState] = useState(false);
   const [isOpen, setIsOpen] = useState<string[]>([]);
-
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const [sortConfig, setSortConfig] = useState<SortingConfig | null>(null);
   const globalUnderscoreRegex = /_/g;
   const SPACE_STRING = ' ';
@@ -117,12 +121,17 @@ const COGDataLoader = () => {
         <TableHeader>
           <TableRow>
             <TableHead>
-              <Button variant="ghost" onClick={() => requestSort('yearLevel')}>
+              <Button
+                disabled={disabledNoUserList.includes(authStatus)}
+                variant="ghost"
+                onClick={() => requestSort('yearLevel')}
+              >
                 Year Level
               </Button>
             </TableHead>
             <TableHead>
               <Button
+                disabled={disabledNoUserList.includes(authStatus)}
                 variant="ghost"
                 onClick={() => requestSort('academicYear')}
               >
@@ -130,7 +139,11 @@ const COGDataLoader = () => {
               </Button>
             </TableHead>
             <TableHead>
-              <Button variant="ghost" onClick={() => requestSort('semester')}>
+              <Button
+                disabled={disabledNoUserList.includes(authStatus)}
+                variant="ghost"
+                onClick={() => requestSort('semester')}
+              >
                 Semester
               </Button>
             </TableHead>
@@ -181,6 +194,7 @@ const COGDataLoader = () => {
                     </CollapsibleContent>
                     <CollapsibleTrigger asChild>
                       <Button
+                        disabled={disabledNoUserList.includes(authStatus)}
                         aria-expanded="false"
                         className="w-24 rounded-lg bg-blue-500 px-2 py-1 capitalize text-white shadow-sm duration-200 ease-in"
                         onClick={(e) => toggleSubject(e, identifier)}

@@ -30,6 +30,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { CardContent } from '@/components/ui/card';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 type ExtraProps = {
   yearLevelIndex: number;
@@ -47,6 +49,9 @@ const COGDataExtractor = () => {
   const dispatch = useAppDispatch();
   const _grades = grades(useAppSelector((s) => s.grade));
   const [isInputDisabled, setInputAvailability] = useState(false);
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -186,9 +191,17 @@ const COGDataExtractor = () => {
               name="file"
               type="file"
               required
-              disabled={isInputDisabled}
+              disabled={
+                isInputDisabled || disabledNoUserList.includes(authStatus)
+              }
             />
-            <Button disabled={isInputDisabled}>Upload COG</Button>
+            <Button
+              disabled={
+                isInputDisabled || disabledNoUserList.includes(authStatus)
+              }
+            >
+              Upload COG
+            </Button>
           </CardContent>
         </Card>
       </form>
