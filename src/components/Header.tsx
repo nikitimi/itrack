@@ -14,11 +14,19 @@ import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import { useAppSelector } from '@/hooks/redux';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import { useClerk } from '@clerk/nextjs';
+import { UserRole } from '@/lib/enums/userRole';
+
+type ClerkPublicMetadata = {
+  role: UserRole;
+};
 
 const Header = () => {
+  const { user } = useClerk();
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+  const metadata = user?.publicMetadata as ClerkPublicMetadata | undefined;
 
   return (
     <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
@@ -29,7 +37,7 @@ const Header = () => {
         <ResizableHandle disabled />
         <ResizablePanel defaultSize={50} />
       </ResizablePanelGroup>
-      <ProgressTracker />
+      {metadata?.role === 'student' ? <ProgressTracker /> : <></>}
     </header>
   );
 };

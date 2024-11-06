@@ -2,14 +2,12 @@ import type { AddUserTypeResponse } from '@/server/lib/schema/apiResponse/addUse
 
 import { NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
-import getStudentType from '@/utils/getStudentType';
 import StudentCreation from '@/utils/types/studentCreation';
 
 export async function POST(request: Request) {
   const { role, specialization, studentNumber, userId, firstName, lastName } =
     (await request.json()) as StudentCreation;
   const clerk = await clerkClient();
-  const studentType = getStudentType(studentNumber as string);
   let response: AddUserTypeResponse = {
     data: '',
     errorMessage: [],
@@ -20,11 +18,17 @@ export async function POST(request: Request) {
       role,
       specialization,
       studentNumber,
-      studentType,
-      firstName,
-      lastName,
     },
   });
+
+  await clerk.users
+    .updateUser(userId, {
+      firstName,
+      lastName,
+    })
+    .catch((e) =>
+      NextResponse.json({ ...response, errorMessage: [(e as Error).message] })
+    );
 
   const publicMetadata = user.publicMetadata as Record<
     'role',

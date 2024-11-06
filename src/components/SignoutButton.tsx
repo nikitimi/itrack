@@ -27,6 +27,8 @@ const SignoutButton = () => {
   );
 
   function handleSignout() {
+    const isAdmin = clerk.user?.publicMetadata?.role === 'admin';
+
     dispatch(authenticationSetStatus('initializing'));
     clerk.signOut().finally(() => {
       dispatch(authenticationResetState());
@@ -37,7 +39,7 @@ const SignoutButton = () => {
       dispatch(inputControlResetter());
       dispatch(presentationResetState());
       dispatch(authenticationSetStatus('no user'));
-      router.replace('/student/signin');
+      router.replace(isAdmin ? '/admin/signin' : '/student/signin');
     });
   }
   return (

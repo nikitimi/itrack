@@ -93,6 +93,13 @@ export function LineChart(
   let totalPoints = 0;
   chartData.flatMap((s) => s.percentage).forEach((p) => (totalPoints += p));
 
+  console.log({
+    tasks,
+    isITCompany,
+    grade,
+    result,
+  });
+
   return (
     <ParentChart {...props}>
       <ChartContainer config={chartConfig}>

@@ -47,7 +47,7 @@ const Hero = () => {
       <Card className="lg:1/2 mx-auto h-auto md:w-3/4">
         <CardHeader>
           <CardTitle>Student Information</CardTitle>
-          <CardDescription>{`Welcome ${fullName}!`}</CardDescription>
+          <CardDescription className="capitalize">{`Welcome ${fullName}!`}</CardDescription>
         </CardHeader>
         <CardContent>
           <LabelHelper

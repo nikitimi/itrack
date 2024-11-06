@@ -79,56 +79,51 @@ const RenderTable = (props: {
     one: 'careers',
     two: 'ranks',
   };
-  /** TODO: CRITICAL... This causes hydration issues, please refactor. */
-  function handleTableRender() {
-    if (props.isLoading)
-      return (
-        <TableRow>
-          {Array.from({ length: 6 }).map((_, index) => (
-            <SidebarMenuSkeleton key={index} showIcon />
-          ))}
-        </TableRow>
-      );
-
-    return (
-      <>
-        <TableHeader className="capitalize">
-          <TableRow>
-            <TableHead>
-              <p>{heading.one}</p>
-            </TableHead>
-            <TableHead>
-              <p>{heading.two}</p>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {props.conditionToRender ? (
-            props.objectArray.map(([key], index) => {
-              return (
-                <TableRow key={key}>
-                  <TableCell className="capitalize">
-                    {key.replace(/_/g, ' ').toLocaleLowerCase()}
-                  </TableCell>
-                  {/* <p>{number}</p> */}
-                  <TableCell>{index + 1}</TableCell>
-                </TableRow>
-              );
-            })
-          ) : (
-            // No results yet.
-            <TableRow />
-          )}
-        </TableBody>
-      </>
-    );
-  }
 
   return (
     <Card className="p-2">
       <CardTitle className="capitalize">{`${props.title}:`}</CardTitle>
       <CardContent>
-        <Table>{handleTableRender()}</Table>
+        <Table>
+          {props.isLoading ? (
+            <TableRow>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <SidebarMenuSkeleton key={index} showIcon />
+              ))}
+            </TableRow>
+          ) : (
+            <>
+              <TableHeader className="capitalize">
+                <TableRow>
+                  <TableHead>
+                    <p>{heading.one}</p>
+                  </TableHead>
+                  <TableHead>
+                    <p>{heading.two}</p>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {props.conditionToRender ? (
+                  props.objectArray.map(([key], index) => {
+                    return (
+                      <TableRow key={key}>
+                        <TableCell className="capitalize">
+                          {key.replace(/_/g, ' ').toLocaleLowerCase()}
+                        </TableCell>
+                        {/* <p>{number}</p> */}
+                        <TableCell>{index + 1}</TableCell>
+                      </TableRow>
+                    );
+                  })
+                ) : (
+                  // No results yet.
+                  <TableRow />
+                )}
+              </TableBody>
+            </>
+          )}
+        </Table>
       </CardContent>
     </Card>
   );

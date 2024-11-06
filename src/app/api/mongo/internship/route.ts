@@ -53,9 +53,39 @@ export async function GET(request: NextRequest) {
     },
     errorMessage: [],
   };
+  const parameters = url.parse(request.url, true).query as Record<
+    'studentNumber' | 'role',
+    string
+  >;
+
   try {
-    const studentNumber = url.parse(request.url, true).query
-      .studentNumber as string;
+    const studentNumber = parameters.studentNumber;
+
+    if (parameters.role === 'admin') {
+      const adminGetGrades = (await internshipCollection
+        .find()
+        .toArray()) as unknown as (InternshipData & MongoExtra)[];
+      const studentNumbers = Array.from(
+        new Set(adminGetGrades.flatMap((s) => s.studentNumber))
+      );
+      const filteredInternshipByStudentNumber = studentNumbers.map((v) => ({
+        [v]: adminGetGrades.map(
+          ({ _id, dateCreated, dateModified, grade, isITCompany, tasks }) => ({
+            _id,
+            dateCreated,
+            dateModified,
+            grade,
+            isITCompany,
+            tasks,
+          })
+        ),
+      }));
+      return NextResponse.json({
+        ...response,
+        data: filteredInternshipByStudentNumber,
+      } as BaseAPIResponse<Record<string, (InternshipData & MongoExtra)[]>[]>);
+    }
+
     if (studentNumber === undefined) {
       throw new Error('No student number given.');
     }

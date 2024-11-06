@@ -49,6 +49,8 @@ export default function handleClerkAuthMiddleware(
   const formattedPublicRoutes = publicRoutes.map((v) =>
     v.replace('/', EMPTY_STRING)
   );
+
+  console.log({ role });
   const unauthorizedRoutes = isStudent
     ? protectedAdminRoutes
     : protectedStudentRoutes;
