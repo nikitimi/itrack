@@ -16,6 +16,7 @@ import { LineChart } from '@/components/charts/LineChart';
 
 const Dashboard = () => {
   const chartData = studentInfoChartData(useAppSelector((s) => s.studentInfo));
+  console.log(chartData);
   const description = 'Showing careers related to your performance.';
 
   const chartConfig = {

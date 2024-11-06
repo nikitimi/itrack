@@ -51,7 +51,7 @@ const internshipSlice = createSlice({
     internshipResetState(state) {
       state.internshipCompanyQuestion = initialState.internshipCompanyQuestion;
       state.internshipGrade = initialState.internshipGrade;
-      state.internshipTasks = initialState.internshipTasks;
+      state.internshipTasks.splice(0);
     },
   },
 });

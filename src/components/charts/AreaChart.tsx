@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/chart';
 import ParentChart, { type ChartProps } from '@/components/charts/ParentChart';
 import useChartDataKeys from '@/hooks/useChartDataKeys';
-import { EMPTY_STRING } from '@/utils/constants';
 import chartTickFormatter from '@/utils/chartTickFormatter';
 
 export default function AreaChart(props: ChartProps) {

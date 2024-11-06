@@ -21,7 +21,7 @@ const Header = () => {
   );
 
   return (
-    <header className="fixed top-0 w-full bg-white/90 shadow-md">
+    <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50}>
           <SidebarTrigger disabled={disabledNoUserList.includes(authStatus)} />

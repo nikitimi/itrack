@@ -80,7 +80,10 @@ export default async function layoutFetcher() {
       });
   }
 
-  calculateRecord(foo.certificate, 'certificate');
+  calculateRecord(
+    result.certificate.length === 0 ? [] : foo.certificate,
+    'certificate'
+  );
   calculateRecord(foo.grades ?? [], 'grades');
   calculateRecord(foo.internship, 'internship');
 
