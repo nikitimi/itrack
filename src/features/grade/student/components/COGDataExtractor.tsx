@@ -58,7 +58,7 @@ const COGDataExtractor = () => {
     try {
       const formdata = new FormData(event.currentTarget);
       const response = await fetchHelper(
-        '/api/extractPDFData',
+        '/api/extractPDFData/COG',
         'POST',
         {
           studentNumber: undefined,

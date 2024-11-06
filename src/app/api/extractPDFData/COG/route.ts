@@ -1,5 +1,5 @@
 import type { ParsingStatus } from '@/lib/enums/parsingStatus';
-import type { ExtractPDFDataResponse } from '@/server/lib/schema/apiResponse/extractPDFData';
+import type { ExtractPDFDataCOGResponse } from '@/server/lib/schema/apiResponse/extractPDFDataCOG';
 
 import PDFParser, { type Output } from 'pdf2json';
 
@@ -8,8 +8,8 @@ import { NextResponse } from 'next/server';
 
 export async function POST(
   request: Request
-): Promise<NextResponse<ExtractPDFDataResponse>> {
-  let response: ExtractPDFDataResponse = {
+): Promise<NextResponse<ExtractPDFDataCOGResponse>> {
+  let response: ExtractPDFDataCOGResponse = {
     data: {
       body: EMPTY_STRING,
       footer: EMPTY_STRING,
