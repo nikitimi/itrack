@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/chart';
 import ParentChart, { type ChartProps } from './ParentChart';
 import useChartDataKeys from '@/hooks/useChartDataKeys';
+import chartTickFormatter from '@/utils/chartTickFormatter';
 
 export const description = 'An bar chart with careers';
 
@@ -26,7 +27,7 @@ export default function BarChart(props: ChartProps) {
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickFormatter={(value) => value}
+            tickFormatter={chartTickFormatter}
           />
           <ChartTooltip
             cursor={false}

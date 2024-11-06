@@ -26,6 +26,7 @@ import {
 import ParentChart, { chartDataColor, ChartProps } from './ParentChart';
 import { internshipModuleInputControl } from '@/redux/reducers/inputControlReducer';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
+import chartTickFormatter from '@/utils/chartTickFormatter';
 
 const chartConfig = {
   visitors: {
@@ -113,7 +114,7 @@ export function LineChart(
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickFormatter={(value) => value}
+            tickFormatter={chartTickFormatter}
           />
           <ChartTooltip
             cursor={false}
