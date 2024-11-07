@@ -2,7 +2,7 @@ import { internshipModuleInputControl } from '@/redux/reducers/inputControlReduc
 import { useAppSelector } from './redux';
 import disabledPromptList from '@/utils/disabledPromptList';
 
-const useCertificateInputControl = () => {
+const useInternshipInputControl = () => {
   const inputControl = internshipModuleInputControl(
     useAppSelector((s) => s.inputControl)
   );
@@ -11,4 +11,4 @@ const useCertificateInputControl = () => {
   return { isInputDisabled, internshipInputControl: inputControl };
 };
 
-export default useCertificateInputControl;
+export default useInternshipInputControl;

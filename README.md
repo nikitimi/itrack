@@ -71,6 +71,7 @@ These 3 modules will have a breakdown of the Jobs well suited for the students.
 
 # Issues:
 
+- Grades of the students in admin stacks, need to bring back `studentNumber` in the mapping of objects.
 - AuthenticatedRoutes are still accessible when logged out excluding the student dashboard.
 - ~~Bugs in the certificate calculation due to the inconsistent naming of specialization.~~ _(Fixed by renaming specialization in `/src/lib/certificates.ts` aligning with specialization enum.)_
 - ~~TypeError: Promise.withResolvers is not a function in react-pdftotext that is using [react-pdf](https://github.com/mozilla/pdf.js), here the [solutions](https://stackoverflow.com/questions/78415681/pdf-js-pdfjs-dist-promise-withresolvers-is-not-a-function), **TLDR**: _this is due to NodeJS < v22_.~~ _(Resolved with [`pdf2json`](https://github.com/modesty/pdf2json) package.)_

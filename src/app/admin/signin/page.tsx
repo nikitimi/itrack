@@ -1,6 +1,8 @@
 'use client';
 
+import AppLogo from '@/components/AppLogo';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useAppDispatch } from '@/hooks/redux';
 import useAppRouter from '@/hooks/useAppRouter';
@@ -45,12 +47,33 @@ const Signin = () => {
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <Input type="email" name="email" required />
-        <Input type="password" name="password" required />
-        <Button type="submit">Signin</Button>
-      </form>
+    <div className="flex h-screen items-center justify-center">
+      <Card className="mx-8 w-full duration-200 ease-in-out md:mx-0 md:w-3/4 lg:w-1/3">
+        <CardHeader>
+          <AppLogo />
+          <CardTitle className="text-center">Admin</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-flow-row gap-4 p-2"
+          >
+            <Input
+              type="email"
+              name="email"
+              required
+              placeholder="Enter you email"
+            />
+            <Input
+              type="password"
+              name="password"
+              required
+              placeholder="Enter you password"
+            />
+            <Button type="submit">Signin</Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

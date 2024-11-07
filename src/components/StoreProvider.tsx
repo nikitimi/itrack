@@ -64,6 +64,8 @@ const StoreInitializer = ({ children }: Children) => {
   const dispatch = useAppDispatch();
   const { userId } = useAuth();
 
+  console.log({ userId });
+
   const fetchLayoutHelper = useCallback(async () => {
     const response = await fetch('/api/initializeApp', {
       method: 'GET',

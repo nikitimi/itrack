@@ -18,6 +18,7 @@ type ParentChartProps = Children & {
   description: string;
   title: string;
   footerDescription?: React.ReactNode;
+  render?: boolean;
 };
 
 export type ChartProps = {
@@ -35,7 +36,9 @@ export const chartDataColor = [
 
 const ParentChart = ({ children, ...rest }: ParentChartProps) => {
   return (
-    <Card className="lg:1/2 mx-auto h-auto md:w-3/4">
+    <Card
+      className={`${rest.render === false ? 'hidden' : ''} mx-auto h-[480px]`}
+    >
       <CardHeader>
         <CardTitle className="capitalize">{rest.title}</CardTitle>
         <CardDescription>{rest.description}</CardDescription>

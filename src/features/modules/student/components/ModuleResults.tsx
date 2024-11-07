@@ -13,31 +13,42 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
+import useCertificateInputControl from '@/hooks/useCertificateInputControl';
+import useInternshipInputControl from '@/hooks/useInternshipInputControl';
+import useGradeInputControl from '@/hooks/useGradeInputControl';
+import { PromptType } from '@/lib/enums/promptType';
 
 // TODO: Only show if the modules are completed.
 const ModuleResults = () => {
+  const { certificateInputControl } = useCertificateInputControl();
+  const { gradeInputControl } = useGradeInputControl();
+  const { internshipInputControl } = useInternshipInputControl();
   const { certificate, grades, internship, jobHolder } =
     useRevealAllModulesResult();
+  const conditionList = ['fetched from server', 'submitted'] as PromptType[];
   const [state, setState] = useState(false);
   const results = [
     {
       title: 'certificate',
-      conditionToRender: certificate.length > 0,
+      conditionToRender: conditionList.includes(certificateInputControl),
       objectArray: certificate,
     },
     {
       title: 'academic grades',
-      conditionToRender: grades !== undefined,
+      conditionToRender: conditionList.includes(gradeInputControl),
       objectArray: grades ?? [],
     },
     {
       title: 'internship',
-      conditionToRender: internship.length > 0,
+      conditionToRender: conditionList.includes(internshipInputControl),
       objectArray: internship,
     },
     {
       title: 'overall result',
-      conditionToRender: true,
+      conditionToRender:
+        conditionList.includes(certificateInputControl) &&
+        conditionList.includes(gradeInputControl) &&
+        conditionList.includes(internshipInputControl),
       objectArray: Object.entries(jobHolder).splice(0, 3),
     },
   ];
@@ -61,7 +72,7 @@ const ModuleResults = () => {
     );
 
   return (
-    <div className="flex flex-col gap-2 p-2">
+    <div className="mt-12 flex flex-col gap-2 p-2">
       {results.map((props) => {
         return <RenderTable key={props.title} {...props} />;
       })}
@@ -81,7 +92,7 @@ const RenderTable = (props: {
   };
 
   return (
-    <Card className="p-2">
+    <Card className="mt-12 p-2">
       <CardTitle className="capitalize">{`${props.title}:`}</CardTitle>
       <CardContent>
         <Table>

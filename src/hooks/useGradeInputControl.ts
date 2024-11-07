@@ -2,13 +2,13 @@ import { gradeModuleInputControl } from '@/redux/reducers/inputControlReducer';
 import { useAppSelector } from './redux';
 import disabledPromptList from '@/utils/disabledPromptList';
 
-const useCertificateInputControl = () => {
+const useGradeInputControl = () => {
   const inputControl = gradeModuleInputControl(
     useAppSelector((s) => s.inputControl)
   );
-  const disableInputs = disabledPromptList.includes(inputControl);
+  const isInputDisabled = disabledPromptList.includes(inputControl);
 
-  return disableInputs;
+  return { isInputDisabled, gradeInputControl: inputControl };
 };
 
-export default useCertificateInputControl;
+export default useGradeInputControl;

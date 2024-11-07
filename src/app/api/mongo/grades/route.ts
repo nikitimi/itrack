@@ -39,48 +39,49 @@ export async function GET(request: NextRequest) {
     data: [],
     errorMessage: [],
   };
-  const parameters = url.parse(request.url, true).query as Record<
-    'studentNumber' | 'role',
-    string
-  >;
-
-  if (parameters.role === 'admin') {
-    const adminGetGrades = (await gradeCollection
-      .find()
-      .toArray()) as unknown as (GradeInfo & MongoExtra)[];
-    const studentNumbers = Array.from(
-      new Set(adminGetGrades.flatMap((s) => s.studentNumber))
-    );
-    const filteredGradesByStudentNumber = studentNumbers.map((v) => ({
-      [v]: adminGetGrades.map(
-        ({
-          _id,
-          academicYear,
-          dateCreated,
-          dateModified,
-          semester,
-          subjects,
-          yearLevel,
-        }) => ({
-          _id,
-          academicYear,
-          dateCreated,
-          dateModified,
-          semester,
-          subjects,
-          yearLevel,
-        })
-      ),
-    }));
-    return NextResponse.json({
-      ...response,
-      data: filteredGradesByStudentNumber,
-    } as BaseAPIResponse<
-      Record<string, (Omit<GradeInfo, 'studentNumber'> & MongoExtra)[]>[]
-    >);
-  }
-
   try {
+    const parameters = url.parse(request.url, true).query as Record<
+      'studentNumber' | 'role',
+      string
+    >;
+    console.log(parameters.role);
+
+    if (parameters.role === 'admin') {
+      const adminGetGrades = (await gradeCollection
+        .find()
+        .toArray()) as unknown as (GradeInfo & MongoExtra)[];
+      const studentNumbers = Array.from(
+        new Set(adminGetGrades.flatMap((s) => s.studentNumber))
+      );
+      const filteredGradesByStudentNumber = studentNumbers.map((v) => ({
+        [v]: adminGetGrades.map(
+          ({
+            _id,
+            academicYear,
+            dateCreated,
+            dateModified,
+            semester,
+            subjects,
+            yearLevel,
+          }) => ({
+            _id,
+            academicYear,
+            dateCreated,
+            dateModified,
+            semester,
+            subjects,
+            yearLevel,
+          })
+        ),
+      }));
+      return NextResponse.json({
+        ...response,
+        data: filteredGradesByStudentNumber,
+      } as BaseAPIResponse<
+        Record<string, (Omit<GradeInfo, 'studentNumber'> & MongoExtra)[]>[]
+      >);
+    }
+
     const studentNumber = parameters.studentNumber;
 
     if (studentNumber === undefined) {

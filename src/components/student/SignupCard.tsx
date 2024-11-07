@@ -5,7 +5,6 @@ import type { GetStudentNumberResponse } from '@/server/lib/schema/apiResponse/g
 import { useSignUp } from '@clerk/nextjs';
 import { useEffect, useState, type FormEvent } from 'react';
 
-import Heading from '@/components/Heading';
 import { Input } from '@/components/ui/input';
 import useAppRouter from '@/hooks/useAppRouter';
 import regExp from '@/utils/regex';
@@ -30,6 +29,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem } from '@/components/ui/select';
 import { SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -160,7 +160,7 @@ const SignupCard = () => {
   return (
     <Card>
       <CardHeader>
-        <Heading text="Signup" type="TITLE" />
+        <CardTitle className="capitalize">Signup</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleStudentCreation}>

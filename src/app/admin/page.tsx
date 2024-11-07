@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import GradeInfo from '@/utils/types/gradeInfo';
 import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import {
@@ -20,7 +19,11 @@ import {
 } from '@/components/ui/collapsible';
 import specializationEnum, { Specialization } from '@/lib/enums/specialization';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import { grades, gradesAdd } from '@/redux/reducers/gradeReducer';
+import {
+  gradeResetState,
+  grades,
+  gradesAdd,
+} from '@/redux/reducers/gradeReducer';
 import gradeResult from '@/features/grade/student/utils/gradeResult';
 import BarChart from '@/components/charts/BarChart';
 import {
@@ -29,364 +32,34 @@ import {
   internshipTaskAdd,
 } from '@/redux/reducers/internshipReducer';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
-import { LineChart } from '@/components/charts/LineChart';
+import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
+import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
+import { UserRole } from '@/lib/enums/userRole';
+import { InternshipResult } from '@/utils/types/internshipResult';
 
 type InitialState = {
   grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
+  studentData: StudentInformation[];
   specializationSelected: Specialization | null;
   studentNumber: string | null;
+  internshipData: Record<string, (InternshipResult & MongoExtra)[]>[];
 };
 
-// type StudentInformation = {
-//   firstName: string;
-//   lastName: string;
-//   role: UserRole;
-//   studentType: StudentType;
-//   studentNumber: string;
-//   specialization: Specialization;
-// };
-
-const gradesData = [
-  {
-    '2021201282': [
-      {
-        _id: '672b033232ee880107f90393',
-        semester: 'FIRST_SEMESTER',
-        academicYear: '2021-2022',
-        yearLevel: 'FIRST_YEAR',
-        subjects: [
-          {
-            grade: '1.25',
-            code: 'IT_102',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_103',
-          },
-          {
-            grade: '1.25',
-            code: 'IT_104',
-          },
-          {
-            grade: '1.25',
-            code: 'RPH_101',
-          },
-          {
-            grade: '1.50',
-            code: 'AAP_101',
-          },
-          {
-            grade: '1.75',
-            code: 'STS_101',
-          },
-          {
-            grade: '1.00',
-            code: 'ARP_101',
-          },
-          {
-            grade: '1.25',
-            code: 'PE_10',
-          },
-          {
-            grade: '1.25',
-            code: 'NSTP_10',
-          },
-        ],
-        dateCreated: 1730872114240,
-        dateModified: -1,
-      },
-      {
-        _id: '672b033332ee880107f90394',
-        semester: 'SECOND_SEMESTER',
-        academicYear: '2021-2022',
-        yearLevel: 'FIRST_YEAR',
-        subjects: [
-          {
-            grade: '1.75',
-            code: 'IT_105',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_106',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_107',
-          },
-          {
-            grade: '1.00',
-            code: 'PCM_101',
-          },
-          {
-            grade: '1.00',
-            code: 'MMW_101',
-          },
-          {
-            grade: '1.50',
-            code: 'UTS_101',
-          },
-          {
-            grade: '1.25',
-            code: 'PAL_101',
-          },
-          {
-            grade: '1.00',
-            code: 'PE_11',
-          },
-          {
-            grade: '1.00',
-            code: 'NSTP_11',
-          },
-        ],
-        dateCreated: 1730872115305,
-        dateModified: -1,
-      },
-      {
-        _id: '672b033732ee880107f90395',
-        semester: 'FIRST_SEMESTER',
-        academicYear: '2022-2023',
-        yearLevel: 'SECOND_YEAR',
-        subjects: [
-          {
-            grade: '1.75',
-            code: 'IT_201',
-          },
-          {
-            grade: '1.75',
-            code: 'IT_202',
-          },
-          {
-            grade: '2.25',
-            code: 'IT_203',
-          },
-          {
-            grade: '2.25',
-            code: 'IT_204',
-          },
-          {
-            grade: '1.75',
-            code: 'IT_205',
-          },
-          {
-            grade: '1.75',
-            code: 'AAH_101',
-          },
-          {
-            grade: '1.00',
-            code: 'ETH_101',
-          },
-          {
-            grade: '1.25',
-            code: 'PE_12',
-          },
-        ],
-        dateCreated: 1730872119253,
-        dateModified: -1,
-      },
-      {
-        _id: '672b034632ee880107f90396',
-        semester: 'SECOND_SEMESTER',
-        academicYear: '2022-2023',
-        yearLevel: 'SECOND_YEAR',
-        subjects: [
-          {
-            grade: '1.50',
-            code: 'IT_206',
-          },
-          {
-            grade: '1.75',
-            code: 'IT_207',
-          },
-          {
-            grade: '1.25',
-            code: 'IT_208',
-          },
-          {
-            grade: '1.00',
-            code: 'IT_209',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_210',
-          },
-          {
-            grade: '1.00',
-            code: 'TCW_101',
-          },
-          {
-            grade: '1.75',
-            code: 'MST_101',
-          },
-          {
-            grade: '1.25',
-            code: 'PE13',
-          },
-        ],
-        dateCreated: 1730872134769,
-        dateModified: -1,
-      },
-      {
-        _id: '672b034b32ee880107f90397',
-        semester: 'FIRST_SEMESTER',
-        academicYear: '2023-2024',
-        yearLevel: 'THIRD_YEAR',
-        subjects: [
-          {
-            grade: '1.50',
-            code: 'IT_301',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_302',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_303',
-          },
-          {
-            grade: '3.00',
-            code: 'IT_304',
-          },
-          {
-            grade: '1.00',
-            code: 'IT_305',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_306',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_307',
-          },
-          {
-            grade: '1.00',
-            code: 'FL301',
-          },
-        ],
-        dateCreated: 1730872139320,
-        dateModified: -1,
-      },
-      {
-        _id: '672b035032ee880107f90398',
-        semester: 'SECOND_SEMESTER',
-        academicYear: '2023-2024',
-        yearLevel: 'THIRD_YEAR',
-        subjects: [
-          {
-            grade: '2.00',
-            code: 'IT_308',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_309',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_310',
-          },
-          {
-            grade: '1.50',
-            code: 'CAP_301',
-          },
-          {
-            grade: '1.50',
-            code: 'IT_311',
-          },
-          {
-            grade: '2.25',
-            code: 'IT_312',
-          },
-          {
-            grade: '1.00',
-            code: 'FL302',
-          },
-          {
-            grade: '1.25',
-            code: 'RLW_101',
-          },
-        ],
-        dateCreated: 1730872144950,
-        dateModified: -1,
-      },
-    ],
-  },
-] as InitialState['grades'];
-const studentData = [
-  {
-    firstName: ' jhay mark',
-    lastName: 'reyes',
-    role: 'student',
-    studentType: 'regular',
-    studentNumber: '2020200534',
-    specialization: 'WEB_AND_MOBILE_DEVELOPMENT',
-  },
-  {
-    firstName: ' ralph john',
-    lastName: 'juliano',
-    role: 'student',
-    studentType: 'regular',
-    studentNumber: '2021201472',
-    specialization: 'WEB_AND_MOBILE_DEVELOPMENT',
-  },
-  {
-    firstName: 'gisn carlo',
-    lastName: 'carranza',
-    role: 'student',
-    studentType: 'irregular',
-    studentNumber: '2021201282',
-    specialization: 'SERVICE_MANAGEMENT_PROGRAM',
-  },
-] as const;
+type StudentInformation = {
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  studentNumber: string;
+  specialization: Specialization;
+};
 
 const initialState: InitialState = {
-  grades: gradesData,
+  grades: [],
+  studentData: [],
+  internshipData: [],
   specializationSelected: null,
   studentNumber: null,
 };
-
-const internshipData = [
-  {
-    '2017949494': [
-      {
-        _id: '672a434a6f8e82836a4f75f8',
-        tasks: ['COST-BENEFIT_ANALYSIS', 'REQUIREMENT_GATHERING'],
-        isITCompany: true,
-        grade: '2.00',
-        dateCreated: 1730822986023,
-        dateModified: -1,
-      },
-      {
-        _id: '672ac4ae1fec4e6983a3debc',
-        tasks: ['DATA_ANALYSIS'],
-        isITCompany: true,
-        grade: '1.75',
-        dateCreated: 1730856110170,
-        dateModified: -1,
-      },
-    ],
-  },
-  {
-    '2021201282': [
-      {
-        _id: '672a434a6f8e82836a4f75f8',
-        tasks: ['COST-BENEFIT_ANALYSIS', 'REQUIREMENT_GATHERING'],
-        isITCompany: true,
-        grade: '2.00',
-        dateCreated: 1730822986023,
-        dateModified: -1,
-      },
-      {
-        _id: '672ac4ae1fec4e6983a3debc',
-        tasks: ['DATA_ANALYSIS'],
-        isITCompany: true,
-        grade: '1.75',
-        dateCreated: 1730856110170,
-        dateModified: -1,
-      },
-    ],
-  },
-] as const;
 
 const Admin = () => {
   const [state, setState] = useState(initialState);
@@ -396,7 +69,7 @@ const Admin = () => {
 
   const studentDataGroupedBySpecialization = specializationEnum.options.map(
     (specialization) => ({
-      [specialization]: studentData
+      [specialization]: state.studentData
         .filter((s) => s.specialization === specialization)
         .map(({ firstName, lastName, studentNumber }) => ({
           firstName,
@@ -409,12 +82,13 @@ const Admin = () => {
   useEffect(() => {
     function setSubject() {
       if (state.studentNumber === null) return;
-      const filteredGradesData = gradesData
-        .filter((object) =>
+
+      const filteredGradesData = state.grades
+        ?.filter((object) =>
           Object.keys(object).includes(state.studentNumber as string)
         )
         .map((object) => Object.entries(object).map(([, v]) => v))[0];
-      filteredGradesData.forEach((gradeInfo) =>
+      filteredGradesData?.forEach((gradeInfo) =>
         gradeInfo.forEach(({ academicYear, semester, yearLevel, subjects }) =>
           dispatch(
             gradesAdd({
@@ -436,12 +110,12 @@ const Admin = () => {
     }
     function setInternship() {
       if (state.studentNumber === null) return;
-      const filteredInternshipData = internshipData
-        .filter((object) =>
+      const filteredInternshipData = state.internshipData
+        ?.filter((object) =>
           Object.keys(object).includes(state.studentNumber as string)
         )
         .map((object) => Object.entries(object).map(([, v]) => v))[0];
-      filteredInternshipData.forEach((internshipInfo) =>
+      filteredInternshipData?.forEach((internshipInfo) =>
         internshipInfo.forEach(({ grade, isITCompany, tasks }) => {
           dispatch(internshipGradeUpdate(grade));
           dispatch(internshipCompanyQuestionUpdate(isITCompany));
@@ -455,31 +129,54 @@ const Admin = () => {
         })
       );
     }
+
     setInternship();
     setSubject();
-    return () => {};
-  }, [dispatch, state.studentNumber]);
+    return () => {
+      dispatch(authenticationSetStatus('authenticated'));
+    };
+  }, [dispatch, state.studentNumber, state.grades, state.internshipData]);
+
+  useEffect(() => {
+    async function initializeStudentInformation() {
+      /** Clerk public metadata cannot be acccessed inside functions. Maybe must be root level. */
+      const response = await fetch(`/api/mongo/grades?role=admin`, {
+        method: 'GET',
+      });
+      const { data, errorMessage } = (await response.json()) as BaseAPIResponse<
+        InitialState['grades']
+      >;
+
+      if (!response.ok) return alert(`Grades: ${errorMessage[0]}`);
+      const getStudentInformationsResponse = await fetch(
+        '/api/getStudentInformations',
+        {
+          method: 'GET',
+        }
+      );
+      const getStudentInformationsJson =
+        (await getStudentInformationsResponse.json()) as BaseAPIResponse<
+          StudentInformation[]
+        >;
+      if (!getStudentInformationsResponse.ok) {
+        return alert(
+          `Student informations: ${getStudentInformationsJson.errorMessage[0]}`
+        );
+      }
+      setState((prevState) => ({
+        ...prevState,
+        grades: data,
+        studentData: getStudentInformationsJson.data,
+      }));
+    }
+    return void initializeStudentInformation();
+  }, [dispatch]);
+
+  console.log(state);
 
   return (
     <>
       <Header />
-      <Button
-        disabled={true}
-        onClick={async () => {
-          const response = await fetch('/api/mongo/grades?role=admin', {
-            method: 'GET',
-          });
-
-          const { data, errorMessage } =
-            (await response.json()) as BaseAPIResponse<InitialState['grades']>;
-
-          if (!response.ok) return alert(errorMessage[0]);
-
-          setState((prevState) => ({ ...prevState, grades: data }));
-        }}
-      >
-        Request Grades
-      </Button>
       <Card>
         <CardHeader>
           <CardTitle>Specializations</CardTitle>
@@ -503,13 +200,14 @@ const Admin = () => {
                           specialization as Specialization,
                         studentNumber: null,
                       }));
+                      dispatch(gradeResetState());
                     }}
                   >
                     {specialization.replace(/_/g, ' ').toLocaleLowerCase()}
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="absolute inset-x-0 top-96">
-                  <div className="h-48 overflow-y-auto bg-green-400">
+                  <div className="h-48 overflow-y-auto bg-slate-50">
                     {array.map(({ firstName, lastName, studentNumber }) => (
                       <Collapsible
                         key={studentNumber}
@@ -526,7 +224,7 @@ const Admin = () => {
                             }
                           >{`${firstName} ${lastName}`}</Button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="bg-green-500">
+                        <CollapsibleContent className="bg-green-200">
                           <DisplayStudentGrades
                             gradeResult={
                               gradeResult({
@@ -534,7 +232,7 @@ const Admin = () => {
                                 specialization: state.specializationSelected!,
                               }) ?? []
                             }
-                            data={gradesData.map((object) =>
+                            data={state.grades.map((object) =>
                               Object.entries(object).filter(
                                 ([studentNumberInner]) =>
                                   studentNumberInner === studentNumber
@@ -559,9 +257,10 @@ const DisplayStudentGrades = (props: {
   data: [string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]][][];
   gradeResult: [string, number][];
 }) => {
+  console.log(props);
   return (
     <div className="fixed inset-x-0 bottom-0">
-      <div className="fixed inset-x-48 top-36 grid grid-flow-col">
+      <div className="fixed inset-x-96 top-36 grid grid-flow-col">
         <BarChart
           chartConfig={{
             career: {
@@ -581,18 +280,18 @@ const DisplayStudentGrades = (props: {
           description={'Showing careers based on grades.'}
           footerDescription={<p>Career Chart</p>}
         />
-        <LineChart
+        {/* <LineChart
           description="Showing careers based on internship"
           title="Internship"
           footerDescription={<p>Internship Chart</p>}
-        />
+        /> */}
       </div>
       {props.data.map((array) =>
         array.map(([studentNumber, record]) => (
           <Collapsible key={studentNumber} className="sticky top-0">
             <CollapsibleTrigger asChild>
               <Button
-                className="w-full rounded-none bg-green-600"
+                className="w-full rounded-none bg-slate-100"
                 variant="ghost"
               >
                 {`Student Number: ${studentNumber}`}

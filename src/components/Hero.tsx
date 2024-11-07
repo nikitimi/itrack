@@ -43,7 +43,7 @@ const Hero = () => {
 
   if (isReady) {
     return (
-      <Card className="lg:1/2 mx-auto h-auto md:w-3/4">
+      <Card className="mx-6 mt-12 lg:mx-16">
         <CardHeader>
           <CardTitle>Student Information</CardTitle>
           <CardDescription className="capitalize">{`Welcome ${fullName}!`}</CardDescription>

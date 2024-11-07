@@ -12,19 +12,22 @@ import { HEADER_KEY, EMPTY_STRING } from '@/utils/constants';
 import { ChartData } from '@/utils/types/chartData';
 import { headers } from 'next/headers';
 import getDatabaseInformations from './utils/getDatabaseInformations';
+import { clerkClient } from '@clerk/nextjs/server';
 
 export default async function layoutFetcher() {
   const headerList = headers();
+  const client = await clerkClient();
 
   // TODO: Move this out to a separate global client component handler to set correct user type.
   const studentNumber =
     headerList.get(HEADER_KEY.studentNumber) ?? EMPTY_STRING;
-  const firstName = headerList.get(HEADER_KEY.firstName) ?? EMPTY_STRING;
-  const lastName = headerList.get(HEADER_KEY.lastName) ?? EMPTY_STRING;
+  const userId = headerList.get(HEADER_KEY.uid) as string;
   const role = (headerList.get(HEADER_KEY.role) as UserRole) || 'anonymous';
   const specialization = headerList.get(
     HEADER_KEY.specialization
   ) as Specialization;
+
+  const { firstName, lastName } = await client.users.getUser(userId);
 
   const result = await getDatabaseInformations(studentNumber);
   let internshipHolder: Record<string, number>[] = [];

@@ -2,7 +2,7 @@
 
 import regExp from '@/utils/regex';
 import { Separator } from '@radix-ui/react-separator';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '../ui/button';
 import {
@@ -74,6 +74,10 @@ const SigninCard = () => {
       }
     }
   }
+
+  useEffect(() => {
+    dispatch(authenticationSetStatus('no user'));
+  }, [dispatch]);
 
   return (
     <Card className="mx-8 w-full duration-200 ease-in-out md:mx-0 md:w-3/4 lg:w-1/3">

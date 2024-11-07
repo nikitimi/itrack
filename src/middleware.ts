@@ -26,21 +26,14 @@ export default clerkMiddleware(async (auth, request) => {
       'Student number fetched is a string, cannot set in headers.'
     );
 
-  const {
-    role,
-    specialization,
-    studentNumber,
-    studentType,
-    firstName,
-    lastName,
-  } = studentNumberResult as GetStudentNumber;
+  const { role, specialization, studentNumber, firstName, lastName } =
+    studentNumberResult as GetStudentNumber;
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set(HEADER_KEY.origin, origin);
   requestHeaders.set(HEADER_KEY.pathname, pathname);
   requestHeaders.set(HEADER_KEY.role, role);
   requestHeaders.set(HEADER_KEY.studentNumber, studentNumber);
-  requestHeaders.set(HEADER_KEY.studentType, studentType);
   requestHeaders.set(HEADER_KEY.specialization, specialization);
   requestHeaders.set(HEADER_KEY.firstName, firstName);
   requestHeaders.set(HEADER_KEY.lastName, lastName);
