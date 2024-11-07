@@ -51,7 +51,7 @@ const Hero = () => {
         <CardContent>
           <LabelHelper
             label="Specialization:"
-            value={_specialization?.replace(/_/g, ' ')}
+            value={_specialization?.replace(/_/g, ' ').toLocaleLowerCase()}
           />
           <LabelHelper
             label="Student Type:"
@@ -84,7 +84,7 @@ const LabelHelper = (props: { label: string; value: string }) => {
   return (
     <section className="grid grid-cols-2 items-center">
       <Label>{props.label}</Label>
-      <Input value={props.value} className="border-none" disabled />
+      <Input value={props.value} className="border-none capitalize" disabled />
     </section>
   );
 };

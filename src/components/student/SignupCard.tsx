@@ -196,8 +196,12 @@ const SignupCard = () => {
               <SelectContent>
                 {specializationEnum.options.map((specialization) => {
                   return (
-                    <SelectItem key={specialization} value={specialization}>
-                      {specialization}
+                    <SelectItem
+                      key={specialization}
+                      value={specialization}
+                      className="capitalize"
+                    >
+                      {specialization.toLocaleLowerCase().replace(/_/g, ' ')}
                     </SelectItem>
                   );
                 })}

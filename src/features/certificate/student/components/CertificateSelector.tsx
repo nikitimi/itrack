@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import certificateNameFormatter from '../utils/certificateNameFormatter';
 
 /** The uploader of certificates to the database. */
 const CertificateSelector = () => {
@@ -74,18 +75,13 @@ const CertificateSelector = () => {
               {certificateEnum.options
                 .filter((c) => !_certificateList.includes(c))
                 .map((certificate) => {
-                  const formattedCertificate = certificate.replace(
-                    allUnderscoreRegExp,
-                    ' '
-                  );
-
                   return (
                     <SelectItem
                       key={certificate}
                       value={certificate}
-                      className="text-black"
+                      className="capitalize text-black"
                     >
-                      {formattedCertificate}
+                      {certificateNameFormatter(certificate)}
                     </SelectItem>
                   );
                 })}

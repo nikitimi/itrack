@@ -25,6 +25,7 @@ import { EMPTY_STRING } from '@/utils/constants';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import mime from '@/utils/mime';
 import { ChangeEvent, useEffect, useState } from 'react';
+import certificateNameFormatter from '../utils/certificateNameFormatter';
 
 type CertificateFile = {
   /** For referencing the file. */
@@ -145,7 +146,9 @@ const CertificateLoader = () => {
             return (
               <TableRow key={certificate} id={encodedCertificate}>
                 <TableCell>
-                  <p>{certificate.replace(/_/g, ' ')}</p>
+                  <p className="capitalize">
+                    {certificateNameFormatter(certificate)}
+                  </p>
                 </TableCell>
                 <TableCell>
                   <div
