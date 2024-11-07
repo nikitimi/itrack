@@ -49,9 +49,10 @@ const Dashboard = () => {
   } as InitialState);
 
   const gradeChart = chartData.map(({ job, ...rest }) => ({
-    ...rest,
     job: constantNameFormatter(job),
+    ...rest,
   }));
+  console.log(state);
   const chartConfig = {
     certificate: {
       label: 'Certificate',
@@ -82,21 +83,21 @@ const Dashboard = () => {
               render={state.grade === 'bar'}
               chartData={gradeChart}
               chartConfig={chartConfig}
-              description={grade.description}
+              description={'Career ranking based on accomplishments.'}
               title={grade.title}
             />
             <AreaChart
               render={state.grade === 'area'}
               chartData={gradeChart}
               chartConfig={chartConfig}
-              description={grade.description}
+              description={'Career ranking based on accomplishments.'}
               title={grade.title}
             />
             <RadarChart
               render={state.grade === 'radar'}
               chartData={gradeChart}
               chartConfig={chartConfig}
-              description={grade.description}
+              description={'Career ranking based on accomplishments.'}
               title={grade.title}
             />
             <div className="lg:1/2 mx-auto h-auto md:w-3/4">

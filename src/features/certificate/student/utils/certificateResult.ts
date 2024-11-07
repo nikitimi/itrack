@@ -5,7 +5,6 @@ import type { CertificateResult } from '@/utils/types/certificateResult';
 import type PossibleJob from '@/utils/types/possibleJob';
 
 import gradingPoints from '@/features/certificate/student/utils/gradingPoints';
-import certificatesCompleted from '@/features/certificate/student/utils/certificatesCompleted';
 import certificateCalculation from '@/lib/calculations/certificates';
 import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
 import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';
@@ -131,10 +130,7 @@ export default function certificateResult(props: CertificateResult) {
       //TODO: Debug this is not working.
       if (certificateFilteredBoolean[0] === true)
         return {
-          [jobName]:
-            certificateBooleans.length *
-            gradingPoints.A *
-            certificatesCompleted,
+          [jobName]: certificateBooleans.length * gradingPoints.A,
         };
     });
   });

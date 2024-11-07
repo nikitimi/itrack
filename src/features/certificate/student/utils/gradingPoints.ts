@@ -1,6 +1,6 @@
 const gradingPoints = {
   // A: 14,
-  A: 50,
+  A: 5,
   // B: 6,
   B: 3,
   // C: 1,
