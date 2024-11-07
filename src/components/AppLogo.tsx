@@ -3,7 +3,7 @@ import React from 'react';
 
 const AppLogo = () => {
   return (
-    <div className="h-8 w-24">
+    <div className="mx-auto flex h-8 w-24 items-center justify-center">
       <Image
         draggable={false}
         src="/itrack-removebg.png"

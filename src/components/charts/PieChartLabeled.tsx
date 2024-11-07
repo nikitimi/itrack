@@ -13,6 +13,7 @@ import certificateResult from '@/features/certificate/student/utils/certificateR
 import { certificateList } from '@/redux/reducers/certificateReducer';
 import { useAppSelector } from '@/hooks/redux';
 import { studentInfoSpecialization } from '@/redux/reducers/studentInfoReducer';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 
 const chartConfig = {
   points: {
@@ -67,14 +68,17 @@ export function PieChartLabeled(
     <ParentChart {...props}>
       <ChartContainer
         config={chartConfig}
-        className="mx-auto aspect-square max-h-[250px] px-0"
+        className="mx-auto aspect-square max-h-[250px] px-0 capitalize"
       >
         <PieChart>
           <ChartTooltip
             content={<ChartTooltipContent nameKey="career" hideLabel />}
           />
           <Pie
-            data={chartData}
+            data={chartData.map(({ career, ...rest }) => ({
+              ...rest,
+              career: constantNameFormatter(career),
+            }))}
             dataKey="points"
             labelLine={false}
             label={({ payload, ...props }) => {

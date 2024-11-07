@@ -9,7 +9,7 @@ import {
   studentInfoChartData,
   studentInfoSpecialization,
 } from '@/redux/reducers/studentInfoReducer';
-import { EMPTY_STRING, NUMBER_OF_SEMESTER } from '@/utils/constants';
+import { NUMBER_OF_SEMESTER } from '@/utils/constants';
 import { PieChartLabeled } from '@/components/charts/PieChartLabeled';
 import { LineChart } from '@/components/charts/LineChart';
 import { useState } from 'react';
@@ -24,6 +24,7 @@ import {
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { grades } from '@/redux/reducers/gradeReducer';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 // import BarChartSemester from '@/features/grade/student/components/BarChartSemester';
 
 type InitialState = {
@@ -31,8 +32,14 @@ type InitialState = {
 };
 
 const Dashboard = () => {
-  const chartData = studentInfoChartData(useAppSelector((s) => s.studentInfo));
-  const description = 'Showing careers related to your performance.';
+  const studentInfoSelector = useAppSelector((s) => s.studentInfo);
+  const chartData = studentInfoChartData(studentInfoSelector);
+  const specialization = studentInfoSpecialization(studentInfoSelector);
+  const formattedSpecialization = constantNameFormatter(specialization);
+  const grade = {
+    description: 'Careers based on accomplishments.',
+    title: `${formattedSpecialization} career chart`,
+  };
   const _grades = grades(useAppSelector((s) => s.grade));
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
@@ -41,6 +48,10 @@ const Dashboard = () => {
     grade: 'bar',
   } as InitialState);
 
+  const gradeChart = chartData.map(({ job, ...rest }) => ({
+    ...rest,
+    job: constantNameFormatter(job),
+  }));
   const chartConfig = {
     certificate: {
       label: 'Certificate',
@@ -63,36 +74,30 @@ const Dashboard = () => {
         <Hero />
         <div className="grid grid-cols-3">
           <PieChartLabeled
-            description={description}
-            title="certificates"
-            footerDescription={
-              <ParagraphNode description={'Certificates Chart'} />
-            }
+            title={`${formattedSpecialization} certificate chart`}
+            description={grade.description}
           />
           <section>
             <BarChart
               render={state.grade === 'bar'}
-              chartData={chartData}
+              chartData={gradeChart}
               chartConfig={chartConfig}
-              description={description}
-              title="careers"
-              footerDescription={<ParagraphNode description={'Career Chart'} />}
+              description={grade.description}
+              title={grade.title}
             />
             <AreaChart
               render={state.grade === 'area'}
-              chartData={[...chartData]}
+              chartData={gradeChart}
               chartConfig={chartConfig}
-              description={description}
-              title="careers"
-              footerDescription={<ParagraphNode description={'Career Chart'} />}
+              description={grade.description}
+              title={grade.title}
             />
             <RadarChart
               render={state.grade === 'radar'}
-              chartData={[...chartData]}
+              chartData={gradeChart}
               chartConfig={chartConfig}
-              description={description}
-              title="careers"
-              footerDescription={<ParagraphNode description={'Career Chart'} />}
+              description={grade.description}
+              title={grade.title}
             />
             <div className="lg:1/2 mx-auto h-auto md:w-3/4">
               <Select
@@ -123,29 +128,13 @@ const Dashboard = () => {
             </div>
           </section>
           <LineChart
-            description={description}
-            title="internship"
-            footerDescription={
-              <ParagraphNode description={'Internship Chart'} />
-            }
+            title={`${formattedSpecialization} internship chart`}
+            description={grade.description}
           />
         </div>
         {/* <BarChartSemester /> */}
       </div>
     </>
-  );
-};
-
-const ParagraphNode = ({ description }: { description: string }) => {
-  const specialization = studentInfoSpecialization(
-    useAppSelector((s) => s.studentInfo)
-  );
-
-  return (
-    <p className="flex gap-1 capitalize">
-      {(specialization ?? EMPTY_STRING).replace(/_/g, ' ').toLocaleLowerCase()}
-      <span>{description}</span>
-    </p>
   );
 };
 

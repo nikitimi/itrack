@@ -27,8 +27,7 @@ const InternshipTaskConfirmation = () => {
   const _internshipCompanyQuestion = internshipCompanyQuestion(selector);
   const _internshipGrade = internshipGrade(selector);
   const _internshipTasks = internshipTasks(selector);
-  const { isInputDisabled, internshipInputControl } =
-    useInternshipInputControl();
+  const { internshipInputControl } = useInternshipInputControl();
   const studentNumber = studentInfoNumber(useAppSelector((s) => s.studentInfo));
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
@@ -43,7 +42,27 @@ const InternshipTaskConfirmation = () => {
     );
     try {
       if (disabledWriteInDB.includes(internshipInputControl)) {
-        throw new Error("You've already submitted your internship details.");
+        const response = await fetch('/api/mongo/internship', {
+          method: 'PATCH',
+          body: JSON.stringify({
+            tasks: _internshipTasks,
+            isITCompany: _internshipCompanyQuestion,
+            grade: _internshipGrade,
+            studentNumber,
+          }),
+        });
+
+        const json = (await response.json()) as BaseAPIResponse<string>;
+        if (!response.ok) throw new Error(json.errorMessage[0]);
+
+        dispatch(
+          inputControlSetPromptType({
+            key: 'internshipModule',
+            promptType: 'submitted',
+          })
+        );
+
+        return console.log(json.data);
       }
       // Check if already submitted  document.
       const getInternship = await fetchHelper('/api/mongo/internship', 'GET', {
@@ -114,7 +133,7 @@ const InternshipTaskConfirmation = () => {
       trigger={
         <Button
           className="mx-2 w-full"
-          disabled={isInputDisabled || disabledNoUserList.includes(authStatus)}
+          disabled={disabledNoUserList.includes(authStatus)}
         >
           Submit internship details
         </Button>

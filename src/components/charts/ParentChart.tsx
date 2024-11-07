@@ -40,7 +40,10 @@ const ParentChart = ({ children, ...rest }: ParentChartProps) => {
       className={`${rest.render === false ? 'hidden' : ''} mx-auto h-[480px]`}
     >
       <CardHeader>
-        <CardTitle className="capitalize">{rest.title}</CardTitle>
+        <CardTitle className="flex gap-2 capitalize">
+          {rest.title}
+          <TrendingUp className="h-4 w-4" />
+        </CardTitle>
         <CardDescription>{rest.description}</CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>
@@ -49,7 +52,6 @@ const ParentChart = ({ children, ...rest }: ParentChartProps) => {
           <div className="grid gap-2">
             <div className="flex items-center gap-2 font-medium leading-none">
               {rest.footerDescription}
-              <TrendingUp className="h-4 w-4" />
             </div>
           </div>
         </div>

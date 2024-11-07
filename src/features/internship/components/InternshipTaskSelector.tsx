@@ -14,7 +14,6 @@ import {
   SelectTrigger,
 } from '@/components/ui/select';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import type { InternshipTask } from '@/lib/enums/internshipTask';
 import internshipTaskEnum from '@/lib/enums/internshipTask';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
@@ -23,6 +22,7 @@ import {
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 import { SelectValue } from '@radix-ui/react-select';
 import { FormEvent } from 'react';
 
@@ -30,12 +30,10 @@ const InternshipTaskSelector = () => {
   const dispatch = useAppDispatch();
   const selector = useAppSelector((s) => s.internship);
   const _internshipTasks = internshipTasks(selector);
-  const { isInputDisabled } = useInternshipInputControl();
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
   const condition =
-    isInputDisabled ||
     _internshipTasks.length === internshipTaskEnum.options.length ||
     disabledNoUserList.includes(authStatus);
 
@@ -75,8 +73,8 @@ const InternshipTaskSelector = () => {
                 .map((task) => {
                   const taskName = task.replace(/_/g, ' ');
                   return (
-                    <SelectItem key={task} value={task}>
-                      {taskName}
+                    <SelectItem key={task} value={task} className="capitalize">
+                      {constantNameFormatter(taskName)}
                     </SelectItem>
                   );
                 })}

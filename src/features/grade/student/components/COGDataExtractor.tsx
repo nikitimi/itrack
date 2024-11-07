@@ -183,7 +183,7 @@ const COGDataExtractor = () => {
       <form onSubmit={handleSubmit}>
         <Card className="mt-12 rounded-none border-none shadow-none">
           <CardHeader>
-            <CardTitle>COG Extractor</CardTitle>
+            <CardTitle>Certificate of Grades</CardTitle>
             <CardDescription>Upload your COG here</CardDescription>
           </CardHeader>
           <CardContent className="flex">

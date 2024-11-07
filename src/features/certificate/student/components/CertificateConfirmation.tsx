@@ -21,8 +21,7 @@ const CertificateConfirmation = () => {
   const certificateSelector = useAppSelector((s) => s.certificate);
   const _certificateList = certificateList(certificateSelector);
   const studentNumber = studentInfoNumber(useAppSelector((s) => s.studentInfo));
-  const { isInputDisabled, certificateInputControl } =
-    useCertificateInputControl();
+  const { certificateInputControl } = useCertificateInputControl();
   const dispatch = useAppDispatch();
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
@@ -46,12 +45,28 @@ const CertificateConfirmation = () => {
   async function handleConfirmCertificate() {
     handleInputControl('submitted');
 
-    if (disabledWriteInDB.includes(certificateInputControl)) {
-      return alert("You've already uploaded your certificates.");
-    }
     const result: Pick<CertificateResult, 'certificateList'> = {
       certificateList: _certificateList,
     };
+
+    if (disabledWriteInDB.includes(certificateInputControl)) {
+      const response = await fetch('/api/mongo/certificate', {
+        method: 'PATCH',
+        body: JSON.stringify({ ...result, studentNumber }),
+      });
+
+      const json = (await response.json()) as BaseAPIResponse<string>;
+      if (!response.ok) return alert(json.errorMessage[0]);
+
+      console.log(json.data);
+
+      return dispatch(
+        inputControlSetPromptType({
+          key: 'certificateModule',
+          promptType: 'submitted',
+        })
+      );
+    }
 
     // Posting to database.
     const postingCertificate = await fetchHelper(
@@ -86,9 +101,7 @@ const CertificateConfirmation = () => {
           trigger={
             <Button
               onClick={handleSubmit}
-              disabled={
-                isInputDisabled || disabledNoUserList.includes(authStatus)
-              }
+              disabled={disabledNoUserList.includes(authStatus)}
             >
               Submit
             </Button>

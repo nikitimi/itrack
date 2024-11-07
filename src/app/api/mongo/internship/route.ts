@@ -109,3 +109,26 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  const { studentNumber, ...rest } = await request.json();
+  const response: BaseAPIResponse<string> = {
+    data: EMPTY_STRING,
+    errorMessage: [],
+  };
+
+  if (studentNumber === undefined) {
+    return NextResponse.json({
+      ...response,
+      errorMessage: ['Student number is undefined.'],
+    });
+  }
+  const date = new Date();
+  const result = await internshipCollection.updateOne(
+    { studentNumber },
+    { $set: { dateModified: date.getTime(), ...rest } },
+    { upsert: true }
+  );
+
+  return NextResponse.json({ ...response, data: JSON.stringify(result) });
+}

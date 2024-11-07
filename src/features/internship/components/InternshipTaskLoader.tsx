@@ -16,7 +16,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import { type InternshipTask } from '@/lib/enums/internshipTask';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import {
@@ -24,14 +23,12 @@ import {
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 import { EMPTY_STRING } from '@/utils/constants';
-import disabledWriteInDB from '@/utils/disabledWriteInDB';
 
 const InternshipTaskLoader = () => {
   const selector = useAppSelector((s) => s.internship);
   const _internshipTasks = internshipTasks(selector);
-  const { isInputDisabled, internshipInputControl } =
-    useInternshipInputControl();
   const dispatch = useAppDispatch();
   const nonAlphabetCharacters = /[()/]/g;
   const authStatus = authenticationStatus(
@@ -44,9 +41,9 @@ const InternshipTaskLoader = () => {
     ) as HTMLTableRowElement;
     const toggleClasses = ['hidden'] as const;
 
-    if (disabledWriteInDB.includes(internshipInputControl)) {
-      return alert("You've already submitted your internship form.");
-    }
+    // if (disabledWriteInDB.includes(internshipInputControl)) {
+    //   return alert("You've already submitted your internship form.");
+    // }
 
     tableRow.classList.toggle(...toggleClasses);
     dispatch(internshipTaskRemove(task));
@@ -74,15 +71,12 @@ const InternshipTaskLoader = () => {
                   id={task.replace(nonAlphabetCharacters, EMPTY_STRING)}
                 >
                   <TableCell className="capitalize text-foreground">
-                    <p>{taskName.toLocaleLowerCase()}</p>
+                    <p>{constantNameFormatter(taskName)}</p>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-row justify-center gap-2 p-2">
                       <Button
-                        disabled={
-                          isInputDisabled ||
-                          disabledNoUserList.includes(authStatus)
-                        }
+                        disabled={disabledNoUserList.includes(authStatus)}
                         onClick={() => handleRemoveTask(task)}
                         variant="destructive"
                       >

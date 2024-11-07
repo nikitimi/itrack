@@ -34,7 +34,7 @@ const Header = () => {
         <ResizablePanel defaultSize={50}>
           <SidebarTrigger disabled={disabledNoUserList.includes(authStatus)} />
         </ResizablePanel>
-        <ResizableHandle disabled />
+        <ResizableHandle disabled className="opacity-0" />
         <ResizablePanel defaultSize={50} />
       </ResizablePanelGroup>
       {metadata?.role === 'student' ? <ProgressTracker /> : <></>}

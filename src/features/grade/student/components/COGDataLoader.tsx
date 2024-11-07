@@ -161,12 +161,16 @@ const COGDataLoader = () => {
                 className="relative h-12 odd:bg-slate-50"
                 // className="relative flex w-full items-start justify-between text-black odd:bg-slate-100"
               >
-                <TableCell>
-                  {yearLevel.replace(globalUnderscoreRegex, SPACE_STRING)}
+                <TableCell className="capitalize">
+                  {yearLevel
+                    .replace(globalUnderscoreRegex, SPACE_STRING)
+                    .toLocaleLowerCase()}
                 </TableCell>
                 <TableCell>{academicYear}</TableCell>
-                <TableCell>
-                  {semester.replace(globalUnderscoreRegex, SPACE_STRING)}
+                <TableCell className="capitalize">
+                  {semester
+                    .replace(globalUnderscoreRegex, SPACE_STRING)
+                    .toLocaleLowerCase()}
                 </TableCell>
                 <TableCell
                   id={identifier}

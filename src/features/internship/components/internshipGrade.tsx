@@ -16,18 +16,20 @@ import {
 //eslint-disable-next-line boundaries/element-types
 import gradeSystem from '@/features/grade/student/utils/gradeSystem';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
-import { internshipGradeUpdate } from '@/redux/reducers/internshipReducer';
+import {
+  internshipGrade,
+  internshipGradeUpdate,
+} from '@/redux/reducers/internshipReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const InternshipGrade = () => {
   const dispatch = useAppDispatch();
-  const { isInputDisabled } = useInternshipInputControl();
   const gradeScale = gradeSystem.flatMap((g) => g.scale);
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+  const _internshipGrade = internshipGrade(useAppSelector((s) => s.internship));
 
   function handleGradeChange(value: (typeof gradeScale)[number]) {
     dispatch(internshipGradeUpdate(value));
@@ -42,10 +44,14 @@ const InternshipGrade = () => {
         <Select
           onValueChange={handleGradeChange}
           required
-          disabled={isInputDisabled || disabledNoUserList.includes(authStatus)}
+          disabled={disabledNoUserList.includes(authStatus)}
         >
           <SelectTrigger>
-            <SelectValue placeholder="grade" />
+            <SelectValue
+              placeholder={
+                _internshipGrade === 'initializing' ? 'Grade' : _internshipGrade
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             {gradeScale.map((v) => (

@@ -6,7 +6,7 @@ import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import url from 'url';
 
 import { collection } from '@/server/utils/mongodb';
-import { WRONG_NUMBER } from '@/utils/constants';
+import { EMPTY_STRING, WRONG_NUMBER } from '@/utils/constants';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 
 const certificateCollection = collection('Certificates');
@@ -66,4 +66,28 @@ export async function GET(request: NextRequest) {
       { status: 400 }
     );
   }
+}
+
+export async function PATCH(request: NextRequest) {
+  const payload = await request.json();
+  const response: BaseAPIResponse<string> = {
+    data: EMPTY_STRING,
+    errorMessage: [],
+  };
+
+  if (payload.studentNumber === undefined) {
+    return NextResponse.json({
+      ...response,
+      errorMessage: ['Student number is undefined.'],
+    });
+  }
+
+  const date = new Date();
+  const result = await certificateCollection.updateOne(
+    { studentNumber: payload.studentNumber },
+    { $set: { dateModified: date.getTime(), ...payload.certificateList } },
+    { upsert: true }
+  );
+
+  return NextResponse.json({ ...response, data: JSON.stringify(result) });
 }

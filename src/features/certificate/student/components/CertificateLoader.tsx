@@ -25,7 +25,7 @@ import { EMPTY_STRING } from '@/utils/constants';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import mime from '@/utils/mime';
 import { ChangeEvent, useEffect, useState } from 'react';
-import certificateNameFormatter from '../utils/certificateNameFormatter';
+import constantNameFormatter from '../../../../utils/constantNameFormatter';
 
 type CertificateFile = {
   /** For referencing the file. */
@@ -40,8 +40,7 @@ const CertificateLoader = () => {
   const selector = useAppSelector((s) => s.certificate);
   const [state, setState] = useState<CertificateFile[]>([]);
   const _certificateList = certificateList(selector);
-  const { isInputDisabled, certificateInputControl } =
-    useCertificateInputControl();
+  const { certificateInputControl } = useCertificateInputControl();
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
@@ -49,8 +48,8 @@ const CertificateLoader = () => {
   const invalidExtraCharactersRegex = /(%\d{1}\D{1})/g;
 
   function handleRemoveCertificate(certificate: Certificate) {
-    if (disabledWriteInDB.includes(certificateInputControl))
-      return alert('You cannot do that now.');
+    // if (disabledWriteInDB.includes(certificateInputControl))
+    //   return alert('You cannot do that now.');
 
     const indexOfCertificate = state
       .flatMap((s) => s.certificate)
@@ -147,7 +146,7 @@ const CertificateLoader = () => {
               <TableRow key={certificate} id={encodedCertificate}>
                 <TableCell>
                   <p className="capitalize">
-                    {certificateNameFormatter(certificate)}
+                    {constantNameFormatter(certificate)}
                   </p>
                 </TableCell>
                 <TableCell>
@@ -156,18 +155,12 @@ const CertificateLoader = () => {
                   >
                     <Input
                       type="file"
-                      disabled={
-                        isInputDisabled ||
-                        disabledNoUserList.includes(authStatus)
-                      }
+                      disabled={disabledNoUserList.includes(authStatus)}
                       onChange={(e) => handleAddFile(e, certificate)}
                     />
                     <Button
                       variant="destructive"
-                      disabled={
-                        isInputDisabled ||
-                        disabledNoUserList.includes(authStatus)
-                      }
+                      disabled={disabledNoUserList.includes(authStatus)}
                       onClick={() => handleRemoveCertificate(certificate)}
                     >
                       Remove

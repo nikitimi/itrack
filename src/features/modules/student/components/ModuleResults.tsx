@@ -17,6 +17,7 @@ import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import useGradeInputControl from '@/hooks/useGradeInputControl';
 import { PromptType } from '@/lib/enums/promptType';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 
 // TODO: Only show if the modules are completed.
 const ModuleResults = () => {
@@ -120,7 +121,7 @@ const RenderTable = (props: {
                     return (
                       <TableRow key={key}>
                         <TableCell className="capitalize">
-                          {key.replace(/_/g, ' ').toLocaleLowerCase()}
+                          {constantNameFormatter(key)}
                         </TableCell>
                         {/* <p>{number}</p> */}
                         <TableCell>{index + 1}</TableCell>
