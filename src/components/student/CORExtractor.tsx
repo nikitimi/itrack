@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   studentTemporarySetFirstname,
   studentTemporarySetLastname,
+  studentTemporarySetMiddleInitial,
   studentTemporarySetNumber,
 } from '@/redux/reducers/studentTemporaryReducer';
 import { EMPTY_STRING } from '@/utils/constants';
@@ -78,6 +79,7 @@ const CORExtractor = () => {
     });
 
     dispatch(studentTemporarySetNumber(data.studentNumber));
+    dispatch(studentTemporarySetMiddleInitial(fullName.middleInitial));
     dispatch(studentTemporarySetFirstname(fullName.firstName));
     dispatch(studentTemporarySetLastname(fullName.lastName));
   }

@@ -10,6 +10,7 @@ type InitialState = {
   studentNumber: string;
   firstName: string;
   lastName: string;
+  middleInitial: string;
 };
 /** `studentNumber`: ***'null'*** if userType is ***'anonymous'***.
  *
@@ -23,6 +24,7 @@ const initialState: InitialState = {
   studentNumber: EMPTY_STRING,
   firstName: EMPTY_STRING,
   lastName: EMPTY_STRING,
+  middleInitial: EMPTY_STRING,
 };
 
 /** This is for managing the state in studentTemporary module of students. */
@@ -48,6 +50,12 @@ const studentInfoSlice = createSlice({
     ) {
       state.firstName = action.payload;
     },
+    studentTemporarySetMiddleInitial(
+      state,
+      action: { payload: InitialState['middleInitial'] }
+    ) {
+      state.middleInitial = action.payload;
+    },
     studentTemporarySetLastname(
       state,
       action: { payload: InitialState['lastName'] }
@@ -58,6 +66,7 @@ const studentInfoSlice = createSlice({
       state.specialization = initialState.specialization;
       state.studentNumber = initialState.studentNumber;
       state.firstName = initialState.firstName;
+      state.middleInitial = initialState.middleInitial;
       state.lastName = initialState.lastName;
     },
   },
@@ -66,6 +75,9 @@ const studentInfoSlice = createSlice({
 // SELECTORS.
 export const studentTemporaryFirstname = (a: RootState['studentTemporary']) =>
   a.firstName;
+export const studentTemporaryMiddleInitial = (
+  a: RootState['studentTemporary']
+) => a.middleInitial;
 export const studentTemporaryLastname = (a: RootState['studentTemporary']) =>
   a.lastName;
 export const studentTemporaryNumber = (a: RootState['studentTemporary']) =>
@@ -79,6 +91,7 @@ export const {
   studentTemporaryResetState,
   studentTemporarySetNumber,
   studentTemporarySetFirstname,
+  studentTemporarySetMiddleInitial,
   studentTemporarySetLastname,
   studentTemporarySetSpecialization,
 } = studentInfoSlice.actions;

@@ -1,7 +1,5 @@
 'use client';
 
-import { type FormEvent } from 'react';
-
 import { useSignUp } from '@clerk/nextjs';
 import {
   authenticationSetStatus,
@@ -12,6 +10,7 @@ import useAppRouter from '@/hooks/useAppRouter';
 import {
   studentTemporaryFirstname,
   studentTemporaryLastname,
+  studentTemporaryMiddleInitial,
   studentTemporaryNumber,
   studentTemporaryResetState,
   studentTemporarySpecialization,
@@ -23,46 +22,54 @@ import {
   CardDescription,
   CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import OTP from '@/components/OTP';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '@/components/ui/input-otp';
+import { useEffect, useRef } from 'react';
+import { EMPTY_STRING } from '@/utils/constants';
 
 const VerifyEmail = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useAppRouter();
+  const otpRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const studentInfoSelector = useAppSelector((s) => s.studentTemporary);
   const _studentInfoNumber = studentTemporaryNumber(studentInfoSelector);
   const firstName = studentTemporaryFirstname(studentInfoSelector);
   const lastName = studentTemporaryLastname(studentInfoSelector);
+  const middleInitial = studentTemporaryMiddleInitial(studentInfoSelector);
   const _studentInfoSpecialization =
     studentTemporarySpecialization(studentInfoSelector);
   const _authenticationStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
 
-  if (window !== undefined && _authenticationStatus !== 'verifying account')
-    return router.back();
+  const OTP_LENGTH = 6;
 
-  async function handleVerificationCode(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const code = formData.get('code') as string;
-
+  async function handleVerificationCode(newValue: string) {
+    if (newValue.length < OTP_LENGTH) return;
     if (!isLoaded) return;
+    if (otpRef.current === null) return;
 
     try {
+      otpRef.current.setAttribute('disabled', 'true');
+
       const result = await signUp.attemptEmailAddressVerification({
-        code,
+        code: newValue,
       });
 
       if (result.createdUserId === null) {
-        throw new Error('Created User ID is null!');
+        throw new Error(result.status?.toString());
       }
 
       const studentData: StudentCreation = {
         role: 'student',
         lastName,
         firstName,
+        middleInitial,
         userId: result.createdUserId,
         studentNumber: _studentInfoNumber.toLocaleString(),
         specialization: _studentInfoSpecialization,
@@ -79,28 +86,52 @@ const VerifyEmail = () => {
         dispatch(studentTemporaryResetState());
         dispatch(authenticationSetStatus('authenticated'));
       });
-    } catch (err) {
-      console.log(err);
-      alert('Error in processing verification code.');
+    } catch (e) {
+      otpRef.current.removeAttribute('disabled');
+      const error = e as Error;
+      alert(
+        error.message === EMPTY_STRING
+          ? 'Error in verifying code'
+          : error.message
+      );
     }
   }
 
+  useEffect(() => {
+    if (_authenticationStatus !== 'verifying account') {
+      return router.back();
+    }
+  }, [_authenticationStatus, router]);
+
   return (
     <div className="flex h-screen items-center justify-center">
-      <Card className="w-3/4 p-4">
+      <Card className="w-3/4 p-4 duration-300 ease-in-out lg:w-1/2">
         <CardDescription>
           <CardTitle>Account Verification</CardTitle>
           <CardDescription>
             We&apos;ve sent verification code to the email you&apos;ve provided.
           </CardDescription>
         </CardDescription>
-        <CardContent>
-          <form onSubmit={handleVerificationCode} className="grid gap-2">
-            <OTP />
-            <Button type="submit" className="w-full">
-              Submit
-            </Button>
-          </form>
+        <CardContent className="flex items-center justify-center">
+          <InputOTP
+            id="otp-code"
+            ref={otpRef}
+            required
+            maxLength={OTP_LENGTH}
+            onChange={handleVerificationCode}
+          >
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+            </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup>
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
         </CardContent>
       </Card>
     </div>

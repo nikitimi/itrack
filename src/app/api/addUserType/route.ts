@@ -5,8 +5,15 @@ import { clerkClient } from '@clerk/nextjs/server';
 import StudentCreation from '@/utils/types/studentCreation';
 
 export async function POST(request: Request) {
-  const { role, specialization, studentNumber, userId, firstName, lastName } =
-    (await request.json()) as StudentCreation;
+  const {
+    role,
+    specialization,
+    studentNumber,
+    userId,
+    firstName,
+    lastName,
+    middleInitial,
+  } = (await request.json()) as StudentCreation;
   const clerk = await clerkClient();
   let response: AddUserTypeResponse = {
     data: '',
@@ -18,6 +25,7 @@ export async function POST(request: Request) {
       role,
       specialization,
       studentNumber,
+      middleInitial,
     },
   });
 

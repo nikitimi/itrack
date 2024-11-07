@@ -5,6 +5,7 @@ export type StudentCreation = {
   role: UserRole;
   firstName: string;
   lastName: string;
+  middleInitial: string;
   userId: string;
   studentNumber: string;
   specialization: Specialization;
