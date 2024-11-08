@@ -4,7 +4,7 @@ import regExp from '@/utils/regex';
 import { Separator } from '@radix-ui/react-separator';
 import React, { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardHeader,
@@ -12,7 +12,7 @@ import {
   CardContent,
   CardFooter,
   CardDescription,
-} from '../ui/card';
+} from '@/components/ui/card';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useAppRouter from '@/hooks/useAppRouter';
 import {
@@ -21,7 +21,7 @@ import {
 } from '@/redux/reducers/authenticationReducer';
 import { useSignIn } from '@clerk/nextjs';
 import handleInputChange from '@/utils/handleInputChange';
-import AppLogo from '../AppLogo';
+import AppLogo from '@/components/AppLogo';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 
 const SigninCard = () => {

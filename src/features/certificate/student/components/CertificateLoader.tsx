@@ -1,5 +1,7 @@
 'use client';
 
+import { type ChangeEvent, useEffect, useState } from 'react';
+
 import Loading from '@/components/Loading';
 import { Button } from '@/components/ui/button';
 import { CardContent } from '@/components/ui/card';
@@ -24,8 +26,7 @@ import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { EMPTY_STRING } from '@/utils/constants';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import mime from '@/utils/mime';
-import { ChangeEvent, useEffect, useState } from 'react';
-import constantNameFormatter from '../../../../utils/constantNameFormatter';
+import constantNameFormatter from '@/utils/constantNameFormatter';
 
 type CertificateFile = {
   /** For referencing the file. */

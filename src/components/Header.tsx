@@ -7,9 +7,9 @@ import {
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
 import AppLogo from '@/components/AppLogo';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import useAppRouter from '@/hooks/useAppRouter';
-import { ProgressTracker } from './student/ProgressTracker';
+import { ProgressTracker } from '@/components/student/ProgressTracker';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import { useAppSelector } from '@/hooks/redux';

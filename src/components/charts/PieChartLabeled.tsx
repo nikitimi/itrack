@@ -7,7 +7,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import ParentChart, { chartDataColor, type ChartProps } from './ParentChart';
+import ParentChart, {
+  chartDataColor,
+  type ChartProps,
+} from '@/components/charts/ParentChart';
 // eslint-disable-next-line boundaries/element-types
 import certificateResult from '@/features/certificate/student/utils/certificateResult';
 import { certificateList } from '@/redux/reducers/certificateReducer';

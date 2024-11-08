@@ -1,11 +1,11 @@
 'server only';
 
 import type { ClerkMiddlewareAuthObject } from '@clerk/nextjs/server';
-
 import type {
   GetStudentNumber,
   GetStudentNumberResponse,
 } from '@/server/lib/schema/apiResponse/getStudentNumber';
+
 import { EMPTY_STRING } from '@/utils/constants';
 
 export default async function setStudentNumber(

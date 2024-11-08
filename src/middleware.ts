@@ -1,11 +1,11 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
-
 import type { AdminRoute } from '@/lib/enums/routes/adminRoutes';
 import type { StudentRoute } from '@/lib/enums/routes/studentRoutes';
+import type { GetStudentNumber } from '@/server/lib/schema/apiResponse/getStudentNumber';
+
+import { clerkMiddleware } from '@clerk/nextjs/server';
 import handleClerkAuthMiddleware from '@/server/utils/middleware/handleClerkAuthMiddleware';
 import setStudentNumber from '@/server/utils/middleware/setStudentNumber';
 import { HEADER_KEY } from '@/utils/constants';
-import { GetStudentNumber } from '@/server/lib/schema/apiResponse/getStudentNumber';
 
 type Routes = AdminRoute | StudentRoute;
 

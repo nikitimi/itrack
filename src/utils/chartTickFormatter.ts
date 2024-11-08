@@ -1,4 +1,4 @@
-import { EMPTY_STRING } from './constants';
+import { EMPTY_STRING } from '@/utils/constants';
 
 export default function chartTickFormatter<T>(value: T) {
   const initials = `${value}`

@@ -1,10 +1,11 @@
 'server only';
 
+import { headers } from 'next/headers';
+
 import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { APIRoutes } from '@/server/lib/enum/apiRoutes';
 import type { APIMethods } from '@/server/lib/enum/apiMethods';
 
-import { headers } from 'next/headers';
 import { HEADER_KEY } from '@/utils/constants';
 
 export default async function fetchHelper<

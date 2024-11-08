@@ -1,5 +1,6 @@
-import type { Children } from "@/utils/types/children";
-import React from "react";
+import React from 'react';
+
+import type { Children } from '@/utils/types/children';
 
 const Main = (props: Children) => {
   return <main>{props.children}</main>;

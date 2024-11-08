@@ -22,7 +22,7 @@ import {
   studentTemporarySetSpecialization,
 } from '@/redux/reducers/studentTemporaryReducer';
 import type StudentCreation from '@/utils/types/studentCreation';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -37,7 +37,7 @@ import handleInputChange, {
   errorClasses,
   validClasses,
 } from '@/utils/handleInputChange';
-import CORExtractor from './CORExtractor';
+import CORExtractor from '@/components/student/CORExtractor';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 
 type InitialState = {

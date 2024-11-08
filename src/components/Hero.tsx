@@ -15,8 +15,8 @@ import {
   CardHeader,
   CardContent,
 } from '@/components/ui/card';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import getStudentType from '@/utils/getStudentType';
 
 type InitialState = 'loading' | 'ready';

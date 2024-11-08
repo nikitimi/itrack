@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth, useClerk, useSignIn } from '@clerk/nextjs';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 
 const AuthenticationHelper = () => {
   const { signOut } = useClerk();

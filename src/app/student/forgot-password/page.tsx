@@ -1,14 +1,8 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useAppDispatch } from '@/hooks/redux';
-import useAppRouter from '@/hooks/useAppRouter';
-import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
-import regExp from '@/utils/regex';
 import { useSignIn } from '@clerk/nextjs';
 import React, { type FormEvent } from 'react';
-import handleInputChange from '@/utils/handleInputChange';
+
 import {
   Card,
   CardContent,
@@ -16,6 +10,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useAppDispatch } from '@/hooks/redux';
+import useAppRouter from '@/hooks/useAppRouter';
+import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
+import regExp from '@/utils/regex';
+import handleInputChange from '@/utils/handleInputChange';
 
 const Page = () => {
   const { isLoaded, signIn } = useSignIn();

@@ -1,5 +1,7 @@
 'use client';
 
+import type { FormEvent } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,6 +14,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import type { InternshipTask } from '@/lib/enums/internshipTask';
@@ -23,8 +26,6 @@ import {
 } from '@/redux/reducers/internshipReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import constantNameFormatter from '@/utils/constantNameFormatter';
-import { SelectValue } from '@radix-ui/react-select';
-import { FormEvent } from 'react';
 
 const InternshipTaskSelector = () => {
   const dispatch = useAppDispatch();

@@ -8,9 +8,13 @@ import studentRoutesEnum, {
   StudentRoute,
 } from '@/lib/enums/routes/studentRoutes';
 import { EMPTY_STRING, ROUTE_DIVIDER } from '@/utils/constants';
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@/components/ui/sidebar';
 import { LayoutDashboardIcon, LifeBuoyIcon, PieChartIcon } from 'lucide-react';
-import { Collapsible, CollapsibleContent } from './ui/collapsible';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 // eslint-disable-next-line boundaries/element-types
 import ModuleNav from '@/features/modules/student/components/ModuleNav';
 import getDynamicClasses from '@/utils/getDynamicClasses';

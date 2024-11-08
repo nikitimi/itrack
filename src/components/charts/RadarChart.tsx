@@ -12,7 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import ParentChart, { ChartProps } from './ParentChart';
+import ParentChart, { ChartProps } from '@/components/charts/ParentChart';
 import useChartDataKeys from '@/hooks/useChartDataKeys';
 import chartTickFormatter from '@/utils/chartTickFormatter';
 

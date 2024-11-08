@@ -3,7 +3,7 @@
 import type { ModuleList } from '@/lib/schema/moduleList';
 
 import { useAppDispatch } from '@/hooks/redux';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
 import {
   Dialog,

@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
+
 import Header from '@/components/Header';
+import Loading from '@/components/Loading';
+
 import InternshipTaskLoader from '@/features/internship/components/InternshipTaskLoader';
 import InternshipTaskSelector from '@/features/internship/components/InternshipTaskSelector';
-import { Suspense } from 'react';
-import Loading from '@/components/Loading';
 import InternshipTaskConfirmation from '@/features/internship/components/InternshipTaskConfirmation';
 import InternshipIsITCompany from '@/features/internship/components/InternshipIsITCompany';
 import InternshipGrade from '@/features/internship/components/internshipGrade';

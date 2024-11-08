@@ -1,5 +1,8 @@
 'server only';
 
+import { headers } from 'next/headers';
+
+import { clerkClient } from '@clerk/nextjs/server';
 // eslint-disable-next-line boundaries/element-types
 import certificateResult from '@/features/certificate/student/utils/certificateResult';
 // eslint-disable-next-line boundaries/element-types
@@ -8,11 +11,9 @@ import gradeResult from '@/features/grade/student/utils/gradeResult';
 import internshipResult from '@/features/internship/utils/internshipResult';
 import { Specialization } from '@/lib/enums/specialization';
 import { UserRole } from '@/lib/enums/userRole';
+import getDatabaseInformations from '@/server/utils/getDatabaseInformations';
 import { HEADER_KEY, EMPTY_STRING } from '@/utils/constants';
 import { ChartData } from '@/utils/types/chartData';
-import { headers } from 'next/headers';
-import getDatabaseInformations from './utils/getDatabaseInformations';
-import { clerkClient } from '@clerk/nextjs/server';
 
 export default async function layoutFetcher() {
   const headerList = headers();

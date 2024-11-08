@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import useAppRouter from '@/hooks/useAppRouter';
 
 export function ProgressTracker() {

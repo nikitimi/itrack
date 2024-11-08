@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 export const validClasses = ['border-green-600', 'text-green-900'];
 export const errorClasses = ['border-red-600', 'text-red-900'];

@@ -4,9 +4,9 @@ import certificateReducer from '@/redux/reducers/certificateReducer';
 import gradeReducer from '@/redux/reducers/gradeReducer';
 import internshipReducer from '@/redux/reducers/internshipReducer';
 import studentInfoReducer from '@/redux/reducers/studentInfoReducer';
-import studentTemporaryReducer from './reducers/studentTemporaryReducer';
-import inputControlReducer from './reducers/inputControlReducer';
-import presentationReducer from './reducers/presentationReducer';
+import studentTemporaryReducer from '@/redux/reducers/studentTemporaryReducer';
+import inputControlReducer from '@/redux/reducers/inputControlReducer';
+import presentationReducer from '@/redux/reducers/presentationReducer';
 
 export type AppStore = typeof store;
 export type RootState = ReturnType<AppStore['getState']>;

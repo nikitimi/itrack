@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import {
   internshipCompanyQuestion,
@@ -7,7 +9,6 @@ import {
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
 import type { InternshipResult } from '@/utils/types/internshipResult';
-import { useState } from 'react';
 import fetchHelper from '@/utils/fetch';
 import { studentInfoNumber } from '@/redux/reducers/studentInfoReducer';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';

@@ -1,8 +1,9 @@
+import type { Specialization } from '@/lib/enums/specialization';
+import type { ChartData } from '@/utils/types/chartData';
+
 import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
 import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';
 import webAndMobileDevelopmentJobEnum from '@/lib/enums/jobs/webAndMobileDevelopment';
-import type { Specialization } from '@/lib/enums/specialization';
-import { ChartData } from './types/chartData';
 
 const getPossibleJobs = (specialization: Specialization) => {
   const possibleJobs: ChartData[] = [];

@@ -1,9 +1,10 @@
 'use client';
 
+import React from 'react';
+
 import { useAppSelector } from '@/hooks/redux';
 import { grades } from '@/redux/reducers/gradeReducer';
-import React from 'react';
-import gradeResult from '../utils/gradeResult';
+import gradeResult from '@/features/grade/student/utils/gradeResult';
 import { studentInfoSpecialization } from '@/redux/reducers/studentInfoReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';

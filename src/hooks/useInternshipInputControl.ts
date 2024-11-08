@@ -1,5 +1,5 @@
 import { internshipModuleInputControl } from '@/redux/reducers/inputControlReducer';
-import { useAppSelector } from './redux';
+import { useAppSelector } from '@/hooks/redux';
 import disabledPromptList from '@/utils/disabledPromptList';
 
 const useInternshipInputControl = () => {

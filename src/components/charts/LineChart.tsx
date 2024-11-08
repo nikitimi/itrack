@@ -23,7 +23,10 @@ import {
   internshipGrade,
   internshipTasks,
 } from '@/redux/reducers/internshipReducer';
-import ParentChart, { chartDataColor, ChartProps } from './ParentChart';
+import ParentChart, {
+  chartDataColor,
+  ChartProps,
+} from '@/components/charts/ParentChart';
 import { internshipModuleInputControl } from '@/redux/reducers/inputControlReducer';
 import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import chartTickFormatter from '@/utils/chartTickFormatter';

@@ -1,13 +1,13 @@
 'server only';
 
 import type { MongoExtra } from '@/lib/schema/mongoExtra';
+import type { Certificate } from '@/lib/enums/certificate';
 import type { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
+import type { APIRoutes } from '@/server/lib/enum/apiRoutes';
 import type GradeInfo from '@/utils/types/gradeInfo';
 import type { InternshipResult } from '@/utils/types/internshipResult';
 
-import { Certificate } from '@/lib/enums/certificate';
 import fetchHelper from '@/server/utils/fetch';
-import { APIRoutes } from '../lib/enum/apiRoutes';
 
 type InternshipData = Omit<InternshipResult, 'status'>;
 type ResponseInArray =

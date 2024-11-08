@@ -1,7 +1,8 @@
+import type { Certificate } from '@/lib/enums/certificate';
+
 import certificates from '@/lib/calculations/certificates';
 import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
-import gradingPoints from '../student/utils/gradingPoints';
-import { Certificate } from '@/lib/enums/certificate';
+import gradingPoints from '@/features/certificate/student/utils/gradingPoints';
 
 type RecordType = Record<string, number>;
 
