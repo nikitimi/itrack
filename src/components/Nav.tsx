@@ -104,11 +104,11 @@ const Nav = () => {
           <Collapsible open className="group/collapsible" key={item.title}>
             <SidebarMenuItem>
               <SidebarMenuButton
-                className={dynamicClasses}
                 asChild
-                disabled={isAuthInitializing}
+                disabled={isModules}
+                className="hover:bg-transparent active:bg-transparent"
               >
-                <a href={item.url} className="flex">
+                <a className="flex">
                   <item.icon />
                   <span className="capitalize">{item.title}</span>
                 </a>
@@ -121,11 +121,11 @@ const Nav = () => {
         ) : (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
-              className={dynamicClasses}
               asChild
+              className={isAuthInitializing ? '' : dynamicClasses}
               disabled={isAuthInitializing}
             >
-              <a href={item.url}>
+              <a href={isAuthInitializing ? '/student' : item.url}>
                 <item.icon />
                 <span className="capitalize">{item.title}</span>
               </a>

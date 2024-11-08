@@ -46,7 +46,7 @@ const InternshipGrade = () => {
           required
           disabled={disabledNoUserList.includes(authStatus)}
         >
-          <SelectTrigger>
+          <SelectTrigger className="capitalize">
             <SelectValue
               placeholder={
                 _internshipGrade === 'initializing' ? 'Grade' : _internshipGrade

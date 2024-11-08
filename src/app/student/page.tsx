@@ -25,6 +25,8 @@ import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { grades } from '@/redux/reducers/gradeReducer';
 import constantNameFormatter from '@/utils/constantNameFormatter';
+import ModuleResults from '@/features/modules/student/components/ModuleResults';
+import { Separator } from '@/components/ui/separator';
 // import BarChartSemester from '@/features/grade/student/components/BarChartSemester';
 
 type InitialState = {
@@ -71,14 +73,16 @@ const Dashboard = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col gap-4 py-12">
+      <div className="flex flex-col gap-4 pt-20">
         <Hero />
-        <div className="grid grid-cols-3">
+        <DashboardSeparator />
+        <h2 className="px-4 font-semibold">Charts:</h2>
+        <div className="grid grid-flow-row gap-4 px-4 sm:grid-flow-col">
           <PieChartLabeled
             title={`${formattedSpecialization} certificate chart`}
             description={grade.description}
           />
-          <section>
+          <section className="relative flex">
             <BarChart
               render={state.grade === 'bar'}
               chartData={gradeChart}
@@ -100,7 +104,7 @@ const Dashboard = () => {
               description={'Career ranking based on accomplishments.'}
               title={grade.title}
             />
-            <div className="lg:1/2 mx-auto h-auto md:w-3/4">
+            <div className="absolute bottom-2 w-full p-2 px-4">
               <Select
                 disabled={
                   disabledNoUserList.includes(authStatus) ||
@@ -113,10 +117,10 @@ const Dashboard = () => {
                   }))
                 }
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Choose a chart to display breakdown for all modules." />
+                <SelectTrigger className="capitalize">
+                  <SelectValue placeholder="Choose a chart" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="capitalize">
                   {(['area', 'bar', 'radar'] as InitialState['grade'][]).map(
                     (v) => (
                       <SelectItem key={v} value={v}>
@@ -135,7 +139,20 @@ const Dashboard = () => {
         </div>
         {/* <BarChartSemester /> */}
       </div>
+      <DashboardSeparator />
+      <div>
+        <h2 className="px-4 font-semibold">Modules Results:</h2>
+        <ModuleResults />
+      </div>
     </>
+  );
+};
+
+const DashboardSeparator = () => {
+  return (
+    <div className="p-4">
+      <Separator />
+    </div>
   );
 };
 

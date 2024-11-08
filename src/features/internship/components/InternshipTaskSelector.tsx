@@ -65,7 +65,7 @@ const InternshipTaskSelector = () => {
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-2">
           <Select name="selectedTask" disabled={condition}>
-            <SelectTrigger>
+            <SelectTrigger className="capitalize">
               <SelectValue placeholder="Internship Tasks" />
             </SelectTrigger>
             <SelectContent>

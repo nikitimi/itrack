@@ -11,13 +11,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import useInternshipInputControl from '@/hooks/useInternshipInputControl';
 import useGradeInputControl from '@/hooks/useGradeInputControl';
 import { PromptType } from '@/lib/enums/promptType';
 import constantNameFormatter from '@/utils/constantNameFormatter';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 // TODO: Only show if the modules are completed.
 const ModuleResults = () => {
@@ -44,15 +56,16 @@ const ModuleResults = () => {
       conditionToRender: conditionList.includes(internshipInputControl),
       objectArray: internship,
     },
-    {
-      title: 'overall result',
-      conditionToRender:
-        conditionList.includes(certificateInputControl) &&
-        conditionList.includes(gradeInputControl) &&
-        conditionList.includes(internshipInputControl),
-      objectArray: Object.entries(jobHolder).splice(0, 3),
-    },
   ];
+
+  const overall = {
+    title: 'overall result',
+    conditionToRender:
+      conditionList.includes(certificateInputControl) &&
+      conditionList.includes(gradeInputControl) &&
+      conditionList.includes(internshipInputControl),
+    objectArray: Object.entries(jobHolder).splice(0, 3),
+  };
   const titles = results.flatMap(({ title }) => title);
 
   useEffect(() => setState(true), []);
@@ -73,11 +86,14 @@ const ModuleResults = () => {
     );
 
   return (
-    <div className="mt-12 flex flex-col gap-2 p-2">
-      {results.map((props) => {
-        return <RenderTable key={props.title} {...props} />;
-      })}
-    </div>
+    <section className="flex flex-col gap-4 p-4">
+      <div className="grid grid-flow-col gap-4">
+        {results.map((props) => {
+          return <RenderTable key={props.title} {...props} />;
+        })}
+      </div>
+      <RenderTable {...overall} />
+    </section>
   );
 };
 
@@ -93,8 +109,10 @@ const RenderTable = (props: {
   };
 
   return (
-    <Card className="mt-12 p-2">
-      <CardTitle className="capitalize">{`${props.title}:`}</CardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle className="capitalize">{`${props.title}:`}</CardTitle>
+      </CardHeader>
       <CardContent>
         <Table>
           {props.isLoading ? (
@@ -137,6 +155,18 @@ const RenderTable = (props: {
           )}
         </Table>
       </CardContent>
+      <CardFooter>
+        <Tooltip>
+          <TooltipTrigger className="w-full">
+            <Button disabled={true} className="w-full">
+              Show Breakdown
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Not yet implemented.</p>
+          </TooltipContent>
+        </Tooltip>
+      </CardFooter>
     </Card>
   );
 };

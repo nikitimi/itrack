@@ -89,7 +89,7 @@ const CORExtractor = () => {
       <CardHeader>
         <CardTitle>COR Extractor</CardTitle>
         <CardDescription>
-          Please upload your COR for verification.
+          Upload a PDF file of your COR for verification.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -65,7 +65,7 @@ const CertificateSelector = () => {
             disabled={condition}
             name="certificate"
           >
-            <SelectTrigger>
+            <SelectTrigger className="capitalize">
               <SelectValue placeholder="Certificate" />
             </SelectTrigger>
             <SelectContent>
@@ -86,7 +86,7 @@ const CertificateSelector = () => {
           </Select>
         ) : (
           <Select disabled={true} name="certificate">
-            <SelectTrigger>
+            <SelectTrigger className="capitalize">
               <SelectValue placeholder="Certificate" />
             </SelectTrigger>
             <SelectContent>

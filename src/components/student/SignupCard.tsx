@@ -102,6 +102,10 @@ const SignupCard = () => {
         throw new Error("Password doesn't match!");
       }
 
+      // if (password.length < PASSWORD_CHARACTERS) {
+      //   throw new Error(`Password must be ${PASSWORD_CHARACTERS} characters.`);
+      // }
+
       stylePasswordInputs();
       const response = await signUp.create({
         emailAddress,
@@ -190,7 +194,7 @@ const SignupCard = () => {
               required
               disabled={disabledWithUserList.includes(authStatus)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="capitalize">
                 <SelectValue placeholder="Specialization" />
               </SelectTrigger>
               <SelectContent>

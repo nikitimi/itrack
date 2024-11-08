@@ -7,7 +7,7 @@ import {
   studentInfoLastname,
   studentInfoSpecialization,
 } from '@/redux/reducers/studentInfoReducer';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardDescription,
@@ -16,8 +16,9 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import getStudentType from '@/utils/getStudentType';
+import { SidebarMenuSkeleton } from './ui/sidebar';
+import { Input } from './ui/input';
 
 type InitialState = 'loading' | 'ready';
 const initialState = 'loading';
@@ -28,7 +29,6 @@ const Hero = () => {
   }
   const [status, setStatus] = useState<InitialState>(initialState);
   const isReady = status === 'ready';
-  const loadingText = 'loading...';
 
   const studentInfoSelector = useAppSelector((s) => s.studentInfo);
   const _studentNumber = studentInfoNumber(studentInfoSelector);
@@ -43,7 +43,7 @@ const Hero = () => {
 
   if (isReady) {
     return (
-      <Card className="mx-6 mt-12 lg:mx-16">
+      <Card className="mx-4">
         <CardHeader>
           <CardTitle>Student Information</CardTitle>
           <CardDescription className="capitalize">{`Welcome ${fullName}!`}</CardDescription>
@@ -64,27 +64,35 @@ const Hero = () => {
   }
   // TODO: Add loading here.
   return (
-    <Card>
+    <Card className="mx-4">
       <CardHeader>
         <CardTitle>Student Information</CardTitle>
         <CardDescription>
-          All information you provided resides here...
+          <SidebarMenuSkeleton />
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <LabelHelper label="Specialization:" value={loadingText} />
-        <LabelHelper label="Student Type:" value={loadingText} />
-        <LabelHelper label="Student Number:" value={loadingText} />
+        <LabelHelper label="Specialization:" value={<SidebarMenuSkeleton />} />
+        <LabelHelper label="Student Type:" value={<SidebarMenuSkeleton />} />
+        <LabelHelper label="Student Number:" value={<SidebarMenuSkeleton />} />
       </CardContent>
     </Card>
   );
 };
 
-const LabelHelper = (props: { label: string; value: string }) => {
+const LabelHelper = (props: { label: string; value: React.ReactNode }) => {
   return (
     <section className="grid grid-cols-2 items-center">
       <Label>{props.label}</Label>
-      <Input value={props.value} className="border-none capitalize" disabled />
+      {typeof props.value === 'string' ? (
+        <Input
+          value={props.value}
+          className="border-none capitalize shadow-none"
+          disabled
+        />
+      ) : (
+        props.value
+      )}
     </section>
   );
 };

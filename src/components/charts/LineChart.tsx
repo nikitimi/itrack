@@ -70,7 +70,12 @@ export function LineChart(
     useAppSelector((s) => s.inputControl)
   );
 
-  if (!disabledWriteInDB.includes(inputControl)) return <></>;
+  if (!disabledWriteInDB.includes(inputControl))
+    return (
+      <ParentChart {...props}>
+        <></>
+      </ParentChart>
+    );
 
   const tasks = internshipTasks(internshipSelector);
   const isITCompany = internshipCompanyQuestion(internshipSelector);

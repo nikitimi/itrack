@@ -36,9 +36,7 @@ export const chartDataColor = [
 
 const ParentChart = ({ children, ...rest }: ParentChartProps) => {
   return (
-    <Card
-      className={`${rest.render === false ? 'hidden' : ''} mx-auto h-[480px]`}
-    >
+    <Card className={`${rest.render === false ? 'hidden' : ''} mx-auto`}>
       <CardHeader>
         <CardTitle className="flex gap-2 capitalize">
           {rest.title}
