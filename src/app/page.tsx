@@ -1,29 +1,28 @@
-'use client';
+
 
 import Header, { HeaderNoUser } from '@/components/Header';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
-import { useAppDispatch } from '@/hooks/redux';
-import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
-import { useAuth } from '@clerk/nextjs';
-import Image from 'next/image';
-import { useEffect } from 'react';
+import { UploadButton } from '@/server/utils/uploadthing';
+// import { useAuth } from '@clerk/nextjs';
 
 const About = () => {
   const width = 1920;
   const height = 1080;
-  const { userId } = useAuth();
-  const dispatch = useAppDispatch();
-  const isThereNoUser = typeof userId !== 'string';
 
-  useEffect(() => {
-    dispatch(
-      authenticationSetStatus(isThereNoUser ? 'no user' : 'authenticated')
-    );
-  }, [userId, dispatch, isThereNoUser]);
 
   return (
     <>
-      <DynamicHeader />
+    <UploadButton endpoint="imageUploader"
+        onClientUploadComplete={(res) => {
+          // Do something with the response
+          console.log("Files: ", res);
+          alert("Upload Completed");
+        }}
+        onUploadError={(error: Error) => {
+          // Do something with the error.
+          alert(`ERROR! ${error.message}`);
+        }} />
+      {/* <DynamicHeader />
       <section className="w-3/4 pl-24 pt-32">
         <h1 className="w-full font-geist-sans text-lg font-black duration-200 ease-in-out sm:text-xl md:text-3xl">
           Check your career trajectory
@@ -47,7 +46,7 @@ const About = () => {
           height={height}
           alt=""
         />
-      </div>
+      </div> */}
     </>
   );
 };
