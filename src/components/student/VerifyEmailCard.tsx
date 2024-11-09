@@ -28,9 +28,9 @@ import {
   studentTemporaryResetState,
   studentTemporarySpecialization,
 } from '@/redux/reducers/studentTemporaryReducer';
-import type StudentCreation from '@/utils/types/studentCreation';
 import { useEffect, useRef } from 'react';
 import { EMPTY_STRING } from '@/utils/constants';
+import type { StudentInfo } from '@/lib/schema/studentInfo';
 
 const VerifyEmailCard = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -65,8 +65,7 @@ const VerifyEmailCard = () => {
         throw new Error(result.status?.toString());
       }
 
-      const studentData: StudentCreation = {
-        role: 'student',
+      const studentData: StudentInfo = {
         lastName,
         firstName,
         middleInitial,

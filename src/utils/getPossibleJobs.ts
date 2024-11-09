@@ -1,5 +1,5 @@
 import type { Specialization } from '@/lib/enums/specialization';
-import type { ChartData } from '@/utils/types/chartData';
+import type { ChartData } from '@/lib/schema/chartData';
 
 import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
 import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';

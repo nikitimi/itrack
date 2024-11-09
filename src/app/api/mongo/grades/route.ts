@@ -1,12 +1,12 @@
-import type GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
+import type { MongoExtra } from '@/lib/schema/mongoExtra';
+import type { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 
 import { NextRequest, NextResponse } from 'next/server';
+import url from 'url';
 
 import { collection } from '@/server/utils/mongodb';
 import { WRONG_NUMBER } from '@/utils/constants';
-import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
-import url from 'url';
-import { MongoExtra } from '@/lib/schema/mongoExtra';
 
 const gradeCollection = collection('Grades');
 

@@ -1,7 +1,7 @@
 import type { Semester } from '@/lib/enums/semester';
 import type { Specialization } from '@/lib/enums/specialization';
 import type { SubjectCodesFor2018CurriculumEnum } from '@/lib/enums/subjectCodesFor2018Curriculum';
-import type { SubjectDetails } from '@/utils/types/gradeInfo';
+import type { SubjectDetails } from '@/lib/schema/subjectDetails';
 
 type SubjectsHelperProps = {
   semester: Semester;

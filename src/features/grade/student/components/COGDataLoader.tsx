@@ -1,6 +1,6 @@
 'use client';
 
-import type GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
 
 import React, { useEffect, useState } from 'react';
 

@@ -21,7 +21,6 @@ import {
   studentTemporaryNumber,
   studentTemporarySetSpecialization,
 } from '@/redux/reducers/studentTemporaryReducer';
-import type StudentCreation from '@/utils/types/studentCreation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -39,9 +38,10 @@ import handleInputChange, {
 } from '@/utils/handleInputChange';
 import CORExtractor from '@/components/student/CORExtractor';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
+import { StudentInfo } from '@/lib/schema/studentInfo';
 
 type InitialState = {
-  studentNumbers: StudentCreation['studentNumber'][];
+  studentNumbers: StudentInfo['studentNumber'][];
 };
 
 /** Styling the password inputs inside the Sign Up page. */

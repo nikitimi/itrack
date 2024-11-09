@@ -1,28 +1,14 @@
-
+'use client';
 
 import Header, { HeaderNoUser } from '@/components/Header';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
-import { UploadButton } from '@/server/utils/uploadthing';
-// import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
+import Image from 'next/image';
 
 const About = () => {
-  const width = 1920;
-  const height = 1080;
-
-
   return (
     <>
-    <UploadButton endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          // Do something with the response
-          console.log("Files: ", res);
-          alert("Upload Completed");
-        }}
-        onUploadError={(error: Error) => {
-          // Do something with the error.
-          alert(`ERROR! ${error.message}`);
-        }} />
-      {/* <DynamicHeader />
+      <DynamicHeader />
       <section className="w-3/4 pl-24 pt-32">
         <h1 className="w-full font-geist-sans text-lg font-black duration-200 ease-in-out sm:text-xl md:text-3xl">
           Check your career trajectory
@@ -42,11 +28,11 @@ const About = () => {
           priority
           src="/about.png"
           className="h-auto w-[1080px]"
-          width={width}
-          height={height}
+          width={1920}
+          height={1080}
           alt=""
         />
-      </div> */}
+      </div>
     </>
   );
 };

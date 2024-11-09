@@ -6,7 +6,7 @@ import type { Specialization } from '@/lib/enums/specialization';
 import type { Certificate } from '@/lib/enums/certificate';
 import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { Children } from '@/utils/types/children';
-import type GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
 
 import { useCallback, useEffect } from 'react';
 import { Provider } from 'react-redux';
@@ -33,7 +33,7 @@ import {
   internshipGradeUpdate,
   internshipTaskAdd,
 } from '@/redux/reducers/internshipReducer';
-import { ChartData } from '@/utils/types/chartData';
+import { ChartData } from '@/lib/schema/chartData';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import { useAuth } from '@clerk/nextjs';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';

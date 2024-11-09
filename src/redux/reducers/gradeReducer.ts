@@ -2,7 +2,7 @@ import type { RootState } from '@/redux/store';
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
 
 type InitialState = {
   grades: GradeInfo[];

@@ -4,7 +4,7 @@ import type { RootState } from '@/redux/store';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { EMPTY_STRING } from '@/utils/constants';
-import { ChartData } from '@/utils/types/chartData';
+import { ChartData } from '@/lib/schema/chartData';
 
 type StudentInfo = {
   specialization: Specialization;

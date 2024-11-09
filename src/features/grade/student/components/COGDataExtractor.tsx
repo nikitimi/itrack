@@ -1,6 +1,6 @@
 'use client';
 
-import type GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
 
 import * as _subjects from '@/lib/calculations/grades';
 import gradeLevel from '@/lib/enums/gradeLevel';
@@ -62,14 +62,11 @@ const COGDataExtractor = () => {
 
     try {
       const formdata = new FormData(event.currentTarget);
-      const response = await fetchHelper(
-        '/api/extractPDFData/COG',
-        'POST',
-        {
-          studentNumber: undefined,
-        },
-        formdata
-      );
+      const response = await fetchHelper({
+        route: '/api/extractPDFData/COG',
+        method: 'POST',
+        data: formdata,
+      });
 
       if (!response.ok) {
         throw new Error('File upload failed');
@@ -151,11 +148,11 @@ const COGDataExtractor = () => {
 
               console.log('removing year level index: ', yearLevelIndex);
 
-              const response = await fetchHelper(
-                '/api/mongo/grades',
-                'POST',
-                rest
-              );
+              const response = await fetchHelper({
+                route: '/api/mongo/grades',
+                method: 'POST',
+                data: rest,
+              });
               console.log(response);
               const result = (await response.json()) as BaseAPIResponse<
                 string[]

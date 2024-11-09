@@ -3,11 +3,10 @@
 import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { Certificate } from '@/lib/enums/certificate';
 import type { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
-import type { APIRoutes } from '@/server/lib/enum/apiRoutes';
-import type GradeInfo from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
 import type { InternshipResult } from '@/utils/types/internshipResult';
 
-import fetchHelper from '@/server/utils/fetch';
+import fetchHelper from '@/utils/fetch';
 
 type InternshipData = Omit<InternshipResult, 'status'>;
 type ResponseInArray =
@@ -25,15 +24,19 @@ async function getDatabaseInformations(studentNumber: string) {
   let internship = undefined;
 
   try {
-    const apiRoutes: APIRoutes[] = [
+    const apiRoutes = [
       '/api/mongo/grades',
       '/api/mongo/certificate',
       '/api/mongo/internship',
     ] as const;
 
-    for (const api of apiRoutes) {
-      const response = await fetchHelper(api, 'GET', {
-        studentNumber,
+    for (const route of apiRoutes) {
+      const response = await fetchHelper({
+        route,
+        method: 'GET',
+        params: {
+          studentNumber,
+        },
       });
       const { data, errorMessage } =
         (await response.json()) as BaseAPIResponse<ResponseInArray>;
@@ -41,20 +44,20 @@ async function getDatabaseInformations(studentNumber: string) {
       if (errorMessage.length > 0) throw new Error(errorMessage[0]);
 
       switch (true) {
-        case api.includes('certificate'):
-          console.log({ route: api });
+        case route.includes('certificate'):
+          console.log({ route });
           certificate = Object.entries(
             (data as GetDatabaseInformation['grades'])[0]
           )
             .filter(([key]) => !isNaN(parseInt(key, 10)))
             .map(([, v]) => v as Certificate);
           break;
-        case api.includes('grades'):
-          console.log({ route: api });
+        case route.includes('grades'):
+          console.log({ route });
           grades = data as GetDatabaseInformation['grades'];
           break;
-        case api.includes('internship'):
-          console.log({ route: api });
+        case route.includes('internship'):
+          console.log({ route });
           internship = data as GetDatabaseInformation['internship'];
           break;
       }

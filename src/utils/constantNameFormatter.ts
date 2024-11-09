@@ -1,3 +1,5 @@
+import { EMPTY_STRING } from './constants';
+
 const lowerCasedAbbre = [
   'ui',
   'ux',
@@ -10,8 +12,10 @@ const lowerCasedAbbre = [
   'sla',
 ];
 /** Constant name referes to Screaming snakecase e.g. HELLO_WORLD. */
-export default function constantNameFormatter(constantName: string) {
-  let textHolder = constantName.toLocaleLowerCase().replace(/_/g, ' ');
+export default function constantNameFormatter(constantName: string | null) {
+  let textHolder = (constantName ?? EMPTY_STRING)
+    .toLocaleLowerCase()
+    .replace(/_/g, ' ');
   lowerCasedAbbre.forEach(
     (abbre) =>
       (textHolder = textHolder.replace(

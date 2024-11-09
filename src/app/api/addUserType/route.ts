@@ -2,18 +2,17 @@ import type { AddUserTypeResponse } from '@/server/lib/schema/apiResponse/addUse
 
 import { NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
-import StudentCreation from '@/utils/types/studentCreation';
+import type { StudentInfo } from '@/lib/schema/studentInfo';
 
 export async function POST(request: Request) {
   const {
-    role,
     specialization,
     studentNumber,
     userId,
     firstName,
     lastName,
     middleInitial,
-  } = (await request.json()) as StudentCreation;
+  } = (await request.json()) as StudentInfo;
   const clerk = await clerkClient();
   let response: AddUserTypeResponse = {
     data: '',
@@ -22,7 +21,6 @@ export async function POST(request: Request) {
 
   const user = await clerk.users.updateUserMetadata(userId, {
     publicMetadata: {
-      role,
       specialization,
       studentNumber,
       middleInitial,
@@ -39,12 +37,12 @@ export async function POST(request: Request) {
     );
 
   const publicMetadata = user.publicMetadata as Record<
-    'role',
+    'studentNumber',
     string | undefined
   >;
-  const roleMetadata = publicMetadata['role'];
+  const isStudent = publicMetadata['studentNumber'];
 
-  if (roleMetadata === undefined) {
+  if (isStudent === undefined) {
     response = {
       ...response,
       errorMessage: ['Role is not set in the public metadata of the user.'],

@@ -1,11 +1,9 @@
 import type { AdminRoute } from '@/lib/enums/routes/adminRoutes';
 import type { StudentRoute } from '@/lib/enums/routes/studentRoutes';
-import type { GetStudentNumber } from '@/server/lib/schema/apiResponse/getStudentNumber';
 
 import { clerkMiddleware } from '@clerk/nextjs/server';
-import handleClerkAuthMiddleware from '@/server/utils/middleware/handleClerkAuthMiddleware';
-import setStudentNumber from '@/server/utils/middleware/setStudentNumber';
-import { HEADER_KEY } from '@/utils/constants';
+import { EMPTY_STRING, HEADER_KEY } from '@/utils/constants';
+import { NextResponse } from 'next/server';
 
 type Routes = AdminRoute | StudentRoute;
 
@@ -14,33 +12,46 @@ export default clerkMiddleware(async (auth, request) => {
   const url = new URL(request.url);
   const origin = url.origin;
   const pathname = url.pathname as Routes;
+  const pathPrefix = pathname.split('/').filter((p) => p !== EMPTY_STRING)[0];
 
-  if (session.sessionId === null) {
-    return handleClerkAuthMiddleware(pathname, request);
+  if (pathPrefix === '/') {
+    return NextResponse.next({ request });
   }
 
-  const studentNumberResult = await setStudentNumber(session, origin);
+  if (session.userId === null) {
+    return NextResponse.redirect(new URL(`/${pathPrefix}/signin`, origin));
+  }
 
-  if (typeof studentNumberResult === 'string')
-    return console.log(
-      'Student number fetched is a string, cannot set in headers.'
-    );
+  // const studentNumberResult = await setStudentNumber(session);
 
-  const { role, specialization, studentNumber, firstName, lastName } =
-    studentNumberResult as GetStudentNumber;
+  // console.log(studentNumberResult);
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(HEADER_KEY.origin, origin);
-  requestHeaders.set(HEADER_KEY.pathname, pathname);
-  requestHeaders.set(HEADER_KEY.role, role);
-  requestHeaders.set(HEADER_KEY.studentNumber, studentNumber);
-  requestHeaders.set(HEADER_KEY.specialization, specialization);
-  requestHeaders.set(HEADER_KEY.firstName, firstName);
-  requestHeaders.set(HEADER_KEY.lastName, lastName);
   requestHeaders.set(HEADER_KEY.uid, session.userId);
-  requestHeaders.set(HEADER_KEY.url, request.url);
 
-  return handleClerkAuthMiddleware(pathname, request, requestHeaders);
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+
+  // if (typeof studentNumberResult === 'string')
+  //   return console.log(
+  //     'Student number fetched is a string, cannot set in headers.'
+  //   );
+
+  // const { role, specialization, studentNumber, firstName, lastName } =
+  //   studentNumberResult as GetStudentNumber;
+
+  // requestHeaders.set(HEADER_KEY.origin, origin);
+  // requestHeaders.set(HEADER_KEY.pathname, pathname);
+  // requestHeaders.set(HEADER_KEY.role, role);
+  // requestHeaders.set(HEADER_KEY.studentNumber, studentNumber);
+  // requestHeaders.set(HEADER_KEY.specialization, specialization);
+  // requestHeaders.set(HEADER_KEY.firstName, firstName);
+  // requestHeaders.set(HEADER_KEY.lastName, lastName);
+  // requestHeaders.set(HEADER_KEY.uid, session.userId);
+  // requestHeaders.set(HEADER_KEY.url, request.url);
+
+  // return handleClerkAuthMiddleware(pathname, request, requestHeaders);
 });
 
 export const config = {

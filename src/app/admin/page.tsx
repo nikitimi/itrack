@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import GradeInfo from '@/utils/types/gradeInfo';
-import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import {
   Card,
   CardContent,
@@ -18,14 +16,8 @@ import {
   CollapsibleContent,
 } from '@/components/ui/collapsible';
 import specializationEnum, { Specialization } from '@/lib/enums/specialization';
-import { useAppDispatch, useAppSelector } from '@/hooks/redux';
-import {
-  gradeResetState,
-  grades,
-  gradesAdd,
-} from '@/redux/reducers/gradeReducer';
-import gradeResult from '@/features/grade/student/utils/gradeResult';
-import BarChart from '@/components/charts/BarChart';
+import { useAppDispatch } from '@/hooks/redux';
+import { gradeResetState, gradesAdd } from '@/redux/reducers/gradeReducer';
 import {
   internshipCompanyQuestionUpdate,
   internshipGradeUpdate,
@@ -35,14 +27,14 @@ import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer'
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
 import { UserRole } from '@/lib/enums/userRole';
-import { InternshipResult } from '@/utils/types/internshipResult';
+import { InitializeApp } from '@/lib/schema/initializeApp';
 
 type InitialState = {
-  grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
+  grades: Record<string, InitializeApp['grades']>[];
   studentData: StudentInformation[];
   specializationSelected: Specialization | null;
   studentNumber: string | null;
-  internshipData: Record<string, (InternshipResult & MongoExtra)[]>[];
+  internshipData: Record<string, Required<InitializeApp['internship']>[]>[];
 };
 
 type StudentInformation = {
@@ -64,7 +56,7 @@ const initialState: InitialState = {
 const Admin = () => {
   const [state, setState] = useState(initialState);
   const cardRef = useRef<HTMLDivElement>(null);
-  const _grades = grades(useAppSelector((s) => s.grade));
+  // const _grades = grades(useAppSelector((s) => s.grade));
   const dispatch = useAppDispatch();
 
   const studentDataGroupedBySpecialization = specializationEnum.options.map(
@@ -115,13 +107,16 @@ const Admin = () => {
           Object.keys(object).includes(state.studentNumber as string)
         )
         .map((object) => Object.entries(object).map(([, v]) => v))[0];
-      filteredInternshipData?.forEach((internshipInfo) =>
-        internshipInfo.forEach(({ grade, isITCompany, tasks }) => {
+      filteredInternshipData?.forEach((internshipInfo) => {
+        internshipInfo.forEach((props) => {
+          if (props === undefined) return;
+
+          const { grade, isITCompany, tasks } = props;
           dispatch(internshipGradeUpdate(grade));
           dispatch(internshipCompanyQuestionUpdate(isITCompany));
           tasks.forEach((task) => dispatch(internshipTaskAdd(task)));
-        })
-      );
+        });
+      });
       dispatch(
         inputControlSetPromptType({
           key: 'internshipModule',
@@ -225,7 +220,7 @@ const Admin = () => {
                           >{`${firstName} ${lastName}`}</Button>
                         </CollapsibleTrigger>
                         <CollapsibleContent className="bg-green-200">
-                          <DisplayStudentGrades
+                          {/* <DisplayStudentGrades
                             gradeResult={
                               gradeResult({
                                 grades: _grades,
@@ -238,7 +233,7 @@ const Admin = () => {
                                   studentNumberInner === studentNumber
                               )
                             )}
-                          />
+                          /> */}
                         </CollapsibleContent>
                       </Collapsible>
                     ))}
@@ -253,79 +248,79 @@ const Admin = () => {
   );
 };
 
-const DisplayStudentGrades = (props: {
-  data: [string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]][][];
-  gradeResult: [string, number][];
-}) => {
-  console.log(props);
-  return (
-    <div className="fixed inset-x-0 bottom-0">
-      <div className="fixed inset-x-96 top-36 grid grid-flow-col">
-        <BarChart
-          chartConfig={{
-            career: {
-              label: 'Career',
-              color: 'hsl(var(--chart-1))',
-            },
-            grade: {
-              label: 'Grade',
-              color: 'hsl(var(--chart-2))',
-            },
-          }}
-          chartData={props.gradeResult.map(([career, grade]) => ({
-            career,
-            grade: Math.floor(grade).toFixed(2),
-          }))}
-          title={'Careers'}
-          description={'Showing careers based on grades.'}
-          footerDescription={<p>Career Chart</p>}
-        />
-        {/* <LineChart
-          description="Showing careers based on internship"
-          title="Internship"
-          footerDescription={<p>Internship Chart</p>}
-        /> */}
-      </div>
-      {props.data.map((array) =>
-        array.map(([studentNumber, record]) => (
-          <Collapsible key={studentNumber} className="sticky top-0">
-            <CollapsibleTrigger asChild>
-              <Button
-                className="w-full rounded-none bg-slate-100"
-                variant="ghost"
-              >
-                {`Student Number: ${studentNumber}`}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div>
-                {record.map(({ _id, subjects, semester, yearLevel }) => (
-                  <Collapsible key={_id}>
-                    <CollapsibleTrigger asChild>
-                      <Button className="w-full rounded-none">
-                        {`${yearLevel} - ${semester}`.replace(/_/g, ' ')}
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      {subjects.map(({ code, grade }) => (
-                        <div
-                          key={code}
-                          className="flex items-center justify-between gap-2 bg-white"
-                        >
-                          <p>{code.replace(/_/g, ' ')}</p>
-                          <p>{grade}</p>
-                        </div>
-                      ))}
-                    </CollapsibleContent>
-                  </Collapsible>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        ))
-      )}
-    </div>
-  );
-};
+// const DisplayStudentGrades = (props: {
+//   data: [string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]][][];
+//   gradeResult: [string, number][];
+// }) => {
+//   console.log(props);
+//   return (
+//     <div className="fixed inset-x-0 bottom-0">
+//       <div className="fixed inset-x-96 top-36 grid grid-flow-col">
+//         <BarChart
+//           chartConfig={{
+//             career: {
+//               label: 'Career',
+//               color: 'hsl(var(--chart-1))',
+//             },
+//             grade: {
+//               label: 'Grade',
+//               color: 'hsl(var(--chart-2))',
+//             },
+//           }}
+//           chartData={props.gradeResult.map(([career, grade]) => ({
+//             career,
+//             grade: Math.floor(grade).toFixed(2),
+//           }))}
+//           title={'Careers'}
+//           description={'Showing careers based on grades.'}
+//           footerDescription={<p>Career Chart</p>}
+//         />
+//         {/* <LineChart
+//           description="Showing careers based on internship"
+//           title="Internship"
+//           footerDescription={<p>Internship Chart</p>}
+//         /> */}
+//       </div>
+//       {props.data.map((array) =>
+//         array.map(([studentNumber, record]) => (
+//           <Collapsible key={studentNumber} className="sticky top-0">
+//             <CollapsibleTrigger asChild>
+//               <Button
+//                 className="w-full rounded-none bg-slate-100"
+//                 variant="ghost"
+//               >
+//                 {`Student Number: ${studentNumber}`}
+//               </Button>
+//             </CollapsibleTrigger>
+//             <CollapsibleContent>
+//               <div>
+//                 {record.map(({ _id, subjects, semester, yearLevel }) => (
+//                   <Collapsible key={_id}>
+//                     <CollapsibleTrigger asChild>
+//                       <Button className="w-full rounded-none">
+//                         {`${yearLevel} - ${semester}`.replace(/_/g, ' ')}
+//                       </Button>
+//                     </CollapsibleTrigger>
+//                     <CollapsibleContent>
+//                       {subjects.map(({ code, grade }) => (
+//                         <div
+//                           key={code}
+//                           className="flex items-center justify-between gap-2 bg-white"
+//                         >
+//                           <p>{code.replace(/_/g, ' ')}</p>
+//                           <p>{grade}</p>
+//                         </div>
+//                       ))}
+//                     </CollapsibleContent>
+//                   </Collapsible>
+//                 ))}
+//               </div>
+//             </CollapsibleContent>
+//           </Collapsible>
+//         ))
+//       )}
+//     </div>
+//   );
+// };
 
 export default Admin;

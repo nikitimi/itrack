@@ -6,10 +6,12 @@ import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import url from 'url';
 
 import { collection } from '@/server/utils/mongodb';
-import { EMPTY_STRING, WRONG_NUMBER } from '@/utils/constants';
+import { EMPTY_STRING, HEADER_KEY, WRONG_NUMBER } from '@/utils/constants';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
+import { clerkClient } from '@clerk/nextjs/server';
 
 const certificateCollection = collection('Certificates');
+const clerk = await clerkClient();
 
 export async function POST(request: NextRequest) {
   const response: BaseAPIResponse<string> = {
@@ -49,9 +51,16 @@ export async function GET(request: NextRequest) {
     errorMessage: [],
   };
   try {
+    const uid = request.headers.get(HEADER_KEY.uid) as string | null;
+    if (uid === null) throw new Error('Unauthorized.');
+    const user = await clerk.users.getUser(uid);
+    const isNotUser = user.primaryEmailAddress === null;
+    if (isNotUser) throw new Error("User ID doesn't exists.");
+
     const studentNumber = url.parse(request.url, true).query
       .studentNumber as string;
-    if (studentNumber === undefined) {
+
+    if (studentNumber !== user.publicMetadata.studentNumber) {
       throw new Error('No student number given.');
     }
 

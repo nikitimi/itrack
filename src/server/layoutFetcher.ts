@@ -10,25 +10,23 @@ import gradeResult from '@/features/grade/student/utils/gradeResult';
 // eslint-disable-next-line boundaries/element-types
 import internshipResult from '@/features/internship/utils/internshipResult';
 import { Specialization } from '@/lib/enums/specialization';
-import { UserRole } from '@/lib/enums/userRole';
 import getDatabaseInformations from '@/server/utils/getDatabaseInformations';
 import { HEADER_KEY, EMPTY_STRING } from '@/utils/constants';
-import { ChartData } from '@/utils/types/chartData';
+import { ChartData } from '@/lib/schema/chartData';
+import { InitializeApp } from '@/lib/schema/initializeApp';
 
-export default async function layoutFetcher() {
+export default async function layoutFetcher(): Promise<InitializeApp> {
   const headerList = headers();
   const client = await clerkClient();
+  const userId = headerList.get(HEADER_KEY.uid) as string;
+  const { firstName, lastName } = await client.users.getUser(userId);
 
   // TODO: Move this out to a separate global client component handler to set correct user type.
   const studentNumber =
     headerList.get(HEADER_KEY.studentNumber) ?? EMPTY_STRING;
-  const userId = headerList.get(HEADER_KEY.uid) as string;
-  const role = (headerList.get(HEADER_KEY.role) as UserRole) || 'anonymous';
   const specialization = headerList.get(
     HEADER_KEY.specialization
   ) as Specialization;
-
-  const { firstName, lastName } = await client.users.getUser(userId);
 
   const result = await getDatabaseInformations(studentNumber);
   let internshipHolder: Record<string, number>[] = [];
@@ -90,9 +88,8 @@ export default async function layoutFetcher() {
   calculateRecord(foo.internship, 'internship');
 
   return {
-    role,
-    firstName,
-    lastName,
+    firstName: firstName ?? EMPTY_STRING,
+    lastName: lastName ?? EMPTY_STRING,
     specialization,
     studentNumber,
     chartData,

@@ -69,14 +69,14 @@ const CertificateConfirmation = () => {
     }
 
     // Posting to database.
-    const postingCertificate = await fetchHelper(
-      '/api/mongo/certificate',
-      'POST',
-      {
+    const postingCertificate = await fetchHelper({
+      route: '/api/mongo/certificate',
+      method: 'POST',
+      data: {
         ...result,
         studentNumber,
-      }
-    );
+      },
+    });
 
     const responseBody = await postingCertificate.json();
     if (!postingCertificate.ok) {

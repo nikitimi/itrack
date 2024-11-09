@@ -66,8 +66,12 @@ const InternshipTaskConfirmation = () => {
         return console.log(json.data);
       }
       // Check if already submitted  document.
-      const getInternship = await fetchHelper('/api/mongo/internship', 'GET', {
-        studentNumber,
+      const getInternship = await fetchHelper({
+        route: '/api/mongo/internship',
+        method: 'GET',
+        params: {
+          studentNumber,
+        },
       });
       const { errorMessage } = (await getInternship.json()) as BaseAPIResponse<
         Omit<InternshipTask, 'status'>
@@ -98,9 +102,13 @@ const InternshipTaskConfirmation = () => {
         grade: _internshipGrade,
       };
 
-      const response = await fetchHelper('/api/mongo/internship', 'POST', {
-        ...result,
-        studentNumber,
+      const response = await fetchHelper({
+        route: '/api/mongo/internship',
+        method: 'POST',
+        data: {
+          ...result,
+          studentNumber,
+        },
       });
       const json = (await response.json()) as BaseAPIResponse<string>;
 

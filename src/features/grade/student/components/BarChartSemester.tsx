@@ -30,8 +30,8 @@ const BarChartSemester = () => {
   const result = gradeLevelEnum.options
     .map((grade) => _grades.filter((s) => s.yearLevel === grade))
     .filter((s) => s.length > 0);
-  const gradesFlatted = result.map((s) =>
-    s.map((s) => s.subjects.map((s) => s.grade))
+  const gradesFlatted = result.map((array) =>
+    array.map((gradeInfo) => gradeInfo.subjects.map((s) => s.grade))
   );
 
   const gradesComputed = gradesFlatted.map((yrLevel) =>

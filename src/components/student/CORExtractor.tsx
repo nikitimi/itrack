@@ -36,12 +36,11 @@ const CORExtractor = () => {
 
     const formdata = new FormData();
     formdata.append('file', fileList[0]);
-    const response = await fetchHelper(
-      '/api/extractPDFData/COR',
-      'POST',
-      { studentNumber: undefined },
-      formdata
-    );
+    const response = await fetchHelper({
+      route: '/api/extractPDFData/COR',
+      method: 'POST',
+      data: formdata,
+    });
     const json = (await response.json()) as ExtractPDFDataCORResponse;
 
     if (!response.ok) return alert(json.errorMessage[0]);

@@ -1,6 +1,6 @@
 import type { Specialization } from '@/lib/enums/specialization';
-import type GradeInfo from '@/utils/types/gradeInfo';
-import type { SubjectDetails } from '@/utils/types/gradeInfo';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
+import type { SubjectDetails } from '@/lib/schema/subjectDetails';
 
 import {
   firstYearSubjects,

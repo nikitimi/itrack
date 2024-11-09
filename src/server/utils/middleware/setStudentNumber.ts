@@ -6,31 +6,22 @@ import type {
   GetStudentNumberResponse,
 } from '@/server/lib/schema/apiResponse/getStudentNumber';
 
-import { EMPTY_STRING } from '@/utils/constants';
+import fetchHelper from '@/utils/fetch';
 
 export default async function setStudentNumber(
-  clerkAuthMiddleware: ClerkMiddlewareAuthObject,
-  origin: string
+  clerkAuthMiddleware: ClerkMiddlewareAuthObject
 ) {
   const userId = clerkAuthMiddleware.userId as string;
-  const params = new URLSearchParams({
-    userId,
-  });
-  const url = new URL(`/api/getStudentNumber?${params}`, origin);
-  const response = await fetch(url, {
+  const studentNumberResponse = await fetchHelper({
+    route: '/api/getStudentNumber',
     method: 'GET',
+    params: { userId },
   });
-  const { data } = (await response.json()) as GetStudentNumberResponse;
+  const { data, errorMessage } =
+    (await studentNumberResponse.json()) as GetStudentNumberResponse;
 
-  if (data.length > 0 && data[0] === 'string') {
-    return {
-      role: 'student',
-      studentNumber: EMPTY_STRING,
-      studentType: 'irregular',
-      specialization: 'BUSINESS_ANALYTICS',
-      firstName: EMPTY_STRING,
-      lastName: EMPTY_STRING,
-    } as GetStudentNumber;
+  if (!studentNumberResponse.ok) {
+    return errorMessage[0];
   }
 
   return data[0] as GetStudentNumber;
