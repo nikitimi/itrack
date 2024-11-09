@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Certificate = () => {
-  return <div>Certificate</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Certificate;
+export default Page;

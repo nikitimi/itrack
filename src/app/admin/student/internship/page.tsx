@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Internship = () => {
-  return <div>Internship</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Internship;
+export default Page;

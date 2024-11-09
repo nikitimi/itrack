@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const VerifyEmail = () => {
-  return <div>VerifyEmail</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default VerifyEmail;
+export default Page;

@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Grade = () => {
-  return <div>Grade</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Grade;
+export default Page;

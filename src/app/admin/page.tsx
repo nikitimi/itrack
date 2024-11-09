@@ -1,7 +1,6 @@
-import React from "react";
-import Header from "@/components/Header";
+import Header from '@/components/Header';
 
-const Admin = () => {
+const Page = () => {
   return (
     <>
       <Header />
@@ -9,4 +8,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Page;

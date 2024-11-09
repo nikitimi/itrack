@@ -1,6 +1,6 @@
-import Header from "@/components/Header";
+import Header from '@/components/Header';
 
-const Dashboard = () => {
+const Page = () => {
   return (
     <>
       <Header />
@@ -8,4 +8,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Page;

@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Result = () => {
-  return <div>Result</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Result;
+export default Page;

@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Student = () => {
-  return <div>Student</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Student;
+export default Page;

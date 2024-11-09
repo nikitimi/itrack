@@ -1,7 +1,11 @@
-import React from "react";
+import Header from '@/components/Header';
 
-const Signup = () => {
-  return <div>Signup</div>;
+const Page = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
 };
 
-export default Signup;
+export default Page;
