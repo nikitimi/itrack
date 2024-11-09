@@ -1,34 +1,34 @@
 'server only';
 
-import { headers } from 'next/headers';
+import type { ChartData } from '@/lib/schema/chartData';
+import type { StudentInfo } from '@/lib/schema/studentInfo';
+import type { MongoExtra } from '@/lib/schema/mongoExtra';
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
+import type { Certificate } from '@/lib/enums/certificate';
+import type { InternshipResult } from '@/utils/types/internshipResult';
 
-import { clerkClient } from '@clerk/nextjs/server';
 // eslint-disable-next-line boundaries/element-types
 import certificateResult from '@/features/certificate/student/utils/certificateResult';
 // eslint-disable-next-line boundaries/element-types
 import gradeResult from '@/features/grade/student/utils/gradeResult';
 // eslint-disable-next-line boundaries/element-types
 import internshipResult from '@/features/internship/utils/internshipResult';
-import { Specialization } from '@/lib/enums/specialization';
 import getDatabaseInformations from '@/server/utils/getDatabaseInformations';
-import { HEADER_KEY, EMPTY_STRING } from '@/utils/constants';
-import { ChartData } from '@/lib/schema/chartData';
-import { InitializeApp } from '@/lib/schema/initializeApp';
 
-export default async function layoutFetcher(): Promise<InitializeApp> {
-  const headerList = headers();
-  const client = await clerkClient();
-  const userId = headerList.get(HEADER_KEY.uid) as string;
-  const { firstName, lastName } = await client.users.getUser(userId);
+type LayoutFetcher = {
+  grades: (GradeInfo & MongoExtra)[];
+  certificate: Certificate[];
+  internship?: Omit<InternshipResult, 'status'> & MongoExtra;
+  chartData: ChartData[];
+};
 
-  // TODO: Move this out to a separate global client component handler to set correct user type.
-  const studentNumber =
-    headerList.get(HEADER_KEY.studentNumber) ?? EMPTY_STRING;
-  const specialization = headerList.get(
-    HEADER_KEY.specialization
-  ) as Specialization;
+export default async function layoutFetcher(
+  props: Pick<StudentInfo, 'specialization' | 'studentNumber' | 'userId'>
+): Promise<LayoutFetcher> {
+  const { studentNumber, specialization, userId } = props;
+  console.log(props, ' server layout fetcher...');
 
-  const result = await getDatabaseInformations(studentNumber);
+  const result = await getDatabaseInformations(studentNumber, userId);
   let internshipHolder: Record<string, number>[] = [];
   if (result.internship !== undefined) {
     const { _id, dateCreated, dateModified, ...rest } = result.internship;
@@ -88,10 +88,6 @@ export default async function layoutFetcher(): Promise<InitializeApp> {
   calculateRecord(foo.internship, 'internship');
 
   return {
-    firstName: firstName ?? EMPTY_STRING,
-    lastName: lastName ?? EMPTY_STRING,
-    specialization,
-    studentNumber,
     chartData,
     ...result,
   };

@@ -8,6 +8,7 @@ import {
   authenticationResetState,
   authenticationSetStatus,
   authenticationStatus,
+  authenticationUserType,
 } from '@/redux/reducers/authenticationReducer';
 import { certificateResetState } from '@/redux/reducers/certificateReducer';
 import { gradeResetState } from '@/redux/reducers/gradeReducer';
@@ -22,12 +23,12 @@ const SignoutButton = () => {
   const clerk = useClerk();
   const router = useAppRouter();
   const dispatch = useAppDispatch();
-  const authStatus = authenticationStatus(
-    useAppSelector((s) => s.authentication)
-  );
+  const authSelector = useAppSelector((s) => s.authentication);
+  const authStatus = authenticationStatus(authSelector);
+  const userRole = authenticationUserType(authSelector);
 
   function handleSignout() {
-    const isAdmin = clerk.user?.publicMetadata?.role === 'admin';
+    const isAdmin = userRole === 'admin';
 
     dispatch(authenticationSetStatus('initializing'));
     clerk.signOut().finally(() => {

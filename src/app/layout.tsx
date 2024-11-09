@@ -12,6 +12,9 @@ import StoreProvider from '@/components/StoreProvider';
 import '@/app/globals.css';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/AppSidebar';
+import { headers } from 'next/headers';
+import type { StudentInfo } from '@/lib/schema/studentInfo';
+import { HEADER_KEY } from '@/utils/constants';
 
 const geistSans = localFont({
   src: '../fonts/GeistVF.woff',
@@ -30,6 +33,13 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Children) {
+  const headerList = headers();
+  const { origin, pathname, role, url, ...rest } = HEADER_KEY;
+  console.log('Removing ', origin, pathname, role, url, ' in header keys');
+  const studentInfo = Object.fromEntries(
+    Object.entries(rest).map(([k, v]) => [k, headerList.get(v)])
+  ) as Partial<StudentInfo>;
+
   return (
     <html lang="en">
       <body
@@ -38,7 +48,7 @@ export default async function RootLayout({ children }: Children) {
         <Suspense fallback={<Loading />}>
           <ClerkProvider dynamic>
             <SidebarProvider>
-              <StoreProvider>
+              <StoreProvider {...studentInfo}>
                 <AppSidebar />
                 <main className="w-full">{children}</main>
               </StoreProvider>

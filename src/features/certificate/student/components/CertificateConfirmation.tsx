@@ -50,9 +50,10 @@ const CertificateConfirmation = () => {
     };
 
     if (disabledWriteInDB.includes(certificateInputControl)) {
-      const response = await fetch('/api/mongo/certificate', {
+      const response = await fetchHelper({
+        route: '/api/mongo/certificate',
         method: 'PATCH',
-        body: JSON.stringify({ ...result, studentNumber }),
+        data: { ...result, studentNumber },
       });
 
       const json = (await response.json()) as BaseAPIResponse<string>;

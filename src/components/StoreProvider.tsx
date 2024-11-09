@@ -1,12 +1,6 @@
 'use client';
 
-import type { UserRole } from '@/lib/enums/userRole';
-import type { StudentType } from '@/lib/enums/studentType';
-import type { Specialization } from '@/lib/enums/specialization';
-import type { Certificate } from '@/lib/enums/certificate';
-import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { Children } from '@/utils/types/children';
-import type { GradeInfo } from '@/lib/schema/gradeInfo';
 
 import { useCallback, useEffect } from 'react';
 import { Provider } from 'react-redux';
@@ -23,58 +17,80 @@ import {
   studentInfoSetChartData,
   studentInfoSetFirstname,
   studentInfoSetLastname,
+  studentInfoSetMiddleInitial,
   studentInfoSetNumber,
   studentInfoSetSpecialization,
 } from '@/redux/reducers/studentInfoReducer';
-import { NUMBER_OF_SEMESTER } from '@/utils/constants';
-import { InternshipResult } from '@/utils/types/internshipResult';
+import {
+  EMPTY_STRING,
+  HEADER_KEY,
+  NUMBER_OF_SEMESTER,
+} from '@/utils/constants';
 import {
   internshipCompanyQuestionUpdate,
   internshipGradeUpdate,
   internshipTaskAdd,
 } from '@/redux/reducers/internshipReducer';
-import { ChartData } from '@/lib/schema/chartData';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
-import { useAuth } from '@clerk/nextjs';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
+import fetchHelper from '@/utils/fetch';
+import { StudentInfo } from '@/lib/schema/studentInfo';
+import type layoutFetcher from '@/server/layoutFetcher';
 
-type LayoutFetcher = {
-  userId: string | null;
-  specialization: Specialization;
-  studentType: StudentType;
-  studentNumber: string;
-  role: UserRole;
-  grades: (GradeInfo & MongoExtra)[];
-  certificate: Certificate[];
-  internship?: Omit<InternshipResult, 'status'> & MongoExtra;
-  firstName: string;
-  lastName: string;
-  chartData: ChartData[];
-};
-
-export default function StoreProvider({ children }: Children) {
+export default function StoreProvider({
+  children,
+  ...rest
+}: Children & Partial<StudentInfo>) {
   return (
     <Provider store={store}>
-      <StoreInitializer>{children}</StoreInitializer>
+      <StoreInitializer {...rest}>{children}</StoreInitializer>
     </Provider>
   );
 }
 
-const StoreInitializer = ({ children }: Children) => {
+const StoreInitializer = ({
+  children,
+  ...rest
+}: Children & Partial<StudentInfo>) => {
   const dispatch = useAppDispatch();
-  const { userId } = useAuth();
+  const {
+    firstName,
+    lastName,
+    middleInitial,
+    specialization,
+    studentNumber,
+    userId,
+  } = rest;
 
-  console.log({ userId });
+  console.log('From: Store Provider: ', {
+    firstName,
+    lastName,
+    middleInitial,
+    specialization,
+    studentNumber,
+    userId,
+  });
 
   const fetchLayoutHelper = useCallback(async () => {
-    const response = await fetch('/api/initializeApp', {
+    const response = await fetchHelper({
+      route: '/api/initializeApp',
       method: 'GET',
+      params: { userId: userId ?? EMPTY_STRING },
+      headers: {
+        [HEADER_KEY.studentNumber]: studentNumber,
+        [HEADER_KEY.specialization]: specialization,
+        [HEADER_KEY.userId]: userId,
+      },
     });
-    const json = (await response.json()) as BaseAPIResponse<LayoutFetcher>;
+
+    const json = (await response.json()) as BaseAPIResponse<
+      Awaited<ReturnType<typeof layoutFetcher>>
+    >;
+    console.log({ json });
 
     if (!response.ok) {
       return json.errorMessage.forEach((errorMessage) =>
-        console.log(errorMessage)
+        console.log({ errorMessage })
       );
     }
     if (typeof userId !== 'string') {
@@ -83,23 +99,20 @@ const StoreInitializer = ({ children }: Children) => {
       dispatch(authenticationSetStatus('authenticated'));
     }
 
-    const {
-      certificate,
-      grades,
-      internship,
-      chartData,
-      role,
-      specialization,
-      studentNumber,
-      lastName,
-      firstName,
-    } = json.data;
+    const { certificate, grades, internship, chartData } = json.data;
 
-    dispatch(authenticationSetUserType(role));
-    dispatch(studentInfoSetNumber(studentNumber));
-    dispatch(studentInfoSetSpecialization(specialization));
-    dispatch(studentInfoSetFirstname(firstName));
-    dispatch(studentInfoSetLastname(lastName));
+    dispatch(
+      authenticationSetUserType(
+        studentNumber === undefined ? 'admin' : 'student'
+      )
+    );
+    dispatch(studentInfoSetNumber(studentNumber ?? EMPTY_STRING));
+    dispatch(
+      studentInfoSetSpecialization(specialization ?? 'BUSINESS_ANALYTICS')
+    );
+    dispatch(studentInfoSetFirstname(firstName ?? EMPTY_STRING));
+    dispatch(studentInfoSetMiddleInitial(middleInitial ?? EMPTY_STRING));
+    dispatch(studentInfoSetLastname(lastName ?? EMPTY_STRING));
 
     if (certificate.length > 0) {
       certificate.forEach((certificate) =>
@@ -167,7 +180,15 @@ const StoreInitializer = ({ children }: Children) => {
 
     grades.forEach((gradeInfo) => dispatch(gradesAdd(gradeInfo)));
     chartData.forEach((c) => dispatch(studentInfoSetChartData(c)));
-  }, [dispatch, userId]);
+  }, [
+    dispatch,
+    userId,
+    firstName,
+    lastName,
+    specialization,
+    studentNumber,
+    middleInitial,
+  ]);
 
   useEffect(() => void fetchLayoutHelper(), [fetchLayoutHelper]);
 

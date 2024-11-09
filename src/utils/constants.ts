@@ -4,12 +4,13 @@ export const HEADER_KEY = {
   pathname: 'x-pathname',
   role: 'x-role',
   firstName: 'x-firstName',
+  middleInitial: 'x-middleInitial',
   lastName: 'x-lastName',
   specialization: 'x-specialization',
   studentNumber: 'x-studentNumber',
-  uid: 'x-uid',
+  userId: 'x-uid',
   url: 'x-url',
-};
+} as const;
 /** URL consists of '/'. */
 export const ROUTE_DIVIDER = '/' as const;
 /** Default route of the app. */

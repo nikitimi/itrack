@@ -13,9 +13,16 @@ function paramToIndexOfKey<K extends ParamKey>(key: K, keys: K[]) {
 export default async function fetchHelper(props: FetchHelperProps) {
   const { method, route, data, params } = props;
   const signBeingFormdata = '{}';
+  const headers = new Headers();
 
+  if (props.headers !== undefined) {
+    Object.entries(props.headers).forEach(([key, value]) => {
+      console.log(key, value, ' in fetchHelper header.');
+      headers.set(key, value);
+    });
+  }
   // ALL ABOUT URLS. //
-  const origin = process.env.URL_ORIGIN;
+  const origin = process.env.NEXT_PUBLIC_URL_ORIGIN;
   const baseURL = new URL(route, origin);
   let newURL = baseURL;
 
@@ -30,6 +37,7 @@ export default async function fetchHelper(props: FetchHelperProps) {
 
   const fetchOptions = {
     method,
+    headers,
   };
 
   switch (true) {

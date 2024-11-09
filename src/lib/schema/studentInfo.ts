@@ -3,6 +3,11 @@ import specializationEnum from '@/lib/enums/specialization';
 
 /** Information needed for the students to register. */
 export type StudentInfo = z.infer<typeof studentInfoSchema>;
+export type StudentPublicMetadata = Pick<
+  StudentInfo,
+  'studentNumber' | 'middleInitial' | 'specialization'
+>;
+
 /** Information needed for the students to register. */
 const studentInfoSchema = z.object({
   firstName: z.string(),

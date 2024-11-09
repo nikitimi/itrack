@@ -7,6 +7,7 @@ import type { GradeInfo } from '@/lib/schema/gradeInfo';
 import type { InternshipResult } from '@/utils/types/internshipResult';
 
 import fetchHelper from '@/utils/fetch';
+import { EMPTY_STRING, HEADER_KEY } from '@/utils/constants';
 
 type InternshipData = Omit<InternshipResult, 'status'>;
 type ResponseInArray =
@@ -18,10 +19,12 @@ type GetDatabaseInformation = {
   internship?: InternshipData & MongoExtra;
 };
 
-async function getDatabaseInformations(studentNumber: string) {
+async function getDatabaseInformations(studentNumber: string, userId: string) {
   let grades: GetDatabaseInformation['grades'] = [];
   let certificate: GetDatabaseInformation['certificate'] = [];
   let internship = undefined;
+
+  console.log('Get database informations ', { userId });
 
   try {
     const apiRoutes = [
@@ -36,6 +39,9 @@ async function getDatabaseInformations(studentNumber: string) {
         method: 'GET',
         params: {
           studentNumber,
+        },
+        headers: {
+          [HEADER_KEY.userId]: userId ?? EMPTY_STRING,
         },
       });
       const { data, errorMessage } =

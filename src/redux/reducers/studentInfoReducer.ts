@@ -11,6 +11,7 @@ type StudentInfo = {
   studentNumber: string;
   chartData: ChartData[];
   firstName: string;
+  middleInitial: string;
   lastName: string;
 };
 
@@ -28,6 +29,7 @@ const initialState: InitialState = {
   studentNumber: EMPTY_STRING,
   chartData: [],
   firstName: EMPTY_STRING,
+  middleInitial: EMPTY_STRING,
   lastName: EMPTY_STRING,
 };
 
@@ -41,6 +43,12 @@ const studentInfoSlice = createSlice({
       action: { payload: InitialState['firstName'] }
     ) {
       state.firstName = action.payload;
+    },
+    studentInfoSetMiddleInitial(
+      state,
+      action: { payload: InitialState['middleInitial'] }
+    ) {
+      state.middleInitial = action.payload;
     },
     studentInfoSetLastname(
       state,
@@ -84,6 +92,8 @@ export const studentInfoChartData = (a: RootState['studentInfo']) =>
   a.chartData;
 export const studentInfoFirstname = (a: RootState['studentInfo']) =>
   a.firstName;
+export const studentInfoMiddleInitial = (a: RootState['studentInfo']) =>
+  a.middleInitial;
 export const studentInfoLastname = (a: RootState['studentInfo']) => a.lastName;
 export const studentInfoNumber = (a: RootState['studentInfo']) =>
   a.studentNumber;
@@ -94,6 +104,7 @@ export const studentInfoSpecialization = (a: RootState['studentInfo']) =>
 export const {
   studentInfoResetState,
   studentInfoSetFirstname,
+  studentInfoSetMiddleInitial,
   studentInfoSetLastname,
   studentInfoSetNumber,
   studentInfoSetChartData,

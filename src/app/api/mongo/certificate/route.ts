@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     errorMessage: [],
   };
   try {
-    const uid = request.headers.get(HEADER_KEY.uid) as string | null;
+    const uid = request.headers.get(HEADER_KEY.userId) as string | null;
     if (uid === null) throw new Error('Unauthorized.');
     const user = await clerk.users.getUser(uid);
     const isNotUser = user.primaryEmailAddress === null;
