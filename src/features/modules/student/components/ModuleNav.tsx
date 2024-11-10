@@ -46,8 +46,6 @@ const ModuleNav = () => {
     }
   }, [state.length, studentRoutes]);
 
-  console.log(state);
-
   return (
     <SidebarMenuSub>
       {state.map((route) => {
@@ -58,7 +56,7 @@ const ModuleNav = () => {
 
         return (
           <SidebarMenuSubItem key={route}>
-            <Link href={route}>
+            <Link href={route} prefetch>
               <SidebarMenuButton
                 disabled={disabledNoUserList.includes(authStatus)}
                 className={`${getDynamicClasses(isActiveRoute)} ${[

@@ -13,6 +13,8 @@ import { clerkClient } from '@clerk/nextjs/server';
 const certificateCollection = collection('Certificates');
 const clerk = await clerkClient();
 
+type CertificateFile = { name: Certificate; fileKey: string };
+
 export async function POST(request: NextRequest) {
   const response: BaseAPIResponse<string> = {
     data: '',
@@ -48,7 +50,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const response: BaseAPIResponse<
     {
-      certificateList: { name: Certificate; fileKey: string }[];
+      certificateList: CertificateFile[];
     } & Partial<MongoExtra>
   > = {
     data: { certificateList: [] },
@@ -87,7 +89,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const payload = await request.json();
+  const payload = (await request.json()) as {
+    certificateList: CertificateFile[];
+    studentNumber: string;
+  };
   const response: BaseAPIResponse<string> = {
     data: EMPTY_STRING,
     errorMessage: [],
@@ -99,7 +104,7 @@ export async function PATCH(request: NextRequest) {
       errorMessage: ['Student number is undefined.'],
     });
   }
-  console.log({ payload });
+  payload.certificateList.forEach((c) => console.log({ ...c }));
 
   const date = new Date();
   const result = await certificateCollection.updateOne(

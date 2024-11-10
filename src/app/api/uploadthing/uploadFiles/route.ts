@@ -1,8 +1,10 @@
 import type { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
+import type { UploadFileResult } from 'uploadthing/types';
+
+import url from 'url';
+import { NextRequest, NextResponse } from 'next/server';
 
 import utapi from '@/server/utils/utapi';
-import { NextRequest, NextResponse } from 'next/server';
-import type { UploadFileResult } from 'uploadthing/types';
 
 export async function POST(request: NextRequest) {
   const response: BaseAPIResponse<UploadFileResult[]> = {
@@ -11,11 +13,16 @@ export async function POST(request: NextRequest) {
   };
   try {
     const formdata = await request.formData();
+    const paramQuery = url.parse(request.url, true).query;
 
-    const files = formdata.getAll('files') as File[];
-    if (files === undefined)
+    const blob = formdata.get('files') as Blob;
+    if (blob === undefined) {
       return NextResponse.json('no file', { status: 400 });
-    const uploadedFiles = await utapi.uploadFiles(files);
+    }
+
+    const uploadedFiles = await utapi.uploadFiles(
+      new File([blob], (paramQuery.fileName as string) ?? 'blob.pdf')
+    );
     console.log(uploadedFiles);
     return NextResponse.json({
       ...response,

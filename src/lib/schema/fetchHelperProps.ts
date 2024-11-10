@@ -140,6 +140,13 @@ const fetchHelperPropsSchema = z.union([
     method: apiMethodsEnum.extract(['POST']),
     data: z.record(z.any()),
     headers: z.union([z.undefined(), headersSchema.partial()]),
+    params: z.object({ fileName: z.string() }),
+  }),
+  z.object({
+    route: apiRoutesEnum.extract(['/api/uploadthing/deleteFiles']),
+    method: apiMethodsEnum.extract(['POST']),
+    data: z.object({ name: z.string() }),
+    headers: z.union([z.undefined(), headersSchema.partial()]),
     params: z.undefined(),
   }),
 ]);

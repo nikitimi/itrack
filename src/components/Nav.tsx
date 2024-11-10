@@ -24,6 +24,7 @@ import {
   authenticationUserType,
 } from '@/redux/reducers/authenticationReducer';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const adminRoutes = adminRoutesEnum.options;
 const publicRoutes = publicRoutesEnum.options;
@@ -108,10 +109,10 @@ const Nav = () => {
                 disabled={isModules}
                 className="hover:bg-transparent active:bg-transparent"
               >
-                <a className="flex">
+                <Link className="flex" href={item.url} prefetch>
                   <item.icon />
                   <span className="capitalize">{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <CollapsibleContent>
@@ -125,10 +126,10 @@ const Nav = () => {
               className={isAuthInitializing ? '' : dynamicClasses}
               disabled={isAuthInitializing}
             >
-              <a href={isAuthInitializing ? '/student' : item.url}>
+              <Link href={isAuthInitializing ? '/student' : item.url} prefetch>
                 <item.icon />
                 <span className="capitalize">{item.title}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         );
