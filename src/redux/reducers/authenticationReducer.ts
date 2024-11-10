@@ -45,6 +45,7 @@ const authenticationSlice = createSlice({
 });
 
 // SELECTORS.
+/** Use this to control the component to render. */
 export const authenticationStatus = (a: RootState['authentication']) =>
   a.status;
 export const authenticationUserType = (a: RootState['authentication']) =>

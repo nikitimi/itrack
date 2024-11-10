@@ -62,7 +62,7 @@ const CertificateSelector = () => {
   return (
     <CardHeader>
       <CardTitle>Select certificate type.</CardTitle>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="mx-auto grid w-1/2 grid-cols-2 gap-2">
         {isCertificateLoaded ? (
           <Select
             value={selectState}

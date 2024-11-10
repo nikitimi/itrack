@@ -61,11 +61,13 @@ export function PieChartLabeled(
 
   const chartData = Object.entries(certificateComputationResult).map(
     ([jobName, points], index) => ({
-      career: jobName,
+      career: constantNameFormatter(jobName, true),
       points,
       fill: chartDataColor[index],
     })
   );
+
+  console.log({ chartData, certificateComputationResult });
 
   return (
     <ParentChart {...props}>

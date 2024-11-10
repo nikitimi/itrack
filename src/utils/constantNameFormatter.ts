@@ -12,10 +12,21 @@ const lowerCasedAbbre = [
   'sla',
 ];
 /** Constant name referes to Screaming snakecase e.g. HELLO_WORLD. */
-export default function constantNameFormatter(constantName: string | null) {
-  let textHolder = String(constantName ?? EMPTY_STRING)
-    .toLocaleLowerCase()
-    .replace(/_/g, ' ');
+export default function constantNameFormatter(
+  constantName: string | null,
+  unsupportedClass?: boolean
+) {
+  let textHolder = String(constantName ?? EMPTY_STRING);
+
+  if (unsupportedClass === true) {
+    return textHolder
+      .split('_')
+      .map((v) => `${v.charAt(0)}${v.slice(1, v.length).toLocaleLowerCase()}`)
+      .toString()
+      .replace(/,/g, ' ');
+  }
+
+  textHolder = textHolder.toLocaleLowerCase().replace(/_/g, ' ');
   lowerCasedAbbre.forEach(
     (abbre) =>
       (textHolder = textHolder.replace(

@@ -46,6 +46,8 @@ const ModuleNav = () => {
     }
   }, [state.length, studentRoutes]);
 
+  console.log(state);
+
   return (
     <SidebarMenuSub>
       {state.map((route) => {

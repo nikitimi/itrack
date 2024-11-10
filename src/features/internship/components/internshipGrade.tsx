@@ -5,6 +5,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
 import {
   Select,
@@ -36,8 +37,9 @@ const InternshipGrade = () => {
   }
 
   return (
-    <Card className="rounded-none border-none bg-transparent shadow-none">
+    <Card>
       <CardHeader>
+        <CardTitle>Internship grade</CardTitle>
         <CardDescription>What is your internship grade?</CardDescription>
       </CardHeader>
       <CardContent>

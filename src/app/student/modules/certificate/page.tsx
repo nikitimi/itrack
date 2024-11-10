@@ -10,7 +10,7 @@ const Page = () => {
   return (
     <div>
       <Header />
-      <Card className="mt-12 rounded-none border-none shadow-none">
+      <Card className="mx-auto mt-24 w-3/4">
         <Suspense fallback={<Loading />}>
           <CertificateSelector />
         </Suspense>

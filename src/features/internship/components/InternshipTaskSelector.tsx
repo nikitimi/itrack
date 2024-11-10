@@ -3,12 +3,7 @@
 import type { FormEvent } from 'react';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -58,10 +53,10 @@ const InternshipTaskSelector = () => {
   }
 
   return (
-    <Card className="rounded-none border-none bg-transparent shadow-none">
+    <Card>
       <form onSubmit={handleTaskAdd}>
         <CardHeader>
-          <CardDescription>Internship Task Selector</CardDescription>
+          <CardTitle>Internship Task Selector</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-2">
           <Select name="selectedTask" disabled={condition}>

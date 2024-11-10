@@ -140,10 +140,7 @@ const InternshipTaskConfirmation = () => {
       promptKey={'certificateModule'}
       title={'Internship Details Confirmation'}
       trigger={
-        <Button
-          className="mx-2 w-full"
-          disabled={disabledNoUserList.includes(authStatus)}
-        >
+        <Button disabled={disabledNoUserList.includes(authStatus)}>
           Submit internship details
         </Button>
       }

@@ -8,7 +8,7 @@ const config: Config = withUt({
     extend: {
       colors: {
         itrack: {
-          primary: 'var(--itrack-primary)',
+          primary: '#3071ad',
         },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

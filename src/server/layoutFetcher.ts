@@ -14,11 +14,10 @@ import gradeResult from '@/features/grade/student/utils/gradeResult';
 // eslint-disable-next-line boundaries/element-types
 import internshipResult from '@/features/internship/utils/internshipResult';
 import getDatabaseInformations from '@/server/utils/getDatabaseInformations';
-import { EMPTY_STRING } from '@/utils/constants';
 
 type LayoutFetcher = {
   grades: (GradeInfo & MongoExtra)[];
-  certificate: Certificate[];
+  certificate: { name: Certificate; fileKey: string }[];
   internship?: Omit<InternshipResult, 'status'> & MongoExtra;
   chartData: ChartData[];
 };
@@ -32,8 +31,7 @@ export default async function layoutFetcher(
   const result = await getDatabaseInformations(studentNumber, userId);
   let internshipHolder: Record<string, number>[] = [];
   if (result.internship !== undefined) {
-    const { _id, dateCreated, dateModified, ...rest } = result.internship;
-    console.log(_id, dateCreated, dateModified);
+    const { ...rest } = result.internship;
     const internship = internshipResult({
       internshipResult: rest,
       specialization,
@@ -44,10 +42,7 @@ export default async function layoutFetcher(
   const foo = {
     certificate: Object.entries(
       certificateResult({
-        certificateList: result.certificate.map((name) => ({
-          name,
-          fileKey: EMPTY_STRING,
-        })),
+        certificateList: result.certificate,
         specialization,
       }) as Record<string, number>
     ),
@@ -93,6 +88,8 @@ export default async function layoutFetcher(
 
   return {
     chartData,
-    ...result,
+    grades: result.grades as LayoutFetcher['grades'],
+    certificate: result.certificate,
+    internship: result.internship as LayoutFetcher['internship'],
   };
 }

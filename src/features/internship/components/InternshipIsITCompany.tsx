@@ -47,19 +47,19 @@ const InternshipIsITCompany = () => {
   }
 
   return (
-    <Card className="rounded-none border-none bg-transparent shadow-none">
+    <Card>
       <CardHeader>
         <CardTitle>Internship Form</CardTitle>
         <CardDescription>
           Did you complete your internship at an IT company?
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-flow-col gap-2 p-2">
+      <CardContent className="grid grid-flow-col items-center justify-center gap-2 p-2">
         {yesOrNo.map((yesNo) => (
           <Button
             key={yesNo}
             type="button"
-            className={`${companyQuestion === 'initializing' ? 'bg-black' : companyQuestion && yesNo === 'yes' ? 'bg-green-400' : !companyQuestion && yesNo === 'no' ? 'bg-red-400' : ''} capitalize`}
+            className={`${companyQuestion === 'initializing' ? 'bg-black' : companyQuestion && yesNo === 'yes' ? 'bg-green-400' : !companyQuestion && yesNo === 'no' ? 'bg-red-400' : ''} w-32 capitalize`}
             disabled={disabledNoUserList.includes(authStatus)}
             onClick={(e) => handleYesOrNo(e, yesNo)}
           >

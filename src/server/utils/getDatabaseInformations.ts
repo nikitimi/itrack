@@ -1,6 +1,5 @@
 'server only';
 
-import type { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { Certificate } from '@/lib/enums/certificate';
 import type { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import type { GradeInfo } from '@/lib/schema/gradeInfo';
@@ -8,15 +7,16 @@ import type { InternshipResult } from '@/utils/types/internshipResult';
 
 import fetchHelper from '@/utils/fetch';
 import { EMPTY_STRING, HEADER_KEY } from '@/utils/constants';
-
+// TODO: FIXED TYPES!,
 type InternshipData = Omit<InternshipResult, 'status'>;
 type ResponseInArray =
-  | ((GradeInfo | Certificate) & MongoExtra)[]
-  | (InternshipData & MongoExtra);
+  | GradeInfo[]
+  | { name: Certificate; fileKey: string }[]
+  | InternshipData;
 type GetDatabaseInformation = {
-  grades: (GradeInfo & MongoExtra)[];
-  certificate: Certificate[];
-  internship?: InternshipData & MongoExtra;
+  grades: GradeInfo[];
+  certificate: { name: Certificate; fileKey: string }[];
+  internship?: InternshipData;
 };
 
 async function getDatabaseInformations(studentNumber: string, userId: string) {

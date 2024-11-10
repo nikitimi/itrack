@@ -19,7 +19,7 @@ import { useState } from 'react';
 
 type PromptProps<T> = {
   description: string;
-  promptKey: keyof ModuleList;
+  promptKey?: keyof ModuleList;
   title: string;
   trigger: string | React.ReactNode;
   handleConfirmation: () => T;
@@ -30,6 +30,7 @@ const Prompt = <T,>(props: PromptProps<T>) => {
   const [isConfirm, setIsConfirm] = useState(false);
 
   function handleCloseModal() {
+    if (props.promptKey === undefined) return;
     dispatch(
       inputControlSetPromptType({
         key: props.promptKey,
@@ -44,6 +45,7 @@ const Prompt = <T,>(props: PromptProps<T>) => {
         // Guard clauses.
         if (open) return;
 
+        if (props.promptKey === undefined) return;
         dispatch(
           inputControlSetPromptType({
             key: props.promptKey,
@@ -52,7 +54,9 @@ const Prompt = <T,>(props: PromptProps<T>) => {
         );
       }}
     >
-      <DialogTrigger asChild>{props.trigger}</DialogTrigger>
+      <DialogTrigger asChild className="mx-auto w-96">
+        {props.trigger}
+      </DialogTrigger>
       <DialogContent>
         <DialogTitle>{props.title}</DialogTitle>
         <DialogHeader>

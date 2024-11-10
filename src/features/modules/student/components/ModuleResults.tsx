@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
 import useRevealAllModulesResult from '@/hooks/useRevealAllModulesResult';
 import {
   Table,
@@ -25,11 +23,18 @@ import useGradeInputControl from '@/hooks/useGradeInputControl';
 import { PromptType } from '@/lib/enums/promptType';
 import constantNameFormatter from '@/utils/constantNameFormatter';
 import { Button } from '@/components/ui/button';
+import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import { useAppSelector } from '@/hooks/redux';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import GradeChart from '@/components/charts/GradeChart';
+import { ChartConfig } from '@/components/ui/chart';
+import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 // TODO: Only show if the modules are completed.
 const ModuleResults = () => {
@@ -38,8 +43,10 @@ const ModuleResults = () => {
   const { internshipInputControl } = useInternshipInputControl();
   const { certificate, grades, internship, jobHolder } =
     useRevealAllModulesResult();
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const conditionList = ['fetched from server', 'submitted'] as PromptType[];
-  const [state, setState] = useState(false);
   const results = [
     {
       title: 'certificate',
@@ -68,33 +75,37 @@ const ModuleResults = () => {
   };
   const titles = results.flatMap(({ title }) => title);
 
-  useEffect(() => setState(true), []);
-
-  if (!state)
-    return (
-      <>
-        {titles.map((title) => (
-          <RenderTable
-            isLoading
-            key={title}
-            title={title}
-            conditionToRender={true}
-            objectArray={[]}
-          />
-        ))}
-      </>
-    );
-
-  return (
-    <section className="flex flex-col gap-4 p-4">
-      <div className="grid grid-flow-col gap-4">
-        {results.map((props) => {
-          return <RenderTable key={props.title} {...props} />;
-        })}
-      </div>
-      <RenderTable {...overall} />
-    </section>
-  );
+  switch (authStatus) {
+    case 'initializing':
+      return (
+        <div className="grid grid-flow-col gap-4">
+          {titles.map((title) => (
+            <RenderTable
+              isLoading
+              key={title}
+              title={title}
+              conditionToRender={true}
+              objectArray={[]}
+            />
+          ))}
+        </div>
+      );
+    case 'no user':
+    case 'verifying account':
+    case 'verifying new password':
+      return <></>;
+    case 'authenticated':
+      return (
+        <section className="flex flex-col gap-4 p-4">
+          <div className="grid grid-flow-col gap-4">
+            {results.map((props) => {
+              return <RenderTable key={props.title} {...props} />;
+            })}
+          </div>
+          <RenderTable {...overall} />
+        </section>
+      );
+  }
 };
 
 const RenderTable = (props: {
@@ -103,10 +114,29 @@ const RenderTable = (props: {
   objectArray: Array<[string, number]>;
   isLoading?: boolean;
 }) => {
+  const authStatus = authenticationStatus(
+    useAppSelector((s) => s.authentication)
+  );
   const heading = {
     one: 'careers',
     two: 'ranks',
   };
+
+  const chartConfig = {
+    career: {
+      label: 'Career',
+      color: 'hsl(var(--chart-4))',
+    },
+    points: {
+      label: 'Calculated Points',
+      color: 'hsl(var(--chart-5))',
+    },
+  } satisfies ChartConfig;
+
+  const chartData = props.objectArray.map(([career, points]) => ({
+    career: constantNameFormatter(career, true),
+    points: points,
+  }));
 
   return (
     <Card>
@@ -141,7 +171,7 @@ const RenderTable = (props: {
                         <TableCell className="capitalize">
                           {constantNameFormatter(key)}
                         </TableCell>
-                        {/* <p>{number}</p> */}
+                        {/* <p>{number}</p> */} {/* Value of result */}
                         <TableCell>{index + 1}</TableCell>
                       </TableRow>
                     );
@@ -156,16 +186,25 @@ const RenderTable = (props: {
         </Table>
       </CardContent>
       <CardFooter>
-        <Tooltip>
-          <TooltipTrigger className="w-full">
-            <Button disabled={true} className="w-full">
-              Show Breakdown
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Not yet implemented.</p>
-          </TooltipContent>
-        </Tooltip>
+        <Dialog>
+          <DialogHeader className="mx-auto w-64">
+            <DialogTrigger disabled={disabledNoUserList.includes(authStatus)}>
+              <Button disabled={true}>
+                <DialogTitle className="font-geist-mono font-normal">
+                  Show Breakdown
+                </DialogTitle>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <GradeChart
+                selectStyle="mt-2"
+                title={`${props.title} breakdown`}
+                chartData={chartData}
+                chartConfig={chartConfig}
+              />
+            </DialogContent>
+          </DialogHeader>
+        </Dialog>
       </CardFooter>
     </Card>
   );

@@ -44,6 +44,7 @@ const CertificateConfirmation = () => {
     handleInputControl('fetching');
 
     if (disabledWriteInDB.includes(certificateInputControl)) {
+      console.log({ _certificateList });
       const response = await fetchHelper({
         route: '/api/mongo/certificate',
         method: 'PATCH',
@@ -86,6 +87,7 @@ const CertificateConfirmation = () => {
             <Button
               onClick={handleSubmit}
               disabled={disabledNoUserList.includes(authStatus)}
+              className="mx-auto w-64"
             >
               Submit
             </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarMenuSkeleton, SidebarTrigger } from '@/components/ui/sidebar';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -15,11 +15,10 @@ import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import { useAppSelector } from '@/hooks/redux';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { useClerk } from '@clerk/nextjs';
-import { UserRole } from '@/lib/enums/userRole';
 import SignoutButton from './SignoutButton';
 
 type ClerkPublicMetadata = {
-  role: UserRole;
+  studentNumber: string;
 };
 
 const Header = () => {
@@ -27,34 +26,49 @@ const Header = () => {
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+
   const metadata = user?.publicMetadata as ClerkPublicMetadata | undefined;
 
-  return (
-    <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
-      {metadata?.role === 'student' ? (
-        <>
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={50}>
-              <SidebarTrigger
-                disabled={disabledNoUserList.includes(authStatus)}
-              />
-            </ResizablePanel>
-            <ResizableHandle disabled className="opacity-0" />
-            <ResizablePanel defaultSize={50} />
-          </ResizablePanelGroup>
-          <ProgressTracker />
-        </>
-      ) : (
-        <div className="flex justify-between p-2">
-          <section className="flex items-end justify-between gap-2">
-            <AppLogo />
-            <p className="text-lg font-bold">Admin</p>
-          </section>
-          <SignoutButton />
-        </div>
-      )}
-    </header>
-  );
+  switch (authStatus) {
+    case 'initializing':
+      return (
+        <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
+          <SidebarMenuSkeleton />
+        </header>
+      );
+    case 'no user':
+    case 'verifying account':
+    case 'verifying new password':
+      return <HeaderNoUser />;
+    case 'authenticated':
+      return (
+        <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
+          {typeof metadata?.studentNumber === 'string' ? (
+            <>
+              {' '}
+              <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={50}>
+                  <SidebarTrigger
+                    disabled={disabledNoUserList.includes(authStatus)}
+                  />
+                </ResizablePanel>
+                <ResizableHandle disabled className="opacity-0" />
+                <ResizablePanel defaultSize={50} />
+              </ResizablePanelGroup>
+              <ProgressTracker />
+            </>
+          ) : (
+            <div className="flex justify-between p-2">
+              <section className="flex items-end justify-between gap-2">
+                <AppLogo />
+                <p className="text-lg font-bold">Admin</p>
+              </section>
+              <SignoutButton />
+            </div>
+          )}
+        </header>
+      );
+  }
 };
 
 export const HeaderNoUser = () => {

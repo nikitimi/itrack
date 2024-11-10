@@ -17,17 +17,21 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import useCertificateInputControl from '@/hooks/useCertificateInputControl';
 import { Certificate } from '@/lib/enums/certificate';
-import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import {
   certificateList,
   certificateRemove,
 } from '@/redux/reducers/certificateReducer';
-import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { EMPTY_STRING } from '@/utils/constants';
 import mime from '@/utils/mime';
 import constantNameFormatter from '@/utils/constantNameFormatter';
 import fetchHelper from '@/utils/fetch';
 import { UploadFileResult } from 'uploadthing/types';
+import Prompt from '@/components/Prompt';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type CertificateFile = {
   /** For referencing the file. */
@@ -43,9 +47,7 @@ const CertificateLoader = () => {
   const [state, setState] = useState<CertificateFile[]>([]);
   const _certificateList = certificateList(selector);
   const { certificateInputControl } = useCertificateInputControl();
-  const authStatus = authenticationStatus(
-    useAppSelector((s) => s.authentication)
-  );
+  // const authStatus = authenticationStatust
   const dispatch = useAppDispatch();
   const invalidExtraCharactersRegex = /(%\d{1}\D{1})/g;
 
@@ -153,29 +155,57 @@ const CertificateLoader = () => {
             ).replace(invalidExtraCharactersRegex, EMPTY_STRING);
 
             return (
-              <TableRow key={certificate.name} id={encodedCertificate}>
-                <TableCell>
+              <TableRow
+                key={certificate.name}
+                id={encodedCertificate}
+                className="w-screen"
+              >
+                <TableCell className="w-1/2">
                   <p className="capitalize">
                     {constantNameFormatter(certificate.name)}
                   </p>
                 </TableCell>
-                <TableCell>
-                  <div
-                    className={`flex justify-center gap-2 duration-200 ease-in-out`}
-                  >
-                    <Input
-                      type="file"
-                      disabled={disabledNoUserList.includes(authStatus)}
-                      onChange={(e) => handleAddFile(e, certificate.name)}
-                    />
-                    <Button
-                      variant="destructive"
-                      disabled={disabledNoUserList.includes(authStatus)}
-                      onClick={() => handleRemoveCertificate(certificate.name)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
+                <TableCell
+                  className={`flex justify-end gap-2 duration-200 ease-in-out`}
+                >
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Input
+                        type="file"
+                        className="w-32"
+                        disabled={true}
+                        // disabled={disabledNoUserList.includes(authStatus)}
+                        onChange={(e) => handleAddFile(e, certificate.name)}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Feature is currently being implemented
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Prompt
+                        handleConfirmation={() =>
+                          handleRemoveCertificate(certificate.name)
+                        }
+                        title={`Remove ${constantNameFormatter(certificate.name, true)}?`}
+                        description="Confirm certificate removal."
+                        trigger={
+                          <Button
+                            className="w-32"
+                            variant="destructive"
+                            disabled
+                            // disabled={disabledNoUserList.includes(authStatus)}
+                          >
+                            Remove
+                          </Button>
+                        }
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Unavailable due to file feature implementation
+                    </TooltipContent>
+                  </Tooltip>
                 </TableCell>
               </TableRow>
             );

@@ -178,7 +178,7 @@ const COGDataExtractor = () => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Card className="mt-12 rounded-none border-none shadow-none">
+        <Card className="mx-auto mt-24 w-3/4">
           <CardHeader>
             <CardTitle>Certificate of Grades</CardTitle>
             <CardDescription>Upload your COG here</CardDescription>

@@ -52,7 +52,7 @@ const Page = () => {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <Card className="border-non w-3/4 rounded-none bg-transparent shadow-none">
+      <Card className="mx-8 w-full duration-200 ease-in-out md:mx-0 md:w-3/4 lg:w-1/3">
         <CardHeader>
           <CardTitle>Forgot Password</CardTitle>
           <CardDescription>

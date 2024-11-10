@@ -65,7 +65,9 @@ export async function GET(request: NextRequest) {
       .studentNumber as string;
 
     if (studentNumber !== user.publicMetadata.studentNumber) {
-      throw new Error('No student number given.');
+      throw new Error(
+        'Student is not signed in, If your accessing this for external use, check the API Route for workaround.'
+      );
     }
 
     const certificate = await certificateCollection.findOne({ studentNumber });
@@ -97,7 +99,7 @@ export async function PATCH(request: NextRequest) {
       errorMessage: ['Student number is undefined.'],
     });
   }
-  console.log(payload);
+  console.log({ payload });
 
   const date = new Date();
   const result = await certificateCollection.updateOne(
@@ -105,7 +107,7 @@ export async function PATCH(request: NextRequest) {
     {
       $set: {
         dateModified: date.getTime(),
-        certificateList: payload.certificate.certificateList,
+        certificateList: payload.certificateList,
       },
     },
     { upsert: true }

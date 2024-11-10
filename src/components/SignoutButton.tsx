@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { inputControlResetter } from '@/redux/reducers/inputControlReducer';
 import { presentationResetState } from '@/redux/reducers/presentationReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import Prompt from './Prompt';
 
 const SignoutButton = () => {
   const clerk = useClerk();
@@ -45,13 +46,20 @@ const SignoutButton = () => {
   }
   return (
     <div className="grid">
-      <Button
-        variant="destructive"
-        onClick={handleSignout}
-        disabled={disabledNoUserList.includes(authStatus)}
-      >
-        Signout
-      </Button>
+      <Prompt
+        description="Are you sure you want to sign out?"
+        handleConfirmation={handleSignout}
+        title="Sign out"
+        trigger={
+          <Button
+            variant="destructive"
+            className="w-full"
+            disabled={disabledNoUserList.includes(authStatus)}
+          >
+            Signout
+          </Button>
+        }
+      />
     </div>
   );
 };

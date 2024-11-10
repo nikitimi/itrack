@@ -80,8 +80,8 @@ export default function certificateResult(props: CertificateResult) {
     restOfCertificates
   );
 
-  //   console.log({ filteredRecommendedCertificatesByJob });
-  //   console.log({ filteredRestCertificatesByJob });
+  // console.log({ filteredRecommendedCertificatesByJob });
+  // console.log({ filteredRestCertificatesByJob });
 
   const certificateByJobArray = [
     filteredRecommendedCertificatesByJob,
@@ -112,6 +112,10 @@ export default function certificateResult(props: CertificateResult) {
       if (!isARating) {
         let accumulatedPoints = 0;
         certificates.forEach((c) => {
+          // console.log(
+          //   certificateList.flatMap((c) => c.name).includes(c.certificate)
+          // );
+
           if (!certificateList.flatMap((c) => c.name).includes(c.certificate))
             return;
 

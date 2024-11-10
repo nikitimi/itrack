@@ -14,7 +14,7 @@ const Internship = () => {
     <div>
       <Header />
       <Suspense fallback={<Loading />}>
-        <div className="pt-12">
+        <div className="mx-auto flex w-3/4 flex-col gap-8 pt-24">
           <InternshipIsITCompany />
           <InternshipGrade />
           <InternshipTaskSelector />

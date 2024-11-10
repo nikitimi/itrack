@@ -104,7 +104,7 @@ const VerifyEmailCard = () => {
   }, [_authenticationStatus, router]);
 
   return (
-    <Card className="w-3/4 p-4 duration-300 ease-in-out lg:w-1/2">
+    <Card className="mx-8 w-full duration-200 ease-in-out md:mx-0 md:w-3/4 lg:w-1/3">
       <CardDescription>
         <CardTitle>Account Verification</CardTitle>
         <CardDescription>

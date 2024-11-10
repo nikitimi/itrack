@@ -117,7 +117,7 @@ const COGDataLoader = () => {
 
   if (state) {
     return (
-      <Table className="p-2">
+      <Table className="mx-auto w-3/4 rounded-lg border-2 pt-12 shadow-sm">
         <TableHeader>
           <TableRow>
             <TableHead>
@@ -200,7 +200,7 @@ const COGDataLoader = () => {
                       <Button
                         disabled={disabledNoUserList.includes(authStatus)}
                         aria-expanded="false"
-                        className="w-24 rounded-lg bg-blue-500 px-2 py-1 capitalize text-white shadow-sm duration-200 ease-in"
+                        className="bg-itrack-primary w-24 rounded-lg px-2 py-1 capitalize text-white shadow-sm duration-200 ease-in"
                         onClick={(e) => toggleSubject(e, identifier)}
                       >
                         show

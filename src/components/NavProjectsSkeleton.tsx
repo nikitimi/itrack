@@ -7,7 +7,7 @@ import {
 const NavProjectsSkeleton = () => {
   return (
     <SidebarMenu>
-      {Array.from({ length: 4 }).map((_, index) => (
+      {Array.from({ length: 6 }).map((_, index) => (
         <SidebarMenuItem key={index}>
           <SidebarMenuSkeleton showIcon />
         </SidebarMenuItem>

@@ -1,8 +1,6 @@
-'use client';
-
-import Header, { HeaderNoUser } from '@/components/Header';
+import Header from '@/components/Header';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
-import { useAuth } from '@clerk/nextjs';
+import { Suspense } from 'react';
 
 const About = () => {
   const contents = {
@@ -17,10 +15,12 @@ const About = () => {
   };
   return (
     <>
-      <DynamicHeader />
-      <div className="flex flex-col items-center justify-center gap-4">
+      <Suspense fallback={<SidebarMenuSkeleton />}>
+        <Header />
+      </Suspense>
+      <div className="mt-24 flex flex-col items-center justify-center gap-4">
         <section className="pl-12 pt-12 duration-200 ease-in-out sm:w-3/4">
-          <div className="from-itrack-primary to-itrack-primary/90 mb-12 rounded-lg bg-gradient-to-bl px-2 py-8 text-center shadow-sm duration-200 ease-in-out">
+          <div className="via-itrack-primary/70 to-itrack-primary/90 mb-12 rounded-lg bg-gradient-to-bl from-white px-2 py-8 text-center shadow-sm duration-200 ease-in-out">
             <h1 className="w-full font-geist-sans text-xl font-black text-black duration-200 ease-in-out sm:text-2xl md:text-4xl">
               Check your career trajectory
             </h1>
@@ -50,19 +50,6 @@ const About = () => {
       </div>
     </>
   );
-};
-
-const DynamicHeader = () => {
-  const { userId } = useAuth();
-
-  switch (true) {
-    case typeof userId === 'string':
-      return <Header />;
-    case userId === undefined:
-      return <SidebarMenuSkeleton />;
-    default:
-      return <HeaderNoUser />;
-  }
 };
 
 export default About;

@@ -9,14 +9,16 @@ const Grade = () => {
   return (
     <>
       <Header />
-      <Suspense fallback={<Loading />}>
+      <div className="flex flex-col gap-8">
         <Suspense fallback={<Loading />}>
-          <COGDataExtractor />
+          <Suspense fallback={<Loading />}>
+            <COGDataExtractor />
+          </Suspense>
         </Suspense>
-      </Suspense>
-      <Suspense fallback={<Loading />}>
-        <COGDataLoader />
-      </Suspense>
+        <Suspense fallback={<Loading />}>
+          <COGDataLoader />
+        </Suspense>
+      </div>
     </>
   );
 };

@@ -46,7 +46,7 @@ const InternshipTaskLoader = () => {
   }
 
   return (
-    <Card className="rounded-none border-none bg-transparent shadow-none">
+    <Card>
       <CardHeader>
         <CardDescription>List of performed internship tasks</CardDescription>
       </CardHeader>
@@ -70,8 +70,9 @@ const InternshipTaskLoader = () => {
                     <p>{constantNameFormatter(taskName)}</p>
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-row justify-center gap-2 p-2">
+                    <div className="flex flex-row justify-end gap-2 p-2">
                       <Button
+                        className="w-64"
                         disabled={disabledNoUserList.includes(authStatus)}
                         onClick={() => handleRemoveTask(task)}
                         variant="destructive"

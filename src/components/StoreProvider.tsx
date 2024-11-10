@@ -35,7 +35,11 @@ import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
 import fetchHelper from '@/utils/fetch';
 import { StudentInfo } from '@/lib/schema/studentInfo';
-import type layoutFetcher from '@/server/layoutFetcher';
+import { ChartData } from '@/lib/schema/chartData';
+import { GradeInfo } from '@/lib/schema/gradeInfo';
+import { MongoExtra } from '@/lib/schema/mongoExtra';
+import { InternshipResult } from '@/utils/types/internshipResult';
+import { Certificate } from '@/lib/enums/certificate';
 
 export default function StoreProvider({
   children,
@@ -83,9 +87,12 @@ const StoreInitializer = ({
       },
     });
 
-    const json = (await response.json()) as BaseAPIResponse<
-      Awaited<ReturnType<typeof layoutFetcher>>
-    >;
+    const json = (await response.json()) as BaseAPIResponse<{
+      grades: (GradeInfo & MongoExtra)[];
+      certificate: { name: Certificate; fileKey: string }[];
+      internship?: Omit<InternshipResult, 'status'> & MongoExtra;
+      chartData: ChartData[];
+    }>;
     console.log({ json });
 
     if (!response.ok) {
@@ -116,7 +123,7 @@ const StoreInitializer = ({
 
     if (certificate.length > 0) {
       certificate.forEach((certificate) =>
-        dispatch(certificateAdd({ name: certificate, fileKey: '' }))
+        dispatch(certificateAdd(certificate))
       );
       dispatch(
         inputControlSetPromptType({
