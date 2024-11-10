@@ -60,9 +60,7 @@ const ModuleNav = () => {
           <SidebarMenuSubItem key={route}>
             <Link href={route}>
               <SidebarMenuButton
-                disabled={
-                  isActiveRoute || disabledNoUserList.includes(authStatus)
-                }
+                disabled={disabledNoUserList.includes(authStatus)}
                 className={`${getDynamicClasses(isActiveRoute)} ${[
                   ...defaultClasses,
                 ]}`}
