@@ -132,6 +132,8 @@ const Admin = () => {
     };
   }, [dispatch, state.studentNumber, state.grades, state.internshipData]);
 
+  console.log(state.grades);
+
   useEffect(() => {
     async function initializeStudentInformation() {
       /** Clerk public metadata cannot be acccessed inside functions. Maybe must be root level. */
@@ -167,7 +169,7 @@ const Admin = () => {
     return void initializeStudentInformation();
   }, [dispatch]);
 
-  console.log(state);
+  console.log(state.studentNumber);
 
   return (
     <>
@@ -252,7 +254,7 @@ const Admin = () => {
 //   data: [string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]][][];
 //   gradeResult: [string, number][];
 // }) => {
-//   console.log(props);
+//   console.log({ display: props.gradeResult });
 //   return (
 //     <div className="fixed inset-x-0 bottom-0">
 //       <div className="fixed inset-x-96 top-36 grid grid-flow-col">
@@ -276,10 +278,10 @@ const Admin = () => {
 //           footerDescription={<p>Career Chart</p>}
 //         />
 //         {/* <LineChart
-//           description="Showing careers based on internship"
-//           title="Internship"
-//           footerDescription={<p>Internship Chart</p>}
-//         /> */}
+//             description="Showing careers based on internship"
+//             title="Internship"
+//             footerDescription={<p>Internship Chart</p>}
+//           /> */}
 //       </div>
 //       {props.data.map((array) =>
 //         array.map(([studentNumber, record]) => (

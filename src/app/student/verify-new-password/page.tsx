@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import OTP from '@/components/OTP';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 export type StudentCreation = {
   role: UserRole;
@@ -61,7 +62,7 @@ const VerifyNewPassword = () => {
       const error = e as Error;
       alert(
         error.message === EMPTY_STRING
-          ? 'Password needs to be 8 characters long, or stronger!'
+          ? getAlertMessages('student').verifyNewPassword.eightCharacters
           : error.message
       );
     }

@@ -21,18 +21,20 @@ import {
 import { EMPTY_STRING } from '@/utils/constants';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 const CORExtractor = () => {
   const dispatch = useAppDispatch();
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+  const alertMessages = getAlertMessages('student');
 
   async function handleSubmit(event: ChangeEvent<HTMLInputElement>) {
     event.preventDefault();
     const fileList = event.currentTarget.files;
 
-    if (fileList === null) return alert('Please upload your COR file here.');
+    if (fileList === null) return alert(alertMessages.CORExtractor.noFile);
 
     const formdata = new FormData();
     formdata.append('file', fileList[0]);

@@ -51,12 +51,7 @@ async function getDatabaseInformations(studentNumber: string, userId: string) {
 
       switch (true) {
         case route.includes('certificate'):
-          console.log({ route });
-          certificate = Object.entries(
-            (data as GetDatabaseInformation['grades'])[0]
-          )
-            .filter(([key]) => !isNaN(parseInt(key, 10)))
-            .map(([, v]) => v as Certificate);
+          certificate = data as GetDatabaseInformation['certificate'];
           break;
         case route.includes('grades'):
           console.log({ route });

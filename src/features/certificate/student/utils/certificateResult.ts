@@ -91,7 +91,7 @@ export default function certificateResult(props: CertificateResult) {
     return Object.entries(certificateByJob).map(([jobName, certificates]) => {
       /** Check if the certificates of the student includes the A rating for a specific job-related. */
       const certificateBooleans = certificates.map(({ certificate }) =>
-        certificateList.includes(certificate)
+        certificateList.flatMap((c) => c.name).includes(certificate)
       );
       // console.log({
       //   certificateBooleans,
@@ -112,7 +112,8 @@ export default function certificateResult(props: CertificateResult) {
       if (!isARating) {
         let accumulatedPoints = 0;
         certificates.forEach((c) => {
-          if (!certificateList.includes(c.certificate)) return;
+          if (!certificateList.flatMap((c) => c.name).includes(c.certificate))
+            return;
 
           //   console.log(c.certificate);
           accumulatedPoints += gradingPoints[c.gradeRating];

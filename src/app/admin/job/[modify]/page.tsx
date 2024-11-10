@@ -11,7 +11,7 @@ const Modify = () => {
     r.includes(params.modify as string)
   );
 
-  if (routes.length === 0) throw new Error('Route doesn&apos;t exists!');
+  if (routes.length === 0) throw new Error('Route doesn&apos;t exists.');
 
   return <div>{params.modify}</div>;
 };

@@ -1,7 +1,5 @@
 'use client';
 
-import type { CertificateResult } from '@/utils/types/certificateResult';
-
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { certificateList } from '@/redux/reducers/certificateReducer';
 import { studentInfoNumber } from '@/redux/reducers/studentInfoReducer';
@@ -43,30 +41,19 @@ const CertificateConfirmation = () => {
   }
 
   async function handleConfirmCertificate() {
-    handleInputControl('submitted');
-
-    const result: Pick<CertificateResult, 'certificateList'> = {
-      certificateList: _certificateList,
-    };
+    handleInputControl('fetching');
 
     if (disabledWriteInDB.includes(certificateInputControl)) {
       const response = await fetchHelper({
         route: '/api/mongo/certificate',
         method: 'PATCH',
-        data: { ...result, studentNumber },
+        data: { certificateList: _certificateList, studentNumber },
       });
 
       const json = (await response.json()) as BaseAPIResponse<string>;
       if (!response.ok) return alert(json.errorMessage[0]);
 
-      console.log(json.data);
-
-      return dispatch(
-        inputControlSetPromptType({
-          key: 'certificateModule',
-          promptType: 'submitted',
-        })
-      );
+      return handleInputControl('submitted');
     }
 
     // Posting to database.
@@ -74,21 +61,17 @@ const CertificateConfirmation = () => {
       route: '/api/mongo/certificate',
       method: 'POST',
       data: {
-        ...result,
+        certificateList: _certificateList,
         studentNumber,
       },
     });
 
     const responseBody = await postingCertificate.json();
     if (!postingCertificate.ok) {
+      handleInputControl('missing document');
       return alert((responseBody as BaseAPIResponse<string>).errorMessage[0]);
     }
-    dispatch(
-      inputControlSetPromptType({
-        key: 'certificateModule',
-        promptType: 'submitted',
-      })
-    );
+    return handleInputControl('submitted');
   }
 
   return (

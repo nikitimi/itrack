@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const date = new Date();
     const certificateInsertion = await certificateCollection.insertOne({
-      ...certificateList,
+      certificateList,
       studentNumber,
       dateCreated: date.getTime(),
       dateModified: WRONG_NUMBER,
@@ -46,8 +46,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const response: BaseAPIResponse<(Certificate & MongoExtra)[]> = {
-    data: [],
+  const response: BaseAPIResponse<
+    {
+      certificateList: { name: Certificate; fileKey: string }[];
+    } & Partial<MongoExtra>
+  > = {
+    data: { certificateList: [] },
     errorMessage: [],
   };
   try {
@@ -67,7 +71,10 @@ export async function GET(request: NextRequest) {
     const certificate = await certificateCollection.findOne({ studentNumber });
     if (certificate === null) throw new Error('There is no certificate.');
 
-    return NextResponse.json({ ...response, data: [certificate] });
+    return NextResponse.json({
+      ...response,
+      data: certificate?.certificateList,
+    });
   } catch (e) {
     const error = e as Error;
     return NextResponse.json(
@@ -90,13 +97,20 @@ export async function PATCH(request: NextRequest) {
       errorMessage: ['Student number is undefined.'],
     });
   }
+  console.log(payload);
 
   const date = new Date();
   const result = await certificateCollection.updateOne(
     { studentNumber: payload.studentNumber },
-    { $set: { dateModified: date.getTime(), ...payload.certificateList } },
+    {
+      $set: {
+        dateModified: date.getTime(),
+        certificateList: payload.certificate.certificateList,
+      },
+    },
     { upsert: true }
   );
+  console.log(result);
 
   return NextResponse.json({ ...response, data: JSON.stringify(result) });
 }

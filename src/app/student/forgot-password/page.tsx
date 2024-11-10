@@ -17,6 +17,7 @@ import useAppRouter from '@/hooks/useAppRouter';
 import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
 import regExp from '@/utils/regex';
 import handleInputChange from '@/utils/handleInputChange';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 const Page = () => {
   const { isLoaded, signIn } = useSignIn();
@@ -40,9 +41,12 @@ const Page = () => {
       });
       dispatch(authenticationSetStatus('verifying new password'));
       router.push('/student/verify-new-password');
-    } catch (err) {
-      console.log(err);
-      alert('Invalid email.');
+    } catch (e) {
+      const error = e as Error;
+      console.log(error);
+      alert(
+        getAlertMessages('student').forgotPassword.initiateForgotPasswordError
+      );
     }
   }
 

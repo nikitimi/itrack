@@ -39,6 +39,7 @@ import handleInputChange, {
 import CORExtractor from '@/components/student/CORExtractor';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
 import { StudentInfo } from '@/lib/schema/studentInfo';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 type InitialState = {
   studentNumbers: StudentInfo['studentNumber'][];
@@ -88,18 +89,18 @@ const SignupCard = () => {
 
     if (studentNumber != _studentTemporaryNumber)
       return alert(
-        `Student number in COR is ${_studentTemporaryNumber}, not ${studentNumber}!`
+        `Student number in COR is ${_studentTemporaryNumber}, not ${studentNumber}.`
       );
 
     if (!isLoaded) return;
 
     try {
       if (state.studentNumbers.includes(studentNumber)) {
-        throw new Error('Student number already exists!');
+        throw new Error('Student number already exists.');
       }
 
       if (password !== confirmPassword) {
-        throw new Error("Password doesn't match!");
+        throw new Error("Password doesn't match.");
       }
 
       // if (password.length < PASSWORD_CHARACTERS) {
@@ -151,7 +152,7 @@ const SignupCard = () => {
         }
       } catch (err) {
         console.log(err);
-        alert('Error in fetching student numbers.');
+        alert(getAlertMessages('student').signUp.cannotFetchStudentNumbers);
       }
     }
     return void getStudentNumbers();

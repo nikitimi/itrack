@@ -18,32 +18,42 @@ const Signin = () => {
   const dispatch = useAppDispatch();
   const router = useAppRouter();
 
+  console.log('first');
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     dispatch(authenticationSetStatus('initializing'));
     event.preventDefault();
     const formdata = new FormData(event.currentTarget);
 
-    const email = formdata.get('email') as string;
-    const password = formdata.get('password') as string;
+    try {
+      const email = formdata.get('email') as string;
+      const password = formdata.get('password') as string;
 
-    if (!isLoaded) return console.log('useSignIn not yet loaded.');
+      if (!isLoaded) return console.log('useSignIn not yet loaded.');
 
-    const result = await signIn.create({
-      identifier: email,
-      password,
-    });
+      const result = await signIn.create({
+        identifier: email,
+        password,
+      });
 
-    if (result.status !== 'complete') {
-      dispatch(authenticationSetStatus('no user'));
-      return console.log(result);
+      console.log(result);
+
+      if (result.status !== 'complete') {
+        dispatch(authenticationSetStatus('no user'));
+        return console.log(result);
+      }
+
+      setActive({
+        session: result.createdSessionId,
+      }).then(() => {
+        dispatch(authenticationSetUserType('admin'));
+        router.replace('/admin');
+      });
+    } catch (e) {
+      const error = e as Error;
+      console.log(signIn?.status, signIn);
+      console.log(error.message);
     }
-
-    setActive({
-      session: result.createdSessionId,
-    }).then(() => {
-      dispatch(authenticationSetUserType('admin'));
-      router.replace('/admin');
-    });
   }
 
   return (

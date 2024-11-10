@@ -45,7 +45,12 @@ const CertificateSelector = () => {
 
       if (selectState === EMPTY_STRING) throw new Error('Select is null!');
 
-      dispatch(certificateAdd(selectState as Certificate));
+      dispatch(
+        certificateAdd({
+          name: selectState as Certificate,
+          fileKey: EMPTY_STRING,
+        })
+      );
     } catch (e) {
       const error = e as Error;
       alert(error.message);
@@ -70,7 +75,10 @@ const CertificateSelector = () => {
             </SelectTrigger>
             <SelectContent>
               {certificateEnum.options
-                .filter((c) => !_certificateList.includes(c))
+                .filter(
+                  (c) =>
+                    !_certificateList.flatMap((list) => list.name).includes(c)
+                )
                 .map((certificate) => {
                   return (
                     <SelectItem

@@ -54,31 +54,33 @@ export async function GET(request: NextRequest) {
         new Set(adminGetGrades.flatMap((s) => s.studentNumber))
       );
       const filteredGradesByStudentNumber = studentNumbers.map((v) => ({
-        [v]: adminGetGrades.map(
-          ({
-            _id,
-            academicYear,
-            dateCreated,
-            dateModified,
-            semester,
-            subjects,
-            yearLevel,
-          }) => ({
-            _id,
-            academicYear,
-            dateCreated,
-            dateModified,
-            semester,
-            subjects,
-            yearLevel,
-          })
-        ),
+        [v]: adminGetGrades
+          .filter((g) => g.studentNumber === v)
+          .map(
+            ({
+              _id,
+              academicYear,
+              dateCreated,
+              dateModified,
+              semester,
+              subjects,
+              yearLevel,
+            }) => ({
+              _id,
+              academicYear,
+              dateCreated,
+              dateModified,
+              semester,
+              subjects,
+              yearLevel,
+            })
+          ),
       }));
       return NextResponse.json({
         ...response,
         data: filteredGradesByStudentNumber,
       } as BaseAPIResponse<
-        Record<string, (Omit<GradeInfo, 'studentNumber'> & MongoExtra)[]>[]
+        Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[]
       >);
     }
 

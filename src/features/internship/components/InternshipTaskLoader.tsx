@@ -41,10 +41,6 @@ const InternshipTaskLoader = () => {
     ) as HTMLTableRowElement;
     const toggleClasses = ['hidden'] as const;
 
-    // if (disabledWriteInDB.includes(internshipInputControl)) {
-    //   return alert("You've already submitted your internship form.");
-    // }
-
     tableRow.classList.toggle(...toggleClasses);
     dispatch(internshipTaskRemove(task));
   }

@@ -13,7 +13,7 @@ const lowerCasedAbbre = [
 ];
 /** Constant name referes to Screaming snakecase e.g. HELLO_WORLD. */
 export default function constantNameFormatter(constantName: string | null) {
-  let textHolder = (constantName ?? EMPTY_STRING)
+  let textHolder = String(constantName ?? EMPTY_STRING)
     .toLocaleLowerCase()
     .replace(/_/g, ' ');
   lowerCasedAbbre.forEach(

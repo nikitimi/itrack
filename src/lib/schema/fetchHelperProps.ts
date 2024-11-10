@@ -63,7 +63,9 @@ const fetchHelperPropsSchema = z.union([
     route: apiRoutesEnum.extract(['/api/mongo/certificate']),
     method: apiMethodsEnum.extract(['POST']),
     data: z.object({
-      certificateList: z.array(certificateEnum),
+      certificateList: z.array(
+        z.object({ name: certificateEnum, fileKey: z.string() })
+      ),
       studentNumber: z.string(),
     }),
     headers: z.union([z.undefined(), headersSchema.partial()]),
@@ -80,7 +82,9 @@ const fetchHelperPropsSchema = z.union([
     route: apiRoutesEnum.extract(['/api/mongo/certificate']),
     method: apiMethodsEnum.extract(['PATCH']),
     data: z.object({
-      certificateList: z.array(certificateEnum),
+      certificateList: z.array(
+        z.object({ name: certificateEnum, fileKey: z.string() })
+      ),
       studentNumber: z.string(),
     }),
     headers: z.union([z.undefined(), headersSchema.partial()]),
@@ -128,6 +132,13 @@ const fetchHelperPropsSchema = z.union([
     route: apiRoutesEnum.extract(['/api/mongo/internship']),
     method: apiMethodsEnum.extract(['PATCH']),
     data: internshipSchema,
+    headers: z.union([z.undefined(), headersSchema.partial()]),
+    params: z.undefined(),
+  }),
+  z.object({
+    route: apiRoutesEnum.extract(['/api/uploadthing/uploadFiles']),
+    method: apiMethodsEnum.extract(['POST']),
+    data: z.record(z.any()),
     headers: z.union([z.undefined(), headersSchema.partial()]),
     params: z.undefined(),
   }),

@@ -23,6 +23,7 @@ import { useSignIn } from '@clerk/nextjs';
 import handleInputChange from '@/utils/handleInputChange';
 import AppLogo from '@/components/AppLogo';
 import disabledWithUserList from '@/utils/authentication/disabledWithUserList';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 const SigninCard = () => {
   const router = useAppRouter();
@@ -55,19 +56,18 @@ const SigninCard = () => {
       }
     } catch (e) {
       const error = e as Error;
+      const alertMessages = getAlertMessages('student').signIn;
       dispatch(authenticationSetStatus('no user'));
       console.log(error.message);
       console.log(signIn);
       if (isLoaded) {
         switch (signIn.status) {
           case 'needs_first_factor':
-            return alert(
-              'Ongoing password verification failed\nPlease forgot your password again then complete the process.'
-            );
+            return alert(alertMessages.needsFirstFactor);
           case 'needs_identifier':
-            return alert("Account doesn't exists.");
+            return alert(alertMessages.needsIdentifier);
           case null:
-            return alert('');
+            return alert(alertMessages.nullStatus);
           default:
             alert(signIn.status);
         }

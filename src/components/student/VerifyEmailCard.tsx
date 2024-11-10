@@ -31,6 +31,7 @@ import {
 import { useEffect, useRef } from 'react';
 import { EMPTY_STRING } from '@/utils/constants';
 import type { StudentInfo } from '@/lib/schema/studentInfo';
+import getAlertMessages from '@/utils/getAlertMessages';
 
 const VerifyEmailCard = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -90,7 +91,7 @@ const VerifyEmailCard = () => {
       const error = e as Error;
       alert(
         error.message === EMPTY_STRING
-          ? 'Error in verifying code'
+          ? getAlertMessages('student').verifyEmail.errorVerifying
           : error.message
       );
     }

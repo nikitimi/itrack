@@ -1,13 +1,16 @@
 import type { Certificate } from '@/lib/enums/certificate';
+import { MongoExtra } from '@/lib/schema/mongoExtra';
 import type { RootState } from '@/redux/store';
 
 import { createSlice } from '@reduxjs/toolkit';
 
 type InitialState = {
-  certificateList: Certificate[];
+  certificate: {
+    certificateList: { name: Certificate; fileKey: string }[];
+  } & Partial<MongoExtra>;
 };
 const initialState: InitialState = {
-  certificateList: [],
+  certificate: { certificateList: [] },
 };
 
 /** This is for managing the state in certificate module of students. */
@@ -17,23 +20,53 @@ const certificateSlice = createSlice({
   reducers: {
     certificateAdd(
       state,
-      action: { payload: (typeof initialState)['certificateList'][number] }
+      action: {
+        payload: (typeof initialState)['certificate']['certificateList'][number];
+      }
     ) {
-      if (!state.certificateList.includes(action.payload)) {
-        state.certificateList.push(action.payload);
+      if (
+        !state.certificate.certificateList
+          .flatMap((c) => c.name)
+          .includes(action.payload.name)
+      ) {
+        state.certificate.certificateList.push(action.payload);
+      }
+    },
+    certificateAddFile(
+      state,
+      action: {
+        payload: (typeof initialState)['certificate']['certificateList'][number];
+      }
+    ) {
+      const index = state.certificate.certificateList
+        .flatMap((c) => c.name)
+        .indexOf(action.payload.name);
+      if (index > -1) {
+        const removedCertificate = state.certificate.certificateList.splice(
+          index,
+          1
+        )[0];
+        state.certificate.certificateList.push({
+          ...removedCertificate,
+          fileKey: action.payload.fileKey,
+        });
       }
     },
     certificateRemove(
       state,
-      action: { payload: (typeof initialState)['certificateList'][number] }
+      action: {
+        payload: (typeof initialState)['certificate']['certificateList'][number]['name'];
+      }
     ) {
-      if (state.certificateList.includes(action.payload)) {
-        const index = state.certificateList.indexOf(action.payload);
-        state.certificateList.splice(index, 1);
+      const index = state.certificate.certificateList
+        .flatMap((c) => c.name)
+        .indexOf(action.payload);
+      if (index > -1) {
+        state.certificate.certificateList.splice(index, 1);
       }
     },
     certificateResetState(state) {
-      state.certificateList.splice(0);
+      state.certificate.certificateList.splice(0);
     },
   },
 });
@@ -41,9 +74,13 @@ const certificateSlice = createSlice({
 // SELECTORS.
 
 export const certificateList = (s: RootState['certificate']) =>
-  s.certificateList;
+  s.certificate.certificateList;
 
 // ACTIONS.
-export const { certificateAdd, certificateRemove, certificateResetState } =
-  certificateSlice.actions;
+export const {
+  certificateAdd,
+  certificateAddFile,
+  certificateRemove,
+  certificateResetState,
+} = certificateSlice.actions;
 export default certificateSlice.reducer;

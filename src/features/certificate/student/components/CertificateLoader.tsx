@@ -24,9 +24,10 @@ import {
 } from '@/redux/reducers/certificateReducer';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { EMPTY_STRING } from '@/utils/constants';
-import disabledWriteInDB from '@/utils/disabledWriteInDB';
 import mime from '@/utils/mime';
 import constantNameFormatter from '@/utils/constantNameFormatter';
+import fetchHelper from '@/utils/fetch';
+import { UploadFileResult } from 'uploadthing/types';
 
 type CertificateFile = {
   /** For referencing the file. */
@@ -101,26 +102,35 @@ const CertificateLoader = () => {
       return [...prevState, { ...removedCertificate, file: choosedFile }];
     });
   }
-  // This will include all the certificate pushed in the certificateReducer.
-  useEffect(
-    () =>
-      setState((prevState) => {
-        const localCertificates = prevState.flatMap((s) => s.certificate);
-        const lastPushCertificate =
-          _certificateList[_certificateList.length - 1];
 
-        if (lastPushCertificate === undefined) return prevState;
+  useEffect(() => {
+    if (certificateInputControl === 'submitted') {
+      const fileToBlob = async (file: File) =>
+        new Blob([new Uint8Array(await file.arrayBuffer())], {
+          type: file.type,
+        });
+      const keys = state.map(async (certificate) => {
+        const blob = await fileToBlob(certificate.file!);
+        const formdata = new FormData();
+        formdata.set('files', blob);
+        const response = await fetchHelper({
+          route: '/api/uploadthing/uploadFiles',
+          method: 'POST',
+          data: formdata,
+        });
+        const json = await response.json();
 
-        if (!localCertificates.includes(lastPushCertificate)) {
-          prevState.push({ certificate: lastPushCertificate });
-          return prevState;
+        if (!response.ok) {
+          console.log('Upload failed');
+          return json.errorMessage[0];
         }
-        console.log('Certificate already exists on the list. line 107');
-        return prevState;
-      }),
-    [_certificateList]
-  );
-
+        const result = json.data as UploadFileResult[];
+        console.log(result);
+        return result[0].data?.key;
+      });
+      console.log({ keys });
+    }
+  }, [certificateInputControl, state]);
   // For Hydration.
   useEffect(() => setCertificateState(true), []);
   if (!isCertificateLoaded) return <Loading />;
@@ -138,31 +148,30 @@ const CertificateLoader = () => {
         </TableHeader>
         <TableBody className="rounded-lg">
           {_certificateList.map((certificate) => {
-            const encodedCertificate = encodeURIComponent(certificate).replace(
-              invalidExtraCharactersRegex,
-              EMPTY_STRING
-            );
+            const encodedCertificate = encodeURIComponent(
+              certificate.name
+            ).replace(invalidExtraCharactersRegex, EMPTY_STRING);
 
             return (
-              <TableRow key={certificate} id={encodedCertificate}>
+              <TableRow key={certificate.name} id={encodedCertificate}>
                 <TableCell>
                   <p className="capitalize">
-                    {constantNameFormatter(certificate)}
+                    {constantNameFormatter(certificate.name)}
                   </p>
                 </TableCell>
                 <TableCell>
                   <div
-                    className={`${disabledWriteInDB.includes(certificateInputControl) ? 'opacity-0' : 'opacity-100'} flex justify-center gap-2 duration-200 ease-in-out`}
+                    className={`flex justify-center gap-2 duration-200 ease-in-out`}
                   >
                     <Input
                       type="file"
                       disabled={disabledNoUserList.includes(authStatus)}
-                      onChange={(e) => handleAddFile(e, certificate)}
+                      onChange={(e) => handleAddFile(e, certificate.name)}
                     />
                     <Button
                       variant="destructive"
                       disabled={disabledNoUserList.includes(authStatus)}
-                      onClick={() => handleRemoveCertificate(certificate)}
+                      onClick={() => handleRemoveCertificate(certificate.name)}
                     >
                       Remove
                     </Button>
