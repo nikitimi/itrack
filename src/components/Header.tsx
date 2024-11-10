@@ -16,6 +16,7 @@ import { useAppSelector } from '@/hooks/redux';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 import { useClerk } from '@clerk/nextjs';
 import { UserRole } from '@/lib/enums/userRole';
+import SignoutButton from './SignoutButton';
 
 type ClerkPublicMetadata = {
   role: UserRole;
@@ -30,14 +31,28 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 z-10 w-full bg-white/95 shadow-md">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={50}>
-          <SidebarTrigger disabled={disabledNoUserList.includes(authStatus)} />
-        </ResizablePanel>
-        <ResizableHandle disabled className="opacity-0" />
-        <ResizablePanel defaultSize={50} />
-      </ResizablePanelGroup>
-      {metadata?.role === 'student' ? <ProgressTracker /> : <></>}
+      {metadata?.role === 'student' ? (
+        <>
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel defaultSize={50}>
+              <SidebarTrigger
+                disabled={disabledNoUserList.includes(authStatus)}
+              />
+            </ResizablePanel>
+            <ResizableHandle disabled className="opacity-0" />
+            <ResizablePanel defaultSize={50} />
+          </ResizablePanelGroup>
+          <ProgressTracker />
+        </>
+      ) : (
+        <div className="flex justify-between p-2">
+          <section className="flex items-end justify-between gap-2">
+            <AppLogo />
+            <p className="text-lg font-bold">Admin</p>
+          </section>
+          <SignoutButton />
+        </div>
+      )}
     </header>
   );
 };

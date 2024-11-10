@@ -7,6 +7,8 @@ import url from 'url';
 
 import { collection } from '@/server/utils/mongodb';
 import { WRONG_NUMBER } from '@/utils/constants';
+import getStudentsPromise from '@/server/utils/promises/getStudents';
+import { StudentInfo } from '@/lib/schema/studentInfo';
 
 const gradeCollection = collection('Grades');
 
@@ -34,9 +36,33 @@ export async function POST(request: NextRequest) {
   }
 }
 
+function processSubjects(
+  gradeInfo: Omit<GradeInfo & MongoExtra, 'studentNumber'>[]
+) {
+  const subjectsValidator: string[] = [];
+
+  const holder = gradeInfo.map((s) => {
+    const counter = `${s.yearLevel} - ${s.semester}` as const;
+    const condition = !subjectsValidator.includes(counter);
+    if (condition) {
+      // console.log(counter, ' - ', studentNumber);
+      subjectsValidator.push(counter);
+      return s;
+    }
+  });
+  // console.log('------\n');
+  return holder.filter((s) => s !== undefined);
+}
+
 export async function GET(request: NextRequest) {
-  const response: BaseAPIResponse<(GradeInfo & MongoExtra)[]> = {
-    data: [],
+  const response: BaseAPIResponse<{
+    grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
+    filteredStudentInfo: StudentInfo[];
+  }> = {
+    data: {
+      grades: [],
+      filteredStudentInfo: [],
+    },
     errorMessage: [],
   };
   try {
@@ -44,44 +70,64 @@ export async function GET(request: NextRequest) {
       'studentNumber' | 'role',
       string
     >;
-    console.log(parameters.role);
 
     if (parameters.role === 'admin') {
-      const adminGetGrades = (await gradeCollection
-        .find()
-        .toArray()) as unknown as (GradeInfo & MongoExtra)[];
-      const studentNumbers = Array.from(
-        new Set(adminGetGrades.flatMap((s) => s.studentNumber))
+      const [clerkUsers, studentGrades] = await Promise.all([
+        getStudentsPromise,
+        gradeCollection.find().toArray() as unknown as Promise<
+          (GradeInfo & MongoExtra)[]
+        >,
+      ]);
+
+      const students = clerkUsers.filter(
+        (u) => u.publicMetadata.studentNumber !== undefined
       );
-      const filteredGradesByStudentNumber = studentNumbers.map((v) => ({
-        [v]: adminGetGrades
-          .filter((g) => g.studentNumber === v)
-          .map(
-            ({
-              _id,
-              academicYear,
-              dateCreated,
-              dateModified,
-              semester,
-              subjects,
-              yearLevel,
-            }) => ({
-              _id,
-              academicYear,
-              dateCreated,
-              dateModified,
-              semester,
-              subjects,
-              yearLevel,
-            })
+      const filteredStudentInfo = students.map(
+        ({ publicMetadata, firstName, lastName, id }) => ({
+          studentNumber: publicMetadata.studentNumber as string | undefined,
+          specialization: publicMetadata.specialization as string | undefined,
+          middleInitial: publicMetadata.middleInitial as string | undefined,
+          firstName,
+          lastName,
+          userId: id,
+        })
+      );
+      const studentNumbers = filteredStudentInfo.map((s) => s.studentNumber);
+      const filteredGradesByStudentNumber = studentNumbers
+        .filter((v) => v !== undefined)
+        .map((v) => ({
+          [v]: processSubjects(
+            studentGrades
+              .filter((g) => g.studentNumber === v)
+              .map(
+                ({
+                  _id,
+                  academicYear,
+                  dateCreated,
+                  dateModified,
+                  semester,
+                  subjects,
+                  yearLevel,
+                }) => ({
+                  _id,
+                  academicYear,
+                  dateCreated,
+                  dateModified,
+                  semester,
+                  subjects,
+                  yearLevel,
+                })
+              ) as Omit<GradeInfo & MongoExtra, 'studentNumber'>[]
           ),
-      }));
+        }));
+
       return NextResponse.json({
         ...response,
-        data: filteredGradesByStudentNumber,
-      } as BaseAPIResponse<
-        Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[]
-      >);
+        data: {
+          grades: filteredGradesByStudentNumber,
+          filteredStudentInfo,
+        },
+      });
     }
 
     const studentNumber = parameters.studentNumber;

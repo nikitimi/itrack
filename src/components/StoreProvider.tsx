@@ -116,7 +116,7 @@ const StoreInitializer = ({
 
     if (certificate.length > 0) {
       certificate.forEach((certificate) =>
-        dispatch(certificateAdd(certificate))
+        dispatch(certificateAdd({ name: certificate, fileKey: '' }))
       );
       dispatch(
         inputControlSetPromptType({

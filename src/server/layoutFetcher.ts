@@ -14,6 +14,7 @@ import gradeResult from '@/features/grade/student/utils/gradeResult';
 // eslint-disable-next-line boundaries/element-types
 import internshipResult from '@/features/internship/utils/internshipResult';
 import getDatabaseInformations from '@/server/utils/getDatabaseInformations';
+import { EMPTY_STRING } from '@/utils/constants';
 
 type LayoutFetcher = {
   grades: (GradeInfo & MongoExtra)[];
@@ -43,7 +44,10 @@ export default async function layoutFetcher(
   const foo = {
     certificate: Object.entries(
       certificateResult({
-        certificateList: result.certificate,
+        certificateList: result.certificate.map((name) => ({
+          name,
+          fileKey: EMPTY_STRING,
+        })),
         specialization,
       }) as Record<string, number>
     ),

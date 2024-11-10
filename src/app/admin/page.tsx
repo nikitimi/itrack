@@ -1,8 +1,10 @@
 'use client';
 
+import type { GradeInfo } from '@/lib/schema/gradeInfo';
+import type { MongoExtra } from '@/lib/schema/mongoExtra';
+
 import { useEffect, useRef, useState } from 'react';
 import Header from '@/components/Header';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -10,14 +12,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from '@/components/ui/collapsible';
 import specializationEnum, { Specialization } from '@/lib/enums/specialization';
 import { useAppDispatch } from '@/hooks/redux';
-import { gradeResetState, gradesAdd } from '@/redux/reducers/gradeReducer';
+import { gradesAdd } from '@/redux/reducers/gradeReducer';
 import {
   internshipCompanyQuestionUpdate,
   internshipGradeUpdate,
@@ -26,24 +23,45 @@ import {
 import { inputControlSetPromptType } from '@/redux/reducers/inputControlReducer';
 import { BaseAPIResponse } from '@/server/lib/schema/apiResponse';
 import { authenticationSetStatus } from '@/redux/reducers/authenticationReducer';
-import { UserRole } from '@/lib/enums/userRole';
 import { InitializeApp } from '@/lib/schema/initializeApp';
+import fetchHelper from '@/utils/fetch';
+import { StudentInfo } from '@/lib/schema/studentInfo';
+import { EMPTY_STRING } from '@/utils/constants';
+import constantNameFormatter from '@/utils/constantNameFormatter';
+import gradeLevelEnum from '@/lib/enums/gradeLevel';
+import semesterEnum from '@/lib/enums/semester';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+
+type FetchedData = {
+  grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
+  filteredStudentInfo: StudentInfo[];
+};
 
 type InitialState = {
-  grades: Record<string, InitializeApp['grades']>[];
-  studentData: StudentInformation[];
   specializationSelected: Specialization | null;
   studentNumber: string | null;
   internshipData: Record<string, Required<InitializeApp['internship']>[]>[];
-};
-
-type StudentInformation = {
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  studentNumber: string;
-  specialization: Specialization;
-};
+  studentData: StudentInfo[];
+} & FetchedData;
 
 const initialState: InitialState = {
   grades: [],
@@ -51,6 +69,7 @@ const initialState: InitialState = {
   internshipData: [],
   specializationSelected: null,
   studentNumber: null,
+  filteredStudentInfo: [],
 };
 
 const Admin = () => {
@@ -58,18 +77,8 @@ const Admin = () => {
   const cardRef = useRef<HTMLDivElement>(null);
   // const _grades = grades(useAppSelector((s) => s.grade));
   const dispatch = useAppDispatch();
-
-  const studentDataGroupedBySpecialization = specializationEnum.options.map(
-    (specialization) => ({
-      [specialization]: state.studentData
-        .filter((s) => s.specialization === specialization)
-        .map(({ firstName, lastName, studentNumber }) => ({
-          firstName,
-          lastName,
-          studentNumber,
-        })),
-    })
-  );
+  const triggerClasses =
+    'rounded-lg bg-black/90 px-4 py-2 capitalize text-white shadow-sm';
 
   useEffect(() => {
     function setSubject() {
@@ -132,117 +141,186 @@ const Admin = () => {
     };
   }, [dispatch, state.studentNumber, state.grades, state.internshipData]);
 
-  console.log(state.grades);
-
   useEffect(() => {
     async function initializeStudentInformation() {
       /** Clerk public metadata cannot be acccessed inside functions. Maybe must be root level. */
-      const response = await fetch(`/api/mongo/grades?role=admin`, {
+      const response = await fetchHelper({
+        route: '/api/mongo/grades',
         method: 'GET',
+        params: {
+          role: 'admin',
+        },
       });
-      const { data, errorMessage } = (await response.json()) as BaseAPIResponse<
-        InitialState['grades']
-      >;
+      const { data, errorMessage } =
+        (await response.json()) as BaseAPIResponse<{
+          grades: InitialState['grades'];
+          filteredStudentInfo: StudentInfo[];
+        }>;
 
       if (!response.ok) return alert(`Grades: ${errorMessage[0]}`);
-      const getStudentInformationsResponse = await fetch(
-        '/api/getStudentInformations',
-        {
-          method: 'GET',
-        }
-      );
-      const getStudentInformationsJson =
-        (await getStudentInformationsResponse.json()) as BaseAPIResponse<
-          StudentInformation[]
-        >;
-      if (!getStudentInformationsResponse.ok) {
-        return alert(
-          `Student informations: ${getStudentInformationsJson.errorMessage[0]}`
-        );
-      }
+
       setState((prevState) => ({
         ...prevState,
-        grades: data,
-        studentData: getStudentInformationsJson.data,
+        grades: data.grades,
+        filteredStudentInfo: data.filteredStudentInfo,
       }));
     }
     return void initializeStudentInformation();
   }, [dispatch]);
 
-  console.log(state.studentNumber);
-
   return (
     <>
       <Header />
-      <Card>
+      <Card className="mt-12 rounded-none border-none shadow-none">
         <CardHeader>
-          <CardTitle>Specializations</CardTitle>
-          <CardDescription>Students sorted by specializations.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid min-h-64 grid-flow-col" ref={cardRef}>
-          {studentDataGroupedBySpecialization.map((object) =>
-            Object.entries(object).map(([specialization, array]) => (
-              <Collapsible
-                key={specialization}
-                open={state.specializationSelected === specialization}
+          <CardTitle>Students</CardTitle>
+          <CardDescription>All the student infos resides here.</CardDescription>
+          <section>
+            <Label htmlFor="filters">Filter by:</Label>
+            <div id="filters" className="flex justify-between gap-2">
+              <Select
+                onValueChange={(s) =>
+                  setState((prevState) => ({
+                    ...prevState,
+                    specializationSelected: s as Specialization,
+                  }))
+                }
               >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="h-full w-full rounded-none capitalize"
-                    onClick={() => {
-                      setState((prevState) => ({
-                        ...prevState,
-                        specializationSelected:
-                          specialization as Specialization,
-                        studentNumber: null,
-                      }));
-                      dispatch(gradeResetState());
-                    }}
-                  >
-                    {specialization.replace(/_/g, ' ').toLocaleLowerCase()}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="absolute inset-x-0 top-96">
-                  <div className="h-48 overflow-y-auto bg-slate-50">
-                    {array.map(({ firstName, lastName, studentNumber }) => (
-                      <Collapsible
-                        key={studentNumber}
-                        open={state.studentNumber === studentNumber}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <Button
-                            className="w-full rounded-none capitalize"
-                            onClick={() =>
-                              setState((prevState) => ({
-                                ...prevState,
-                                studentNumber,
-                              }))
-                            }
-                          >{`${firstName} ${lastName}`}</Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="bg-green-200">
-                          {/* <DisplayStudentGrades
-                            gradeResult={
-                              gradeResult({
-                                grades: _grades,
-                                specialization: state.specializationSelected!,
-                              }) ?? []
-                            }
-                            data={state.grades.map((object) =>
-                              Object.entries(object).filter(
-                                ([studentNumberInner]) =>
-                                  studentNumberInner === studentNumber
-                              )
+                <SelectTrigger className="capitalize">
+                  <SelectValue placeholder="Specialization" />
+                </SelectTrigger>
+                <SelectContent>
+                  {specializationEnum.options.map((v) => (
+                    <SelectItem key={v} className="capitalize" value={v}>
+                      {constantNameFormatter(v)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* <Select>
+                <SelectTrigger className="capitalize">
+                  <SelectValue placeholder="Semester" />
+                </SelectTrigger>
+                <SelectContent>
+                  {semesterEnum.options.map((v) => (
+                    <SelectItem key={v} className="capitalize" value={v}>
+                      {constantNameFormatter(v)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select>
+                <SelectTrigger className="capitalize">
+                  <SelectValue placeholder="Year Level" />
+                </SelectTrigger>
+                <SelectContent>
+                  {gradeLevelEnum.options.map((v) => (
+                    <SelectItem key={v} className="capitalize" value={v}>
+                      {constantNameFormatter(v)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select> */}
+            </div>
+          </section>
+        </CardHeader>
+        <CardContent
+          className="grid h-1/3 gap-4 overflow-y-auto bg-slate-100 py-4"
+          ref={cardRef}
+        >
+          {state.grades.map((object) =>
+            Object.entries(object)
+              .filter(([studentNumber]) =>
+                // Filter by student's specialization, by default shows all students.
+                state.specializationSelected === null
+                  ? true
+                  : state.filteredStudentInfo
+                      .filter(
+                        (s) => s.specialization === state.specializationSelected
+                      )
+                      .flatMap((s) => s.studentNumber)
+                      .includes(studentNumber)
+              )
+              .map(([studentNumber, array]) => {
+                const studentInfo = state.filteredStudentInfo?.filter(
+                  (s) => s.studentNumber === studentNumber
+                )[0];
+                const fullName = `${studentInfo.lastName.toLocaleUpperCase()}, ${studentInfo?.firstName} ${(studentInfo.middleInitial ?? EMPTY_STRING).replace(/./g, EMPTY_STRING).toLocaleUpperCase()}`;
+                const isNoGradeRecord = array.length === 0;
+                return (
+                  <div key={studentNumber}>
+                    <Dialog>
+                      <DialogHeader>
+                        <DialogTrigger>
+                          <DialogTitle className={triggerClasses}>
+                            {fullName}
+                          </DialogTitle>
+                        </DialogTrigger>
+                      </DialogHeader>
+                      <DialogContent>
+                        <Card className="border-none shadow-none">
+                          <CardHeader>
+                            <div className="flex justify-between">
+                              <p className="font-semibold capitalize">
+                                {fullName}
+                              </p>
+                              <p className="font-semibold">{studentNumber}</p>
+                            </div>
+                            <p className="capitalize">{`Specialization: ${constantNameFormatter(studentInfo.specialization)}`}</p>
+                          </CardHeader>
+                          <CardContent
+                            className={`${isNoGradeRecord ? 'max-h-64' : 'h-64'} flex flex-col overflow-y-auto`}
+                          >
+                            {isNoGradeRecord ? (
+                              <p>No grade records found.</p>
+                            ) : (
+                              array
+                                .sort(
+                                  (a, b) =>
+                                    semesterEnum.options.indexOf(a.semester) -
+                                    semesterEnum.options.indexOf(b.semester)
+                                )
+                                .sort(
+                                  (a, b) =>
+                                    gradeLevelEnum.options.indexOf(
+                                      a.yearLevel
+                                    ) -
+                                    gradeLevelEnum.options.indexOf(b.yearLevel)
+                                )
+                                .map(
+                                  ({ _id, semester, yearLevel, subjects }) => (
+                                    <Collapsible key={_id}>
+                                      <CollapsibleTrigger className="w-full">
+                                        <p className={triggerClasses}>
+                                          {constantNameFormatter(
+                                            `${yearLevel} - ${semester}`
+                                          )}
+                                        </p>
+                                      </CollapsibleTrigger>
+                                      <CollapsibleContent>
+                                        <div className="bg-slate-50">
+                                          {subjects.map(({ code, grade }) => (
+                                            <div
+                                              key={code}
+                                              className="flex w-full items-center justify-between odd:bg-slate-100"
+                                            >
+                                              <p>{code.replace(/_/g, ' ')}</p>
+                                              <p>{grade}</p>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </CollapsibleContent>
+                                    </Collapsible>
+                                  )
+                                )
                             )}
-                          /> */}
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ))}
+                          </CardContent>
+                        </Card>
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                </CollapsibleContent>
-              </Collapsible>
-            ))
+                );
+              })
           )}
         </CardContent>
       </Card>
@@ -250,78 +328,20 @@ const Admin = () => {
   );
 };
 
-// const DisplayStudentGrades = (props: {
-//   data: [string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]][][];
-//   gradeResult: [string, number][];
-// }) => {
-//   console.log({ display: props.gradeResult });
+// const Filters = ({array, onChange}: {array: string[]} & HTMLAttributes<HTMLSelectElement>) => {
 //   return (
-//     <div className="fixed inset-x-0 bottom-0">
-//       <div className="fixed inset-x-96 top-36 grid grid-flow-col">
-//         <BarChart
-//           chartConfig={{
-//             career: {
-//               label: 'Career',
-//               color: 'hsl(var(--chart-1))',
-//             },
-//             grade: {
-//               label: 'Grade',
-//               color: 'hsl(var(--chart-2))',
-//             },
-//           }}
-//           chartData={props.gradeResult.map(([career, grade]) => ({
-//             career,
-//             grade: Math.floor(grade).toFixed(2),
-//           }))}
-//           title={'Careers'}
-//           description={'Showing careers based on grades.'}
-//           footerDescription={<p>Career Chart</p>}
-//         />
-//         {/* <LineChart
-//             description="Showing careers based on internship"
-//             title="Internship"
-//             footerDescription={<p>Internship Chart</p>}
-//           /> */}
-//       </div>
-//       {props.data.map((array) =>
-//         array.map(([studentNumber, record]) => (
-//           <Collapsible key={studentNumber} className="sticky top-0">
-//             <CollapsibleTrigger asChild>
-//               <Button
-//                 className="w-full rounded-none bg-slate-100"
-//                 variant="ghost"
-//               >
-//                 {`Student Number: ${studentNumber}`}
-//               </Button>
-//             </CollapsibleTrigger>
-//             <CollapsibleContent>
-//               <div>
-//                 {record.map(({ _id, subjects, semester, yearLevel }) => (
-//                   <Collapsible key={_id}>
-//                     <CollapsibleTrigger asChild>
-//                       <Button className="w-full rounded-none">
-//                         {`${yearLevel} - ${semester}`.replace(/_/g, ' ')}
-//                       </Button>
-//                     </CollapsibleTrigger>
-//                     <CollapsibleContent>
-//                       {subjects.map(({ code, grade }) => (
-//                         <div
-//                           key={code}
-//                           className="flex items-center justify-between gap-2 bg-white"
-//                         >
-//                           <p>{code.replace(/_/g, ' ')}</p>
-//                           <p>{grade}</p>
-//                         </div>
-//                       ))}
-//                     </CollapsibleContent>
-//                   </Collapsible>
-//                 ))}
-//               </div>
-//             </CollapsibleContent>
-//           </Collapsible>
-//         ))
-//       )}
-//     </div>
+//     <Select>
+//       <SelectTrigger className="capitalize">
+//         <SelectValue placeholder="Specialization" />
+//       </SelectTrigger>
+//       <SelectContent>
+//         {array.map((v) => (
+//           <SelectItem key={v} className="capitalize" value={v}>
+//             {constantNameFormatter(v)}
+//           </SelectItem>
+//         ))}
+//       </SelectContent>
+//     </Select>
 //   );
 // };
 

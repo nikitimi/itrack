@@ -17,7 +17,7 @@ import NavProjectsSkeleton from '@/components/NavProjectsSkeleton';
 import SignoutButton from '@/components/SignoutButton';
 import { authenticationStatus } from '@/redux/reducers/authenticationReducer';
 import { useAppSelector } from '@/hooks/redux';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useClerk } from '@clerk/nextjs';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
 
 const AppSidebar = () => {
@@ -26,8 +26,14 @@ const AppSidebar = () => {
   const authState = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+  const clerk = useClerk();
+  const isAdmin =
+    clerk.session?.publicUserData.identifier === 'admin@itrack.vercel.app';
 
-  if (disabledNoUserList.includes(authState) && typeof userId !== 'string')
+  if (
+    (disabledNoUserList.includes(authState) && typeof userId !== 'string') ||
+    isAdmin
+  )
     return <></>;
 
   return (
