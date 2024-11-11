@@ -46,7 +46,7 @@ export function RadarChart(props: ChartProps) {
                 fill={colorVariable}
                 fillOpacity={0}
                 stroke={colorVariable}
-                strokeWidth={2}
+                strokeWidth={3}
               />
             );
           })}

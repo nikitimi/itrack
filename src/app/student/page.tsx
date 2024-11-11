@@ -39,7 +39,7 @@ const Dashboard = () => {
   const chartConfig = {
     certificate: {
       label: 'Certificate',
-      color: 'hsl(var(--chart-1))',
+      color: 'hsl(var(--chart-5))',
     },
     grades: {
       label: 'Grades',
@@ -93,7 +93,7 @@ const Dashboard = () => {
               />
               <GradeChart
                 parentStyle="relative flex"
-                selectStyle="absolute bottom-2 w-full p-2 px-4"
+                selectStyle="absolute -top-12 mx-auto w-full px-0 sm:px-2 md:px-10"
                 title={grade.title}
                 chartData={gradeChart}
                 chartConfig={chartConfig}

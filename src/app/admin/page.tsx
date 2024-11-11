@@ -50,11 +50,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import AreaChart from '@/components/charts/AreaChart';
 import { ChartConfig } from '@/components/ui/chart';
 import { AdminLineChart } from '@/components/charts/AdminLineChart';
 import { Separator } from '@/components/ui/separator';
-import BarChart from '@/components/charts/BarChart';
+import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
+import webAndMobileDevelopmentJobEnum from '@/lib/enums/jobs/webAndMobileDevelopment';
+import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';
+import gradeResult from '@/features/grade/student/utils/gradeResult';
 
 type FetchedData = {
   grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
@@ -190,6 +192,29 @@ const Admin = () => {
   }
   const { adminLineChartHolder, chartData } = getStudentInfoByDate();
 
+  const calculatedGrades = state.grades.map((object) =>
+    Object.fromEntries(
+      Object.entries(object)
+        // .filter((o) => o[1].length > 0)
+        .map(([studentNumber, record]) => {
+          const calculatedGrade = gradeResult({
+            grades: record as unknown as GradeInfo[],
+            specialization: state.filteredStudentInfo.filter(
+              (s) => s.studentNumber === studentNumber
+            )[0].specialization,
+          });
+          const specialization = state.filteredStudentInfo.filter(
+            (s) => s.studentNumber === studentNumber
+          )[0].specialization;
+          // Remove splice when getting the overall result.
+          return [
+            specialization,
+            calculatedGrade?.splice(0, 3).flatMap(([s]) => s),
+          ];
+        })
+    )
+  );
+
   useEffect(() => {
     function setSubject() {
       if (state.studentNumber === null) return;
@@ -293,11 +318,11 @@ const Admin = () => {
             chartData={chartData}
             chartConfig={chartConfig}
             memoValue={adminLineChartHolder}
-            title={'Students number Chart'}
+            title={'Students number chart'}
             description={`The total number of ITrack-registered students are ${chartData.reduce((acc, curr) => acc + curr.students, 0)}`}
           />
           <Separator />
-          <section className="grid grid-flow-row justify-between sm:grid-flow-col">
+          {/* <section className="grid grid-flow-row justify-between sm:grid-flow-col">
             <AreaChart
               chartConfig={chartConfig}
               chartData={chartData.reduce(
@@ -311,33 +336,102 @@ const Admin = () => {
               title={'Specialization Chart'}
               description={'Get the number of students by specialization.'}
             />
-            <BarChart
-              chartConfig={chartConfig}
-              chartData={chartData.reduce(
-                (acc, curr) => {
-                  const { students, ...rest } = curr;
-                  console.log(students);
-                  return [...acc, rest];
-                },
-                [] as Record<string, string | number>[]
-              )}
-              title={'Specialization Chart'}
-              description={'Get the number of students by specialization.'}
-            />
-            <BarChart
-              chartConfig={chartConfig}
-              chartData={chartData.reduce(
-                (acc, curr) => {
-                  const { students, ...rest } = curr;
-                  console.log(students);
-                  return [...acc, rest];
-                },
-                [] as Record<string, string | number>[]
-              )}
-              title={'Specialization Chart'}
-              description={'Get the number of students by specialization.'}
-            />
-          </section>
+          </section> */}
+          <Card
+          // className="shadow-none rounded-none border-none"
+          >
+            <CardHeader>
+              <CardTitle>Career rankings based on Grades</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-flow-row gap-4 sm:grid-flow-col">
+              {specializationEnum.options.map((s) => {
+                const filteredGradesBySpecialization = calculatedGrades.map(
+                  (obj) =>
+                    Object.entries(obj)
+                      .filter(([specialization]) => specialization === s)
+                      .flatMap(([, v]) => v)
+                );
+                let recordHolder: Record<string, number> = {};
+                filteredGradesBySpecialization.forEach((array) =>
+                  array
+                    .filter((v) => v !== undefined)
+                    .forEach(
+                      (v) =>
+                        (recordHolder = {
+                          ...recordHolder,
+                          [v]: (!recordHolder[v] ? 0 : recordHolder[v]) + 1,
+                        })
+                    )
+                );
+
+                switch (s) {
+                  case 'BUSINESS_ANALYTICS':
+                    return (
+                      <Card key={s}>
+                        <CardHeader>
+                          <CardTitle className="capitalize">
+                            {constantNameFormatter(s)}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {businessAnalyticJobEnum.options.map((c) => (
+                            <div
+                              key={c}
+                              className="flex justify-between gap-2 capitalize"
+                            >
+                              <h3>{constantNameFormatter(c)}</h3>
+                              <p>{!recordHolder[c] ? 0 : recordHolder[c]}</p>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  case 'WEB_AND_MOBILE_DEVELOPMENT':
+                    return (
+                      <Card key={s}>
+                        <CardHeader>
+                          <CardTitle className="capitalize">
+                            {constantNameFormatter(s)}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {webAndMobileDevelopmentJobEnum.options.map((c) => (
+                            <div
+                              key={c}
+                              className="flex justify-between gap-2 capitalize"
+                            >
+                              <h3>{constantNameFormatter(c)}</h3>
+                              <p>{!recordHolder[c] ? 0 : recordHolder[c]}</p>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  case 'SERVICE_MANAGEMENT_PROGRAM':
+                    return (
+                      <Card key={s}>
+                        <CardHeader>
+                          <CardTitle className="capitalize">
+                            {constantNameFormatter(s)}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {serviceManagementProgramJobEnum.options.map((c) => (
+                            <div
+                              key={c}
+                              className="flex justify-between gap-2 capitalize"
+                            >
+                              <h3>{constantNameFormatter(c)}</h3>
+                              <p>{!recordHolder[c] ? 0 : recordHolder[c]}</p>
+                            </div>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    );
+                }
+              })}
+            </CardContent>
+          </Card>
         </CardContent>
       </Card>
       <div className="px-6">

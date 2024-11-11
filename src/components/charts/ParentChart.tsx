@@ -11,7 +11,6 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardFooter,
 } from '@/components/ui/card';
 
 type ParentChartProps = Children & {
@@ -27,11 +26,11 @@ export type ChartProps = {
 } & Omit<ParentChartProps, 'children'>;
 
 export const chartDataColor = [
-  'var(--color-chrome)',
-  'var(--color-safari)',
-  'var(--color-firefox)',
-  'var(--color-edge)',
-  'var(--color-other)',
+  'hsl(var(--chart-1))',
+  'hsl(var(--chart-2))',
+  'hsl(var(--chart-3))',
+  'hsl(var(--chart-4))',
+  'hsl(var(--chart-5))',
 ];
 
 const ParentChart = ({ children, ...rest }: ParentChartProps) => {
@@ -45,15 +44,6 @@ const ParentChart = ({ children, ...rest }: ParentChartProps) => {
         <CardDescription>{rest.description}</CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              {rest.footerDescription}
-            </div>
-          </div>
-        </div>
-      </CardFooter>
     </Card>
   );
 };

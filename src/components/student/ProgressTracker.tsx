@@ -24,7 +24,6 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
-import useAppRouter from '@/hooks/useAppRouter';
 
 export function ProgressTracker() {
   const _grades = grades(useAppSelector((s) => s.grade));
@@ -38,7 +37,6 @@ export function ProgressTracker() {
   const completion = presentationCompletion(
     useAppSelector((s) => s.presentation)
   );
-  const router = useAppRouter();
 
   function getProgress() {
     const completionHolder = completion.filter((l) => !l.startsWith('grade'));
