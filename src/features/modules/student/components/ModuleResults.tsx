@@ -147,7 +147,7 @@ const RenderTable = (props: RenderTableProps) => {
   } satisfies ChartConfig;
 
   useEffect(() => {
-    if (props.isLoading === undefined) {
+    if (props.isLoading === undefined && props.objectArray.length > 0) {
       const totalPoints = props.objectArray
         .map(([, p]) => p)
         .reduce((a, b) => a + b);

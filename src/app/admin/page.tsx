@@ -55,7 +55,6 @@ import { ChartConfig } from '@/components/ui/chart';
 import { AdminLineChart } from '@/components/charts/AdminLineChart';
 import { Separator } from '@/components/ui/separator';
 import BarChart from '@/components/charts/BarChart';
-import { RadarChart } from '@/components/charts/RadarChart';
 
 type FetchedData = {
   grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
@@ -325,7 +324,7 @@ const Admin = () => {
               title={'Specialization Chart'}
               description={'Get the number of students by specialization.'}
             />
-            <RadarChart
+            <BarChart
               chartConfig={chartConfig}
               chartData={chartData.reduce(
                 (acc, curr) => {
