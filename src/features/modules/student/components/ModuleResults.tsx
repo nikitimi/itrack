@@ -35,6 +35,15 @@ import {
 import GradeChart from '@/components/charts/GradeChart';
 import { ChartConfig } from '@/components/ui/chart';
 import disabledNoUserList from '@/utils/authentication/disabledNoUserList';
+import { useEffect, useState } from 'react';
+
+type RenderTableProps = {
+  title: string;
+  conditionToRender: boolean;
+  objectArray: Array<[string, number]>;
+  isLoading?: boolean;
+  spliceResult?: 1 | 2 | 3 | 4;
+};
 
 // TODO: Only show if the modules are completed.
 const ModuleResults = () => {
@@ -47,7 +56,7 @@ const ModuleResults = () => {
     useAppSelector((s) => s.authentication)
   );
   const conditionList = ['fetched from server', 'submitted'] as PromptType[];
-  const results = [
+  const results: RenderTableProps[] = [
     {
       title: 'certificate',
       conditionToRender: conditionList.includes(certificateInputControl),
@@ -65,13 +74,14 @@ const ModuleResults = () => {
     },
   ];
 
-  const overall = {
+  const overall: RenderTableProps = {
     title: 'overall result',
     conditionToRender:
       conditionList.includes(certificateInputControl) &&
       conditionList.includes(gradeInputControl) &&
       conditionList.includes(internshipInputControl),
-    objectArray: Object.entries(jobHolder).splice(0, 3),
+    objectArray: Object.entries(jobHolder),
+    spliceResult: 3,
   };
   const titles = results.flatMap(({ title }) => title);
 
@@ -108,19 +118,22 @@ const ModuleResults = () => {
   }
 };
 
-const RenderTable = (props: {
-  title: string;
-  conditionToRender: boolean;
-  objectArray: Array<[string, number]>;
-  isLoading?: boolean;
-}) => {
+type RenderTableState = {
+  chartData: { career: string; percentage: string }[];
+};
+const initialState: RenderTableState = {
+  chartData: [],
+};
+const RenderTable = (props: RenderTableProps) => {
   const authStatus = authenticationStatus(
     useAppSelector((s) => s.authentication)
   );
+  const [state, setState] = useState(initialState);
   const heading = {
     one: 'careers',
     two: 'ranks',
   };
+  const isSpliceNumber = typeof props.spliceResult === 'number';
 
   const chartConfig = {
     career: {
@@ -133,13 +146,25 @@ const RenderTable = (props: {
     },
   } satisfies ChartConfig;
 
-  const totalPoints = props.objectArray
-    .flatMap(([, p]) => p)
-    .reduce((a, b) => a + b);
-  const chartData = props.objectArray.map(([career, points]) => ({
-    career: constantNameFormatter(career, true),
-    percentage: ((Math.ceil(points) / Math.ceil(totalPoints)) * 100).toFixed(2),
-  }));
+  useEffect(() => {
+    if (props.isLoading === undefined) {
+      const totalPoints = props.objectArray
+        .map(([, p]) => p)
+        .reduce((a, b) => a + b);
+      const chartData = props.objectArray.map(([career, points]) => ({
+        career: constantNameFormatter(career, true),
+        percentage: (
+          (Math.ceil(points) / Math.ceil(totalPoints)) *
+          100
+        ).toFixed(2),
+      }));
+
+      setState((prevState) => ({
+        ...prevState,
+        chartData,
+      }));
+    }
+  }, [props.isLoading, props.objectArray]);
 
   return (
     <Card>
@@ -168,17 +193,22 @@ const RenderTable = (props: {
               </TableHeader>
               <TableBody>
                 {props.conditionToRender ? (
-                  props.objectArray.map(([key], index) => {
-                    return (
+                  // Creates new object.
+                  [...props.objectArray]
+                    .splice(
+                      0,
+                      isSpliceNumber
+                        ? props.spliceResult
+                        : state.chartData.length
+                    )
+                    .map(([key], index) => (
                       <TableRow key={key}>
                         <TableCell className="capitalize">
                           {constantNameFormatter(key)}
                         </TableCell>
-                        {/* <p>{number}</p> */} {/* Value of result */}
                         <TableCell>{index + 1}</TableCell>
                       </TableRow>
-                    );
-                  })
+                    ))
                 ) : (
                   // No results yet.
                   <TableRow />
@@ -202,7 +232,11 @@ const RenderTable = (props: {
               <GradeChart
                 selectStyle="mt-2"
                 title={`${props.title} breakdown`}
-                chartData={chartData}
+                // Creates new object.
+                chartData={[...state.chartData].splice(
+                  0,
+                  isSpliceNumber ? props.spliceResult : state.chartData.length
+                )}
                 chartConfig={chartConfig}
               />
             </DialogContent>
