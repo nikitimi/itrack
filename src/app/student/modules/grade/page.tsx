@@ -4,6 +4,13 @@ import Header from '@/components/Header';
 import Loading from '@/components/Loading';
 import COGDataExtractor from '@/features/grade/student/components/COGDataExtractor';
 import COGDataLoader from '@/features/grade/student/components/COGDataLoader';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'iTrack | Student Grade Module',
+  description: 'Check your career trajectory anywhere and anytime.',
+  icons: ['/favicon.ico'],
+};
 
 const Grade = () => {
   return (

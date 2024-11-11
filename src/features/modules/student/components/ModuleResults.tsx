@@ -97,7 +97,7 @@ const ModuleResults = () => {
     case 'authenticated':
       return (
         <section className="flex flex-col gap-4 p-4">
-          <div className="grid grid-flow-col gap-4">
+          <div className="grid grid-flow-row gap-4 md:grid-flow-col">
             {results.map((props) => {
               return <RenderTable key={props.title} {...props} />;
             })}
@@ -127,15 +127,18 @@ const RenderTable = (props: {
       label: 'Career',
       color: 'hsl(var(--chart-4))',
     },
-    points: {
-      label: 'Calculated Points',
+    percentage: {
+      label: 'Percentage(%)',
       color: 'hsl(var(--chart-5))',
     },
   } satisfies ChartConfig;
 
+  const totalPoints = props.objectArray
+    .flatMap(([, p]) => p)
+    .reduce((a, b) => a + b);
   const chartData = props.objectArray.map(([career, points]) => ({
     career: constantNameFormatter(career, true),
-    points: points,
+    percentage: ((Math.ceil(points) / Math.ceil(totalPoints)) * 100).toFixed(2),
   }));
 
   return (

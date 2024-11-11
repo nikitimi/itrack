@@ -29,7 +29,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'iTrack | About',
-  description: 'Tracking your future!',
+  description: 'Check your career trajectory anywhere and anytime.',
+  icons: ['/favicon.ico'],
 };
 
 export default async function RootLayout({ children }: Children) {

@@ -38,3 +38,4 @@ next-env.d.ts
 # Customized
 dump
 /src/data/extraction/result/excel
+/requirements

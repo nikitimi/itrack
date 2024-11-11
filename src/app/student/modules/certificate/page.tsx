@@ -6,6 +6,14 @@ import CertificateLoader from '@/features/certificate/student/components/Certifi
 import CertificateSelector from '@/features/certificate/student/components/CertificateSelector';
 import { Suspense } from 'react';
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'iTrack | Student Certificate Module',
+  description: 'Check your career trajectory anywhere and anytime.',
+  icons: ['/favicon.ico'],
+};
+
 const Page = () => {
   return (
     <div>

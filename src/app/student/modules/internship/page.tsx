@@ -9,6 +9,14 @@ import InternshipTaskConfirmation from '@/features/internship/components/Interns
 import InternshipIsITCompany from '@/features/internship/components/InternshipIsITCompany';
 import InternshipGrade from '@/features/internship/components/internshipGrade';
 
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'iTrack | Student Internship Module',
+  description: 'Check your career trajectory anywhere and anytime.',
+  icons: ['/favicon.ico'],
+};
+
 const Internship = () => {
   return (
     <div>

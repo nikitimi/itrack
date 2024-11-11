@@ -1,6 +1,13 @@
 import { HeaderNoUser } from '@/components/Header';
 import SignupCard from '@/components/student/SignupCard';
 import Image from 'next/image';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'iTrack | Student Signup',
+  description: 'Check your career trajectory anywhere and anytime.',
+  icons: ['/favicon.ico'],
+};
 
 const page = () => {
   return (
