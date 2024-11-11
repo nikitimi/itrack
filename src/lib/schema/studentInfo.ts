@@ -16,6 +16,7 @@ const studentInfoSchema = z.object({
   userId: z.string(),
   studentNumber: z.string(),
   specialization: specializationEnum,
+  createdAt: z.union([z.number(), z.undefined()]),
 });
 
 export default studentInfoSchema;

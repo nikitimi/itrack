@@ -83,13 +83,14 @@ export async function GET(request: NextRequest) {
         (u) => u.publicMetadata.studentNumber !== undefined
       );
       const filteredStudentInfo = students.map(
-        ({ publicMetadata, firstName, lastName, id }) => ({
+        ({ publicMetadata, firstName, lastName, id, createdAt }) => ({
           studentNumber: publicMetadata.studentNumber as string | undefined,
           specialization: publicMetadata.specialization as string | undefined,
           middleInitial: publicMetadata.middleInitial as string | undefined,
           firstName,
           lastName,
           userId: id,
+          createdAt,
         })
       );
       const studentNumbers = filteredStudentInfo.map((s) => s.studentNumber);

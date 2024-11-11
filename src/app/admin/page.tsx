@@ -50,6 +50,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import AreaChart from '@/components/charts/AreaChart';
+import { ChartConfig } from '@/components/ui/chart';
+import { AdminLineChart } from '@/components/charts/AdminLineChart';
+import { Separator } from '@/components/ui/separator';
+import BarChart from '@/components/charts/BarChart';
+import { RadarChart } from '@/components/charts/RadarChart';
 
 type FetchedData = {
   grades: Record<string, Omit<GradeInfo & MongoExtra, 'studentNumber'>[]>[];
@@ -62,6 +68,12 @@ type InitialState = {
   internshipData: Record<string, Required<InitializeApp['internship']>[]>[];
   studentData: StudentInfo[];
 } & FetchedData;
+type AdminChart = {
+  web: number;
+  business: number;
+  service: number;
+  students: number;
+};
 
 const initialState: InitialState = {
   grades: [],
@@ -79,6 +91,105 @@ const Admin = () => {
   const dispatch = useAppDispatch();
   const triggerClasses =
     'rounded-lg bg-black/90 px-4 py-2 capitalize text-white shadow-sm';
+  const specializations = specializationEnum.options.map((s) =>
+    constantNameFormatter(s, true)
+  );
+
+  const chartConfig = {
+    date: {
+      label: 'Date',
+      color: '--foreground',
+    },
+    business: {
+      label: specializations[0],
+      color: 'hsl(var(--chart-2))',
+    },
+    web: {
+      label: specializations[1],
+      color: 'hsl(var(--chart-3))',
+    },
+    service: {
+      label: specializations[2],
+      color: 'hsl(var(--chart-4))',
+    },
+    students: {
+      label: 'Overall',
+      color: 'hsl(var(--chart-5))',
+    },
+  } satisfies ChartConfig;
+
+  function getStudentInfoByDate() {
+    let adminLineChartHolder: AdminChart[] = [];
+    const studentInfoFormattedDate = state.filteredStudentInfo.map(
+      ({
+        firstName,
+        lastName,
+        middleInitial,
+        specialization,
+        studentNumber,
+        userId,
+        ...rest
+      }) => {
+        const date = new Date();
+        date.setTime(rest.createdAt ?? 0);
+
+        return {
+          firstName,
+          lastName,
+          middleInitial,
+          specialization,
+          studentNumber,
+          userId,
+          date: date.toDateString(),
+        };
+      }
+    );
+    const dateStringifiedList = Array.from(
+      new Set(studentInfoFormattedDate.map(({ date }) => date))
+    );
+
+    const filteredByDate = dateStringifiedList.map((date) => ({
+      date,
+      studentInfo: studentInfoFormattedDate
+        .filter((s) => s.date === date)
+        .map(({ date, ...rest }) => {
+          console.log(date);
+          return { ...rest };
+        }),
+    }));
+
+    const chartData = filteredByDate.map((r) => ({
+      date: r.date,
+      students: r.studentInfo.length,
+      web: r.studentInfo.filter(
+        (s) => s.specialization === 'WEB_AND_MOBILE_DEVELOPMENT'
+      ).length,
+      business: r.studentInfo.filter(
+        (s) => s.specialization === 'BUSINESS_ANALYTICS'
+      ).length,
+      service: r.studentInfo.filter(
+        (s) => s.specialization === 'SERVICE_MANAGEMENT_PROGRAM'
+      ).length,
+    }));
+
+    if (chartData[0] !== undefined) {
+      const calculatedAdminLineChart = Object.keys(chartData[0]).map((k) => ({
+        [k]: chartData
+          .map((record) => record[k as keyof typeof record] as number)
+          .reduce((a, b) => a + b),
+      }));
+
+      adminLineChartHolder = calculatedAdminLineChart
+        .reduce((acc: AdminChart[], curr: { [key: string]: number }) => {
+          const { date, ...rest } = curr;
+          console.log(date, 'adminLine');
+          return [...acc, rest as AdminChart];
+        }, [])
+        .filter((s) => Object.keys(s).length > 0);
+    }
+    return { adminLineChartHolder, chartData };
+  }
+  const { adminLineChartHolder, chartData } = getStudentInfoByDate();
 
   useEffect(() => {
     function setSubject() {
@@ -173,6 +284,68 @@ const Admin = () => {
       <Header />
       <Card className="mt-12 rounded-none border-none shadow-none">
         <CardHeader>
+          <CardTitle>Charts</CardTitle>
+          <CardDescription>
+            All-time number of students registered:
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-flow-row gap-4">
+          <AdminLineChart
+            chartData={chartData}
+            chartConfig={chartConfig}
+            memoValue={adminLineChartHolder}
+            title={'Students number Chart'}
+            description={`The total number of ITrack-registered students are ${chartData.reduce((acc, curr) => acc + curr.students, 0)}`}
+          />
+          <Separator />
+          <section className="grid grid-flow-row justify-between sm:grid-flow-col">
+            <AreaChart
+              chartConfig={chartConfig}
+              chartData={chartData.reduce(
+                (acc, curr) => {
+                  const { students, ...rest } = curr;
+                  console.log(students);
+                  return [...acc, rest];
+                },
+                [] as Record<string, string | number>[]
+              )}
+              title={'Specialization Chart'}
+              description={'Get the number of students by specialization.'}
+            />
+            <BarChart
+              chartConfig={chartConfig}
+              chartData={chartData.reduce(
+                (acc, curr) => {
+                  const { students, ...rest } = curr;
+                  console.log(students);
+                  return [...acc, rest];
+                },
+                [] as Record<string, string | number>[]
+              )}
+              title={'Specialization Chart'}
+              description={'Get the number of students by specialization.'}
+            />
+            <RadarChart
+              chartConfig={chartConfig}
+              chartData={chartData.reduce(
+                (acc, curr) => {
+                  const { students, ...rest } = curr;
+                  console.log(students);
+                  return [...acc, rest];
+                },
+                [] as Record<string, string | number>[]
+              )}
+              title={'Specialization Chart'}
+              description={'Get the number of students by specialization.'}
+            />
+          </section>
+        </CardContent>
+      </Card>
+      <div className="px-6">
+        <Separator />
+      </div>
+      <Card className="rounded-none border-none shadow-none">
+        <CardHeader>
           <CardTitle>Students</CardTitle>
           <CardDescription>All the student infos resides here.</CardDescription>
           <section>
@@ -197,35 +370,11 @@ const Admin = () => {
                   ))}
                 </SelectContent>
               </Select>
-              {/* <Select>
-                <SelectTrigger className="capitalize">
-                  <SelectValue placeholder="Semester" />
-                </SelectTrigger>
-                <SelectContent>
-                  {semesterEnum.options.map((v) => (
-                    <SelectItem key={v} className="capitalize" value={v}>
-                      {constantNameFormatter(v)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="capitalize">
-                  <SelectValue placeholder="Year Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  {gradeLevelEnum.options.map((v) => (
-                    <SelectItem key={v} className="capitalize" value={v}>
-                      {constantNameFormatter(v)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select> */}
             </div>
           </section>
         </CardHeader>
         <CardContent
-          className="grid h-1/3 gap-4 overflow-y-auto bg-slate-100 py-4"
+          className="grid h-64 gap-4 overflow-y-auto bg-slate-100 py-4"
           ref={cardRef}
         >
           {state.grades.map((object) =>
@@ -327,22 +476,5 @@ const Admin = () => {
     </>
   );
 };
-
-// const Filters = ({array, onChange}: {array: string[]} & HTMLAttributes<HTMLSelectElement>) => {
-//   return (
-//     <Select>
-//       <SelectTrigger className="capitalize">
-//         <SelectValue placeholder="Specialization" />
-//       </SelectTrigger>
-//       <SelectContent>
-//         {array.map((v) => (
-//           <SelectItem key={v} className="capitalize" value={v}>
-//             {constantNameFormatter(v)}
-//           </SelectItem>
-//         ))}
-//       </SelectContent>
-//     </Select>
-//   );
-// };
 
 export default Admin;
