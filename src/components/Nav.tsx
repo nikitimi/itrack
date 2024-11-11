@@ -109,10 +109,17 @@ const Nav = () => {
                 disabled={isModules}
                 className="hover:bg-transparent active:bg-transparent"
               >
-                <Link className="flex" href={item.url} prefetch>
-                  <item.icon />
-                  <span className="capitalize">{item.title}</span>
-                </Link>
+                {isModules ? (
+                  <div className="flex">
+                    <item.icon />
+                    <span className="capitalize">{item.title}</span>
+                  </div>
+                ) : (
+                  <Link className="flex" href={item.url} prefetch>
+                    <item.icon />
+                    <span className="capitalize">{item.title}</span>
+                  </Link>
+                )}
               </SidebarMenuButton>
             </SidebarMenuItem>
             <CollapsibleContent>
