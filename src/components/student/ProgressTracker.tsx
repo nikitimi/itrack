@@ -116,11 +116,7 @@ export function ProgressTracker() {
               <TooltipTrigger asChild>
                 <Button
                   variant="link"
-                  onClick={() =>
-                    router.push(
-                      `/student/modules/${v.split(' ')[0] as (typeof completedList)[number]}`
-                    )
-                  }
+                  disabled
                   className={`${completedList.includes(v) ? 'text-green-400' : 'text-yellow-400'} capitalize`}
                 >
                   {v.split(' ')[0]}
