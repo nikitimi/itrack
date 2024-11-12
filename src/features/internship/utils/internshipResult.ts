@@ -86,7 +86,7 @@ export default function internshipResult(props: InternshipResultProps) {
   jobs.forEach((job) => {
     tasksPerformedCalculation = {
       ...tasksPerformedCalculation,
-      [job]: undefined,
+      [job]: 0,
     };
   });
 
@@ -96,7 +96,7 @@ export default function internshipResult(props: InternshipResultProps) {
   const isStudentPerformedTasks = Array.from(booleanSet)[0];
   const tasksGrade = isStudentPerformedTasks ? 100 : 0;
 
-  let taskPerformedCalculations: Record<string, number>[] = [];
+  let taskPerformedCalculations: [PossibleJob, number][] = [];
   if (isStudentPerformedTasks) {
     allPerformedTasks.forEach((performedTasks) => {
       Object.entries(performedTasks).forEach((performedTask) => {
@@ -104,23 +104,14 @@ export default function internshipResult(props: InternshipResultProps) {
           1 | 2 | 3 | 4 | 5,
           PossibleJob,
         ];
-
-        // Initializes contents of the record.
-        if (
-          (tasksPerformedCalculation as RecordPossibleJobAny)[job] === undefined
-        ) {
-          (tasksPerformedCalculation as RecordPossibleJobAny)[job] = 0;
-        }
         // Summation of grades.
         (tasksPerformedCalculation as RecordPossibleJobAny)[job] += grade;
       });
     });
 
     const sortedTaskPerformedCalculation = Object.entries(
-      tasksPerformedCalculation as RecordPossibleJobAny
-    )
-      .sort((a, b) => a[1] - b[1])
-      .map((t) => ({ [t[0]]: t[1] }));
+      tasksPerformedCalculation
+    ) as [PossibleJob, number][];
     taskPerformedCalculations = sortedTaskPerformedCalculation;
   }
 

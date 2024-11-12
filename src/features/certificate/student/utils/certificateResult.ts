@@ -1,4 +1,3 @@
-import type FinalComputation from '@/features/certificate/student/utils/types/finalComputation';
 import type { Certificate } from '@/lib/enums/certificate';
 import type { GradeRating } from '@/lib/enums/gradeRating';
 import type { CertificateResult } from '@/utils/types/certificateResult';
@@ -10,6 +9,7 @@ import certificateCalculation from '@/lib/calculations/certificates';
 import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
 import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';
 import webAndMobileDevelopmentJobEnum from '@/lib/enums/jobs/webAndMobileDevelopment';
+import careerRecord from '@/utils/careerRecord';
 
 type FilteredCertificateAndJob = Pick<
   (typeof certificateCalculation)[number],
@@ -41,7 +41,9 @@ function filterCertificatesByJob(
   return filteredCertificatesByJob;
 }
 
-export default function certificateResult(props: CertificateResult) {
+export default function certificateResult(
+  props: CertificateResult
+): [PossibleJob, number][] {
   const { certificateList, specialization } = props;
 
   /** Task requirements to be performed to be in the role. */
@@ -81,9 +83,6 @@ export default function certificateResult(props: CertificateResult) {
     restOfCertificates
   );
 
-  //   console.log({ filteredRecommendedCertificatesByJob });
-  //   console.log({ filteredRestCertificatesByJob });
-
   const certificateByJobArray = [
     filteredRecommendedCertificatesByJob,
     filteredRestCertificatesByJob,
@@ -92,13 +91,8 @@ export default function certificateResult(props: CertificateResult) {
     return Object.entries(certificateByJob).map(([jobName, certificates]) => {
       /** Check if the certificates of the student includes the A rating for a specific job-related. */
       const certificateBooleans = certificates.map(({ certificate }) =>
-        certificateList.includes(certificate)
+        certificateList.map((c) => c.name).includes(certificate)
       );
-      // console.log({
-      //   certificateBooleans,
-      //   length: certificateBooleans.length,
-      //   isARating,
-      // });
       /** Number of tooked certificates. */
       const numberOfTrue = certificateBooleans.filter((b) => b === true).length;
       /** Checking of A rating certificates if all are tooked. */
@@ -113,9 +107,9 @@ export default function certificateResult(props: CertificateResult) {
       if (!isARating) {
         let accumulatedPoints = 0;
         certificates.forEach((c) => {
-          if (!certificateList.includes(c.certificate)) return;
-
-          //   console.log(c.certificate);
+          if (!certificateList.flatMap((c) => c.name).includes(c.certificate)) {
+            return;
+          }
           accumulatedPoints += gradingPoints[c.gradeRating];
         });
         return { [jobName]: accumulatedPoints };
@@ -139,33 +133,14 @@ export default function certificateResult(props: CertificateResult) {
     });
   });
 
-  // The calculation for A rating certificates are null.
-  // certificateByJobArray.forEach((certificateByJob, index) => {
-  //   const isCertificatesARating = index === 0;
-  //   if (certificateByJob.filter((r) => r !== undefined).length === 0) {
-  //     return console.log(
-  //       isCertificatesARating
-  //         ? 'No A rating certificate tooked!'
-  //         : 'No certificates tooked!'
-  //     );
-  //   }
-  // });
-
-  const finalComputation = {};
+  const careers = careerRecord(specialization, 0);
   Object.values(certificateByJobArray[1]).forEach((c, index) => {
     const ARatingResult = certificateByJobArray[0][index];
-    if (c === undefined) return console.log('No grades provided');
-    const [jobName, points] = Object.entries(c)[0];
+    if (c === undefined) return;
+    const [jobName, points] = Object.entries(c)[0] as [PossibleJob, number];
 
-    (finalComputation as FinalComputation)[jobName as PossibleJob] =
-      ARatingResult ? points + ARatingResult[jobName] : points;
+    careers[jobName] = ARatingResult ? points + ARatingResult[jobName] : points;
   });
 
-  //   return {
-  //     certificateBasedSpecialization,
-  //     recommendedCertificate,
-  //     filteredRecommendedCertificatesByJob,
-  //     finalComputation,
-  //   };
-  return finalComputation;
+  return Object.entries(careers) as [PossibleJob, number][];
 }

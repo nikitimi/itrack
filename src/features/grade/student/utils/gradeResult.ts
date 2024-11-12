@@ -13,11 +13,13 @@ import businessAnalyticJobEnum from '@/lib/enums/jobs/businessAnalytics';
 import webAndMobileDevelopmentJobEnum from '@/lib/enums/jobs/webAndMobileDevelopment';
 import serviceManagementProgramJobEnum from '@/lib/enums/jobs/serviceManagementProgram';
 import gradeSystem from './gradeSystem';
-import { GradeRating } from '@/lib/enums/gradeRating';
+import type { GradeRating } from '@/lib/enums/gradeRating';
 import { NUMBER_OF_SEMESTER } from '@/utils/constants';
+import type { MongoExtra } from '@/lib/schema/mongoExtra';
+import careerRecord from '@/utils/careerRecord';
 
 type GradeResultProps = {
-  grades: GradeInfo[];
+  grades: (GradeInfo & Partial<MongoExtra>)[];
   specialization: Specialization;
 };
 
@@ -31,8 +33,6 @@ type PossibleJob = (
   | typeof webAndMobileDevelopmentJobEnum.options
   | typeof serviceManagementProgramJobEnum.options
 )[number];
-
-type RecordJobs = Record<PossibleJob, number>;
 
 const points = {
   A: 0.5,
@@ -54,31 +54,8 @@ function checkSubjects(
     subjectCodes.includes(s.subjectCode)
   );
 
-  // Put in helper.
-  let jobs = {};
-  switch (specialization) {
-    case 'BUSINESS_ANALYTICS':
-      businessAnalyticJobEnum.options.forEach((job) => {
-        jobs = { ...jobs, [job]: undefined };
-      });
-      break;
-    case 'WEB_AND_MOBILE_DEVELOPMENT':
-      webAndMobileDevelopmentJobEnum.options.forEach((job) => {
-        jobs = { ...jobs, [job]: undefined };
-      });
-      break;
-    case 'SERVICE_MANAGEMENT_PROGRAM':
-      serviceManagementProgramJobEnum.options.forEach((job) => {
-        jobs = { ...jobs, [job]: undefined };
-      });
-      break;
-  }
-
-  //   console.log(subjectRef);
-  //   console.log(subjectGrades);
-  //   console.log(subjectCodes);
-
-  Object.entries(jobs).forEach(([key]) => {
+  const careers = careerRecord(specialization, 0);
+  Object.entries(careers).forEach(([key]) => {
     let allPoints = 0;
     const rawIterationAndPoints: Record<
       GradeRating,
@@ -91,57 +68,34 @@ function checkSubjects(
     const subjectsFilteredByJob = includedSpecializeSubjects.filter(
       (s) => s.job === key
     );
-    // console.log('subjectsFilteredByJob', subjectsFilteredByJob.length);
+
     subjectsFilteredByJob.forEach((s) => {
       const index = subjectCodes.indexOf(s.subjectCode);
       const grade = subjectGrades[index];
       const gradeSystemDetails = gradeSystem.filter((gs) =>
         gs.scale.startsWith(grade)
       );
-
-      if (gradeSystemDetails.length < 0) {
-        throw new Error("Grade doesn't exists in the grade system.");
-      }
-
       const gradeInteger = gradeSystemDetails[0].scale2;
       const gradePercentage = points[s.gradeRating];
       const calculatedPercentage = gradeInteger * gradePercentage;
       rawIterationAndPoints[s.gradeRating]['items'] += 1;
-      //   console.log(
-      //     gradeInteger,
-      //     '|',
-      //     gradePercentage,
-      //     '|',
-      //     calculatedPercentage
-      //   );
       rawIterationAndPoints[s.gradeRating]['points'] += calculatedPercentage;
     });
-
-    // console.log(key, rawIterationAndPoints);
-    // console.log(
-    //   'Length of specialized subjects',
-    //   includedSpecializeSubjects.length
-    // );
 
     Object.values(rawIterationAndPoints).forEach(({ items, points }) => {
       const calculated = points / items;
       const fallbackNumber = isNaN(calculated) ? 0 : calculated;
-      //   console.log({ fallbackNumber });
       allPoints += fallbackNumber;
     });
-
-    (jobs as RecordJobs)[key as PossibleJob] = allPoints;
+    careers[key as PossibleJob] = careers[key as PossibleJob] + allPoints;
   });
 
-  return jobs as RecordJobs;
+  return careers;
 }
 
 export default function gradeResult(props: GradeResultProps) {
   const { grades, specialization } = props;
   try {
-    if (grades.length === 0) {
-      throw new Error('There are no subjects to compute!');
-    }
     if (grades.length < NUMBER_OF_SEMESTER) {
       throw new Error(
         'Insufficient COG!\nPlease upload all COG up to 3rd year 2nd semester.'
@@ -180,40 +134,22 @@ export default function gradeResult(props: GradeResultProps) {
       }
     });
 
-    let finalRecord = {};
-    switch (specialization) {
-      case 'BUSINESS_ANALYTICS':
-        businessAnalyticJobEnum.options.forEach((job) => {
-          finalRecord = { ...finalRecord, [job]: 0 };
-        });
-        break;
-      case 'WEB_AND_MOBILE_DEVELOPMENT':
-        webAndMobileDevelopmentJobEnum.options.forEach((job) => {
-          finalRecord = { ...finalRecord, [job]: 0 };
-        });
-        break;
-      case 'SERVICE_MANAGEMENT_PROGRAM':
-        serviceManagementProgramJobEnum.options.forEach((job) => {
-          finalRecord = { ...finalRecord, [job]: 0 };
-        });
-        break;
-    }
+    const careers = careerRecord(specialization, 0);
     subjectsArray.forEach((object) => {
       Object.entries(object).forEach(
         ([key, grade]) =>
-          // console.log(key, grade);
-          ((finalRecord as RecordJobs)[key as PossibleJob] +=
-            grade / NUMBER_OF_SEMESTER)
+          (careers[key as PossibleJob] =
+            careers[key as PossibleJob] + grade / NUMBER_OF_SEMESTER)
       );
     });
-
-    const sortedFinalRecord = Object.entries(finalRecord as RecordJobs).sort(
+    const sortedFinalRecord = Object.entries(careers).sort(
       (a, b) => b[1] - a[1]
-    );
+    ) as [PossibleJob, number][];
 
     return sortedFinalRecord;
   } catch (e) {
     const error = e as Error;
-    alert(error.message);
+    console.log(error.message);
+    return [];
   }
 }
