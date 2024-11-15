@@ -6,17 +6,17 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 # Table of contents
 
-- [Pre-requisites]("/itrack?tab=readme-ov-file#pre-requisites")
-  - [Installation Procedures]("/itrack?tab=readme-ov-file#installation-procedures)
-- [Running the website]("/itrack?tab=readme-ov-file#running-the-website")
-  - [Development mode]("/itrack?tab=readme-ov-file#development-mode)
-  - [Production mode]("/itrack?tab=readme-ov-file#production-mode)
-- [ Setting-up services]("/itrack?tab=readme-ov-file#setting-up-services")
-  - [Clerk]("/itrack?tab=readme-ov-file#clerk")
-  - [MongoDB]("/itrack?tab=readme-ov-file#mongodb")
-  - [uploadthing]("/itrack?tab=readme-ov-file#mongodb")
-- [Deployment]("/itrack?tab=readme-ov-file#deployment")
-- [Issues]("/itrack?tab=readme-ov-file#issues")
+- [Pre-requisites](#pre-requisites)
+  - [Installation Procedures](#installation-procedures)
+- [Running the website](#running-the-website)
+  - [Development mode](#development-mode)
+  - [Production mode](#production-mode)
+- [Setting-up services](#setting-up-services)
+  - [Clerk](#clerk)
+  - [MongoDB](#mongodb)
+  - [uploadthing](#uploadthing)
+- [Deployment](#deployment)
+- [Issues](#issues)
 
 ---
 
@@ -28,7 +28,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - [**GitHub** - for using services.](https://github.com/) - Git repositories (storing source codes).
 - [**Clerk** - linked with GitHub account.](https://dashboard.clerk.com/) - Authentication services.
 - [**MongoDB** - linked with GitHub account.](https://account.mongodb.com/) - NoSQL Database.
-- [**uploadthing** - linked with GitHub account.]("https://uploadthing.com/dashboard") - File storage.
+- [**uploadthing** - linked with GitHub account.](https://uploadthing.com/dashboard) - File storage.
 - [**Vercel** - linked with GitHub account.](https://vercel.com/) - used for hosting this NextJS project.
 
 ---
@@ -65,7 +65,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
   pnpm install
 ```
 
-4. Set-up your [API keys]("/itrack?tab=readme-ov-file#services-set-up") in your `.env` file, it should look like this **NOTE: DO NOT EXPOSE THIS API KEYS IN PUBLIC** :
+4. Set-up your [API keys](#services-set-up) in your `.env` file, it should look like this **NOTE: DO NOT EXPOSE THIS API KEYS IN PUBLIC** :
 
 ![dotenv_like_this](/docs/dotenv_like_this.jpg)
 
@@ -86,7 +86,7 @@ You can include multiple environment in your NextJS project:
 
 ##### Production mode
 
-1. Make sure you've installed the packages like in the [Running in Development mode's 1-4 steps]("/itrack?tab=readme-ov-file#running-in-development-mode).
+1. Make sure you've installed the packages like in the [Running in Development mode's 1-4 steps](#running-in-development-mode).
 2. In your project's terminal run:
 
 ```bash
@@ -148,7 +148,7 @@ For this tutorial we will use the deployment through GitHub account.
    ![selecting_project](/docs/selecting_project.jpg)
 3. Lastly choose the repository that you've uploaded into GitHub. (For uploading codes in GitHub repository follow this [guide](https://docs.github.com/en/get-started/start-your-journey/uploading-a-project-to-github).)
    ![selecting_your_repository](/docs/selecting_your_repository.jpg)
-4. Make sure to set-up your environment variables for [Clerk]("/itrack?tab=readme-ov-file#clerk"), [MongoDB]("/itrack?tab=readme-ov-file#mongodb"), and [uploadthing]("/itrack?tab=readme-ov-file#uploadthing") here:
+4. Make sure to set-up your environment variables for [Clerk](#clerk), [MongoDB](#mongodb), and [uploadthing](#uploadthing) here:
    ![vercel_env_set_up_nav](/docs/vercel_env_set_up_nav.jpg)
 5. Paste the API keys here:
    ![vercel_env_paste](/docs/vercel_env_paste.jpg)
